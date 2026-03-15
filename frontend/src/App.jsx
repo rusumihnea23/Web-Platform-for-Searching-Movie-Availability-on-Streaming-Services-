@@ -4,7 +4,7 @@ import LoginForm from './Components/LoginForm/LoginForm'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import RegisterForm from './Components/RegisterForm/RegisterForm'
 import PrivateRoutes from './Components/Routes/PrivateRoutes'
-import {logout} from "./Actions/AuthActions"
+import NavbarLayout from './Components/Navbar/NavbarLayout'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -12,24 +12,23 @@ function App() {
     <div >
       
         <BrowserRouter>
-    <Routes> 
-     {/* PRIVATE ROUTES */}
-       <Route
-          path="/"
-          element={
-            <PrivateRoutes>
-              <h1>Titlu</h1>
-              <button onClick={logout}>logout</button>
-            </PrivateRoutes>
-          }
-        />
-        <Route path="*" element={<PrivateRoutes><h1>Aici esti redirectionat</h1></PrivateRoutes>}/>
-         {/* trebuie schimbat cu HomePage sau cv de genul */}
+    <Routes>
+    {/* Pagini cu navbar are un outlet inauntru care ii spune ca mai are nevoie de ceva */}
+    <Route element={<NavbarLayout />}> 
+      {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
+      <Route element={<PrivateRoutes />}>
+        <Route path="/" element={<h1>Salut boieri si frati</h1>} />
+        <Route path="/home" element={<h1>Home Content</h1>} />
+      </Route>
 
-      {/* AUTH ROUTES */}
-      <Route path="/login" element={<LoginForm />}  ></Route>
-      <Route path="/register" element={<RegisterForm/>}></Route>
-    </Routes>
+      {/* Pagini publice */}
+      <Route path="/about" element={<h1>About Us</h1>} />
+    </Route>
+
+    {/* Pagini publice fara navbar */}
+    <Route path="/login" element={<LoginForm />} />
+    <Route path="/register" element={<RegisterForm />} />
+  </Routes>
         </BrowserRouter>
     </div>
 

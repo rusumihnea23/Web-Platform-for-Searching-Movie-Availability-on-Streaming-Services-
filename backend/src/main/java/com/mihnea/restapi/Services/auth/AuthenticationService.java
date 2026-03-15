@@ -22,6 +22,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public @Nullable AuthenticationResponse register(RegisterRequest request) {
+        if(repository.getUserByEmail(request.getEmail()).isPresent()){
+            throw new IllegalArgumentException("Email already in use");
+        }
         var user= User.builder().firstName(request.getFirstName()).
                 lastName(request.getLastName()).
                 email(request.getEmail()).

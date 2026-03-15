@@ -21,7 +21,7 @@ export default function Navbar() {
   const location = useLocation();
 
   return (
-    <Disclosure as="nav" className="relative bg-sky-800/50 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
+    <Disclosure as="nav" className="relative bg-sky-800 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
       <div className="mx-auto max-w-none px-2 sm:px-6 lg:px-12">
         <div className="relative flex h-16 items-center justify-between">
           

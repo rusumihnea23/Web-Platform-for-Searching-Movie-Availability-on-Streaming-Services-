@@ -5,6 +5,8 @@ import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import RegisterForm from './Components/RegisterForm/RegisterForm'
 import PrivateRoutes from './Components/Routes/PrivateRoutes'
 import NavbarLayout from './Components/Navbar/NavbarLayout'
+import Notfound from './Components/Notfound/Notfound'
+import Movie from './Components/Movie/Movie'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -18,11 +20,12 @@ function App() {
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<h1>Salut boieri si frati</h1>} />
-        <Route path="/home" element={<h1>Home Content</h1>} />
+        <Route path="/home" element={<Movie></Movie>} />
       </Route>
 
       {/* Pagini publice */}
       <Route path="/about" element={<h1>About Us</h1>} />
+      <Route path="*" element={<Notfound/>}/>
     </Route>
 
     {/* Pagini publice fara navbar */}

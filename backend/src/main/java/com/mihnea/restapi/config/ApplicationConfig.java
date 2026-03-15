@@ -3,6 +3,7 @@ package com.mihnea.restapi.config;
 import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.MovieMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,11 +42,13 @@ public class ApplicationConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
     }
+    @Value("${tmdb.api.key}")
+    private String tmdbApiKey;
     @Bean
     public WebClient webClient(WebClient.Builder builder){
         return builder.baseUrl("https://api.themoviedb.org/3")
-                .defaultHeader("Authorization", "Bearer //AM SCOS INTENTIONAT API KEY CA SA NU FIE EXPUSA PE GIT" +
-                        "") //todo api key care sa fie sigura cand dau push pe git
+                .defaultHeader("Authorization", "Bearer " + tmdbApiKey
+                        ) //todo api key care sa fie sigura cand dau push pe git
                 .build();
     }
     @Bean

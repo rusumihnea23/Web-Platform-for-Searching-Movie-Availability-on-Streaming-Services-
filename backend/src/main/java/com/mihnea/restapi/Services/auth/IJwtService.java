@@ -1,6 +1,4 @@
-package com.mihnea.restapi.Services;
-
-import io.jsonwebtoken.Claims;
+package com.mihnea.restapi.Services.auth;
 
 public interface IJwtService {
     public String extractUsername(String token);

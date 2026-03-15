@@ -1,6 +1,6 @@
 package com.mihnea.restapi.config;
 
-import com.mihnea.restapi.Services.JwtService;
+import com.mihnea.restapi.Services.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +34,8 @@ public class JwtAuthenticatinFilter extends OncePerRequestFilter {
     }
     jwt=authHeader.substring((bearerLenght));
     userEmail=jwtService.extractUsername(jwt);
+        System.out.println("Auth header: " + authHeader);
+        System.out.println("Extracted email: " + userEmail);
     if(userEmail!=null&& SecurityContextHolder.getContext().getAuthentication()==null){
         UserDetails userDetails=this.userDetailsService.loadUserByUsername(userEmail);
         if(jwtService.isTokenValid(jwt,userDetails)){

@@ -2,6 +2,7 @@ package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Models.Movie;
 import com.mihnea.restapi.Services.TMDBService;
+import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,4 +35,10 @@ public class MovieController {
     List<MovieDTO> getMoviesListByQuery(@RequestParam String query){
         return TMDBService.searchMovieList(query);
     }
-}
+
+
+    @GetMapping("/{id}/details")
+    public Mono<MovieDetailDTO> getMovieDetails(@PathVariable Long id) {
+        return TMDBService.getDetailedMovie(id);
+
+}}

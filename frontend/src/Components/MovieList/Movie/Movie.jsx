@@ -1,28 +1,30 @@
-export default function Movie({ poster_path, title }) {
+import { useNavigate } from "react-router-dom"
+export default function Movie({ poster_path, title,id}) {
   const hasPoster = poster_path && poster_path !== "";
-
+  const navigate=useNavigate();
   return (
-    <div className="
+    <div  onClick={()=>{navigate(`/movies/${id}/details`)}}  className="
+
       group/film 
       relative 
       w-30 sm:w-37.5 md:w-45
       aspect-2/3
       shrink-0 
       overflow-hidden 
-      bg-gray-800 /* This ensures the box exists even if the image doesn't */
-      shadow-xl border-2 border-pink-600/20 hover:border-pink-600 cursor-pointer"
+       rounded-xs shadow-2xl border border-slate-700
+      hover:border-pink-600 cursor-pointer"
     >
       {hasPoster ? (
         <img
           src={`https://image.tmdb.org/t/p/w500/${poster_path}`}
           alt={title}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover "
           onError={(e) => { e.target.style.display = 'none'; }}
         />
       ) : (
         /* In caz ca nu are poster */
         <div className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-slate-900 text-center">
-          <span className="text-pink-500 mb-2">🎬</span>
+          <span className="text-pink-600 mb-2">🎬</span>
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">
             No Poster
           </p>

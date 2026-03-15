@@ -8,11 +8,12 @@ import NavbarLayout from './Components/Navbar/NavbarLayout'
 import Notfound from './Components/Notfound/Notfound'
 import HomePage from './Components/HomePage/HomePage'
 import SearchResult from './Components/Search/SearchResults/SearchResults'
+import MovieCard from './Components/MovieCard/MovieCard'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div >
+    <div className='font-semibold bg-sky-900'>
       
         <BrowserRouter>
     <Routes>
@@ -24,6 +25,7 @@ function App() {
       </Route>
 
       {/* Pagini publice */}
+      <Route path="/movies/:id/details" element={<MovieCard />} />
       <Route path="/search" element={<SearchResult />} />
       <Route path="/about" element={<div  className='h-screen'><h1>About Us</h1></div>} />
       <Route path="*" element={<Notfound/>}/>

@@ -3,6 +3,8 @@ package com.mihnea.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Entity
 @Table(name="movies")
@@ -35,6 +37,8 @@ public class Movie {
     @Getter
     @Setter
     private String posterPath;
+
+
 
     //genres& genreIds
 

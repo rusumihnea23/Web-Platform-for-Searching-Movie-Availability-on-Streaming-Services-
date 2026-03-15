@@ -1,22 +1,13 @@
 package com.mihnea.restapi.dtos;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
+@Data
 public class MovieDTO {
-    @Setter
-    @Getter
     long id;
-    @Setter
-    @Getter
     String title;
-    @Setter
-    @Getter
     String overview;
-    @Setter
-    @Getter
     String release_date;
-    @Setter
-    @Getter
     String poster_path;
 }

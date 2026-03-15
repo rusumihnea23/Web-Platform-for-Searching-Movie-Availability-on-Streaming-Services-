@@ -1,7 +1,10 @@
 package com.mihnea.restapi.dtos;
 
 import com.mihnea.restapi.Models.Movie;
+import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
+import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 
+import java.util.List;
 import java.util.Map;
 
 public class MovieMapper {
@@ -40,4 +43,20 @@ public class MovieMapper {
         return dto;
     }
 
+
+    public MovieDetailDTO mapToDetailedDTO(MovieDetailDTO details, CreditsDTO credits) {
+        if (credits.getCast() != null) {
+            details.setCast(credits.getCast().stream()
+                    .limit(10)
+                    .toList());
+        }
+        if (credits.getCrew() != null) {
+            details.setCrew(credits.getCrew().stream()
+                    .filter(member -> List.of("Director", "Screenplay", "Writer", "Story","Producer","Executive Producer","Editor","Director of Photography")
+                            .contains(member.getJob()))
+                    .toList());
+        }
+
+        return details;
+    }
 }

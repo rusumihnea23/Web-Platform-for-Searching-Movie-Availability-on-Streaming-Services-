@@ -1,31 +1,49 @@
 import Movie from "../Movie/Movie"
+import { useNavigate } from "react-router-dom"
 
 export default function DetailedMovieList({ Movies, max }) {
+    const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col items-center gap-6 px-6 w-full">
-            {
-                Movies.slice(0, max).map((movie) => {
-                    return (
-                        <div key={movie.id} className="flex gap-6 max-w-4xl w-full bg-white shadow-md rounded-lg p-4">
-                            <div className="flex-shrink-0"> 
-                                <Movie
-                                    poster_path={movie.poster_path}
-                                    title={movie.title}
-                                />
+        <div className="flex flex-col items-center gap-6 px-4 py-8 w-full">
+            {Movies.slice(0, max).map((movie) => {
+                return (
+                    <div   
+                        onClick={() =>navigate(`/movies/${movie.id}/details`)}
+                        className="flex flex-row gap-4 md:gap-8 max-w-4xl w-full bg-slate-800 border border-slate-700  overflow-hidden shadow-lg hover:bg-slate-750 transition-colors cursor-pointer group"
+                    >
+                    
+                            <Movie
+                                poster_path={movie.poster_path}
+                                title={movie.title}
+                                id={movie.id}
+                            />
+                        
+
+                        {/* Right: Info */}
+                        <div className="flex flex-col justify-center p-4 pr-6 overflow-hidden flex-1">
+                            <h2  onClick={() =>navigate(`/movies/${movie.id}/details`)} className="text-sm md:text-xl font-bold text-white mb-2 group-hover:text-pink-500 transition-colors truncate">
+                                {movie.title}
+                            </h2>
+                            
+                            {/* Year & Badge (Optional flair) */}
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">
+                                    {movie.release_date?.split('-')[0]}
+                                </span>
                             </div>
 
-                            <div className="flex flex-col justify-start overflow-hidden">
-                                <h2 className="text-xl font-semibold mb-2 line-clamp-1">{movie.title}</h2>
-                                <p className="text-gray-600 line-clamp-4 md:line-clamp-6 text-ellipsis">
-                                    {movie.overview} 
-                                    {/* de reparat , cand am prea multe caractere iese de pe ecran */}
-                                </p>
-                            </div>
+                            {/* Overview - Hidden on mobile, shown on md+ screens */}
+                            <p className="hidden md:block text-slate-400 text-sm md:text-base leading-relaxed line-clamp-3 lg:line-clamp-4">
+                                {movie.overview}
+                            </p>
+                            
+                            {/* Mobile replacement for overview */}
+                           
                         </div>
-                    )
-                })
-            }
+                    </div>
+                )
+            })}
         </div>
     )
 }

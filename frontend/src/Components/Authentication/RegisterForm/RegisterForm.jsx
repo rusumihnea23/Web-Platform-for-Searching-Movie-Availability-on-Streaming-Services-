@@ -1,6 +1,5 @@
-import "./RegisterForm.css"
 import React, { useState, useEffect } from 'react'
-import {register} from "../../Actions/AuthActions"
+import {register} from "../../../Actions/AuthActions"
 import { useNavigate } from "react-router-dom"
 
 

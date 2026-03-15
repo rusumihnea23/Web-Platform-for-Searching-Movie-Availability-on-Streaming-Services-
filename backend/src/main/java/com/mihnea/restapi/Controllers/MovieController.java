@@ -5,10 +5,7 @@ import com.mihnea.restapi.Services.TMDBService;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -31,5 +28,10 @@ public class MovieController {
     @GetMapping("/popular")
     public List<MovieDTO> getPopularMovieList(){
         return TMDBService.fetchPopularMovies();
+    }
+
+    @GetMapping("/search{query}")
+    List<MovieDTO> getMoviesListByQuery(@RequestParam String query){
+        return TMDBService.searchMovieList(query);
     }
 }

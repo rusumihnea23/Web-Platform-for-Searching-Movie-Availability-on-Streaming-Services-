@@ -31,7 +31,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/movies/**").permitAll()
+                        .requestMatchers("/api/auth/**","/api/movies/**","/api/movies/search/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -48,7 +48,7 @@ public class SecurityConfig {
         CorsConfiguration configurationSource=new CorsConfiguration();
         configurationSource.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configurationSource.setAllowedMethods(Arrays.asList("POST","GET","DELETE","PUT"));
-        configurationSource.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        configurationSource.setAllowedHeaders(List.of("Authorization","Content-Type","Accept"));
         UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**",configurationSource);
         return source;

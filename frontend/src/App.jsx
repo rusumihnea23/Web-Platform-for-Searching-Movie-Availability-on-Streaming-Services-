@@ -1,13 +1,13 @@
 import { React,useState } from 'react'
 import './App.css'
-import LoginForm from './Components/LoginForm/LoginForm'
+import LoginForm from './Components/Authentication/LoginForm/LoginForm'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
-import RegisterForm from './Components/RegisterForm/RegisterForm'
-import PrivateRoutes from './Components/Routes/PrivateRoutes'
+import RegisterForm from './Components/Authentication/RegisterForm/RegisterForm'
+import PrivateRoutes from './Routes/PrivateRoutes'
 import NavbarLayout from './Components/Navbar/NavbarLayout'
 import Notfound from './Components/Notfound/Notfound'
-import Movie from './Components/MovieList/Movie/Movie'
 import HomePage from './Components/HomePage/HomePage'
+import SearchResult from './Components/Search/SearchResults/SearchResults'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -24,6 +24,7 @@ function App() {
       </Route>
 
       {/* Pagini publice */}
+      <Route path="/search" element={<SearchResult />} />
       <Route path="/about" element={<h1>About Us</h1>} />
       <Route path="*" element={<Notfound/>}/>
     </Route>

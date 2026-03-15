@@ -42,5 +42,18 @@ public class TMDBService {
         return mapper.map(response);
     }
 
+    public List<MovieDTO>searchMovieList(String query) {
+        @Nullable Map response = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/search/movie").queryParam("query",query).build())
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+        List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
 
-}
+        // Map each TMDB movie to your MovieDTO
+        return results.stream()
+                .map(mapper::map)
+                .toList();
+
+    }
+    }

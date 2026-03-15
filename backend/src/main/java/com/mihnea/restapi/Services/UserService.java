@@ -18,12 +18,6 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public void createUser(User user) {
-        validateEmail(user.getEmail());
-        userRespository.save(user);
-    }
-
-    @Override
     public void updateUser(Long id, User user) {
     User userToUpdate=userRespository.findById(id).orElseThrow(
             ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));

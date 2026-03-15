@@ -1,57 +1,49 @@
 import "./RegisterForm.css"
 import React, { useState, useEffect } from 'react'
-
-
+import {register} from "../../Actions/AuthActions"
+import { useNavigate } from "react-router-dom"
 
 
 const RegisterForm = () => {
-
+  const navigate=useNavigate();
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstName, setfirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const handleRegister = async (e) => {
+  e.preventDefault();
+  await register(firstName,lastName,email,password)
+  navigate("/");
+
+};
 
 
   return (
-    <div className='register-form'>
-      <div className='form-container'>
-        <h1>Register</h1>
-        <div className="Names">
-             <input
-          type='text'
-          placeholder='First Name'
-          value={email}
-          onChange={e => setfirstName(e.target.value)}
-          className="Name"
-        />
-         <input
-          type='text'
-          placeholder='Last Name'
-          value={email}
-          onChange={e => setLastName(e.target.value)}
-          className="Name"
-        />
-        </div>
-        
+    <form onSubmit={handleRegister}>
         <input
-          type='text'
-          placeholder='email'
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
+        value={firstName}
+        onChange={(e) => setfirstName(e.target.value)}
+        placeholder="firstName"
+      />
         <input
-          type='password'
-          placeholder='password'
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        <button >
-          Register
-        </button>
-       
-      </div>
-    </div>
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        placeholder="lastName"
+      />
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+      <button type="submit">Register</button>
+    </form>
   )
 }
 

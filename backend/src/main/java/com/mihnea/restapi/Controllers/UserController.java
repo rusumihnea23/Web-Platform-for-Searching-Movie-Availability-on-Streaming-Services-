@@ -18,10 +18,6 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @PostMapping
-    public void createUser(@RequestBody User user){
-        userService.createUser(user);
-    }
 
     @PutMapping(path="/{id}")
     public void updateUser(@PathVariable Long id,@RequestBody User user){

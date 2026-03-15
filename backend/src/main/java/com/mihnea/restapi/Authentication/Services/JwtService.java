@@ -44,7 +44,7 @@ public class JwtService implements IJwtService {
         return  Jwts.builder().setClaims(extraClaims).setSubject(userDetails
                 .getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+jwtConfig.getExpiration())) //todo valoare constanta pt treaba asta
+                .setExpiration(new Date(System.currentTimeMillis()+jwtConfig.getExpiration()))
                 .signWith(getSingInKey(), SignatureAlgorithm.HS256).compact();
     }
     public boolean isTokenValid(String token,UserDetails userDetails){

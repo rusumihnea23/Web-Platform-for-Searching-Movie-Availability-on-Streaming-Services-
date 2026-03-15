@@ -6,7 +6,8 @@ import RegisterForm from './Components/RegisterForm/RegisterForm'
 import PrivateRoutes from './Components/Routes/PrivateRoutes'
 import NavbarLayout from './Components/Navbar/NavbarLayout'
 import Notfound from './Components/Notfound/Notfound'
-import Movie from './Components/Movie/Movie'
+import Movie from './Components/MovieList/Movie/Movie'
+import HomePage from './Components/HomePage/HomePage'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -19,8 +20,7 @@ function App() {
     <Route element={<NavbarLayout />}> 
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
-        <Route path="/" element={<h1>Salut boieri si frati</h1>} />
-        <Route path="/home" element={<Movie></Movie>} />
+        <Route path="/" element={<HomePage/>} />
       </Route>
 
       {/* Pagini publice */}

@@ -6,7 +6,7 @@ const login = async (email, password) => {
     alert("Login successful!");
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || err.message);
+    alert(err.response?.data?.message || err.message); // sa nu uit sa schimba asta ca sa nu am tooata ziua alerte 
   }
 };
 
@@ -16,9 +16,10 @@ const register = async (firstName,lastName,email, password) => {
     const res = await api.post("/api/auth/register", { firstName,lastName,email, password });
     localStorage.setItem("token", res.data.token);
     alert("Register successful!");
+  
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || err.message);
+    alert(err.response?.data?.message || err.message); // sa nu uit sa schimba asta ca sa nu am tooata ziua alerte 
   }
 };
 

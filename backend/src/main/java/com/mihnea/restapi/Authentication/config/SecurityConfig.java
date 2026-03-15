@@ -1,9 +1,7 @@
-package com.mihnea.restapi.config;
+package com.mihnea.restapi.Authentication.config;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,7 +31,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**","/api/movies/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

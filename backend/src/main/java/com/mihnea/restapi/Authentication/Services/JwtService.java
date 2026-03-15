@@ -1,6 +1,6 @@
-package com.mihnea.restapi.Services.auth;
+package com.mihnea.restapi.Authentication.Services;
 
-import com.mihnea.restapi.config.JwtConfig;
+import com.mihnea.restapi.Authentication.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

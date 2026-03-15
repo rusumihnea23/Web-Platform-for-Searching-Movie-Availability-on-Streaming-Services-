@@ -1,11 +1,11 @@
-package com.mihnea.restapi.Controllers.auth;
+package com.mihnea.restapi.Authentication.Controllers;
 
 
 
-import com.mihnea.restapi.Services.auth.AuthenticationService;
-import com.mihnea.restapi.dtos.auth.AuthenticationRequest;
-import com.mihnea.restapi.dtos.auth.AuthenticationResponse;
-import com.mihnea.restapi.dtos.auth.RegisterRequest;
+import com.mihnea.restapi.Authentication.Services.AuthenticationService;
+import com.mihnea.restapi.Authentication.dtos.AuthenticationRequest;
+import com.mihnea.restapi.Authentication.dtos.AuthenticationResponse;
+import com.mihnea.restapi.Authentication.dtos.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

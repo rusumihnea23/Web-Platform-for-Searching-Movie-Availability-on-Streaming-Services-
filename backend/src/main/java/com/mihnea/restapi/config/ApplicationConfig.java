@@ -1,6 +1,7 @@
 package com.mihnea.restapi.config;
 
 import com.mihnea.restapi.Repositories.UserRespository;
+import com.mihnea.restapi.dtos.MovieMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
@@ -38,5 +40,20 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
+    }
+    @Bean
+    public WebClient webClient(WebClient.Builder builder){
+        return builder.baseUrl("https://api.themoviedb.org/3")
+                .defaultHeader("Authorization", "Bearer //AM SCOS INTENTIONAT API KEY CA SA NU FIE EXPUSA PE GIT" +
+                        "") //todo api key care sa fie sigura cand dau push pe git
+                .build();
+    }
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+    @Bean
+    MovieMapper movieMapper(){
+        return new MovieMapper();
     }
 }

@@ -1,6 +1,6 @@
-package com.mihnea.restapi.config;
+package com.mihnea.restapi.Authentication.config;
 
-import com.mihnea.restapi.Services.auth.JwtService;
+import com.mihnea.restapi.Authentication.Services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

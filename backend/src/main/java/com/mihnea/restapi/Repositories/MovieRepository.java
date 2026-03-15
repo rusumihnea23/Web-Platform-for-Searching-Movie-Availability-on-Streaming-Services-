@@ -1,0 +1,7 @@
+package com.mihnea.restapi.Repositories;
+
+import com.mihnea.restapi.Models.Movie;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MovieRepository extends JpaRepository<Movie, Long> {
+}

@@ -1,4 +1,4 @@
-package com.mihnea.restapi.dtos.auth;
+package com.mihnea.restapi.Authentication.dtos;
 
 import lombok.*;
 

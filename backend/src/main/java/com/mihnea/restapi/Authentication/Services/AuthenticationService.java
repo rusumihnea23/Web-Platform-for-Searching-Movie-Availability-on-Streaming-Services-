@@ -1,11 +1,11 @@
-package com.mihnea.restapi.Services.auth;
+package com.mihnea.restapi.Authentication.Services;
 
 import com.mihnea.restapi.Models.Role;
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Repositories.UserRespository;
-import com.mihnea.restapi.dtos.auth.AuthenticationRequest;
-import com.mihnea.restapi.dtos.auth.AuthenticationResponse;
-import com.mihnea.restapi.dtos.auth.RegisterRequest;
+import com.mihnea.restapi.Authentication.dtos.AuthenticationRequest;
+import com.mihnea.restapi.Authentication.dtos.AuthenticationResponse;
+import com.mihnea.restapi.Authentication.dtos.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;

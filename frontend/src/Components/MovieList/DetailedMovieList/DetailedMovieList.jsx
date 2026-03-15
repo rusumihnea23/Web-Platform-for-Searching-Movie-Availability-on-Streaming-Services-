@@ -17,7 +17,7 @@ export default function DetailedMovieList({ Movies, max }) {
 
                             <div className="flex flex-col justify-start overflow-hidden">
                                 <h2 className="text-xl font-semibold mb-2 line-clamp-1">{movie.title}</h2>
-                                <p className="text-gray-600 line-clamp-4 md:line-clamp-6">
+                                <p className="text-gray-600 line-clamp-4 md:line-clamp-6 text-ellipsis">
                                     {movie.overview} 
                                     {/* de reparat , cand am prea multe caractere iese de pe ecran */}
                                 </p>

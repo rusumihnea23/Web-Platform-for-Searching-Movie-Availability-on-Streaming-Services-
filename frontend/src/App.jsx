@@ -25,7 +25,7 @@ function App() {
 
       {/* Pagini publice */}
       <Route path="/search" element={<SearchResult />} />
-      <Route path="/about" element={<h1>About Us</h1>} />
+      <Route path="/about" element={<div  className='h-screen'><h1>About Us</h1></div>} />
       <Route path="*" element={<Notfound/>}/>
     </Route>
 

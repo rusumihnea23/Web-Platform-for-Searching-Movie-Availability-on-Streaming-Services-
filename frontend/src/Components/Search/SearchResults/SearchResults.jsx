@@ -25,9 +25,11 @@ export default function SearchResult() {
     return (
         
             <div className="flex flex-col items-center gap-2 my-2">
-                <h1>All results for {query}</h1>
+                <h1>All results for
+                     <span className="text-amber-900"> "{query}"</span>
+                </h1> 
                 <DetailedMovieList Movies={movieList}></DetailedMovieList>
-                <div className="w-full max-w-sm min-w-[200px]">
+                <div className="w-full max-w-sm min-w-50">
                  
                 </div>
                   <button

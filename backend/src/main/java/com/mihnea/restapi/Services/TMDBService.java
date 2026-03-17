@@ -2,6 +2,7 @@ package com.mihnea.restapi.Services;
 
 import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
+import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.MovieMapper;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,12 @@ public class TMDBService {
                 .retrieve()
                 .bodyToMono(CreditsDTO.class);
 
-        return Mono.zip(detailsMono, creditsMono)
-                .map(tuple -> mapper.mapToDetailedDTO(tuple.getT1(), tuple.getT2()));
+        Mono<WatchProviderDTO> providersMono = webClient.get()
+                .uri("/movie/{id}/watch/providers", id)
+                .retrieve()
+                .bodyToMono(WatchProviderDTO.class);
+
+        return Mono.zip(detailsMono, creditsMono,providersMono)
+                .map(tuple -> mapper.mapToDetailedDTO(tuple.getT1(), tuple.getT2(),tuple.getT3()));
     }
     }

@@ -2,7 +2,9 @@ package com.mihnea.restapi.Services;
 
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Repositories.UserRespository;
+import com.mihnea.restapi.dtos.UserDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,9 +38,29 @@ public class UserService implements IUserService{
                 ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
         userRespository.delete(userToDelete);
 
-
     }
 
+    public UserDTO getUserDetails(Long id){
+        User userToReturn=userRespository.findById(id).orElseThrow(
+                ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
+        UserDTO dtoToReturn=new UserDTO();
+        dtoToReturn.setId(userToReturn.getId());
+        dtoToReturn.setEmail(userToReturn.getEmail());
+        dtoToReturn.setFirstName(userToReturn.getFirstName());
+        dtoToReturn.setLastName(userToReturn.getLastName());
+        return dtoToReturn;
+    }
+
+    public UserDTO getLoggedUserDetails(Authentication authentication){
+        User userToReturn=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+        UserDTO dtoToReturn=new UserDTO();
+        dtoToReturn.setId(userToReturn.getId());
+        dtoToReturn.setEmail(userToReturn.getEmail());
+        dtoToReturn.setFirstName(userToReturn.getFirstName());
+        dtoToReturn.setLastName(userToReturn.getLastName());
+        return dtoToReturn;
+    }
 
     private void validateEmail(String email){
         Optional<User> userOptional = userRespository.getUserByEmail(email);

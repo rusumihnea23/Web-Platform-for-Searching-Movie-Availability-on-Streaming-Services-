@@ -8,38 +8,30 @@ export default function DetailedMovieList({ Movies, max }) {
         <div className="flex flex-col items-center gap-6 px-4 py-8 w-full">
             {Movies.slice(0, max).map((movie) => {
                 return (
-                    <div   
-                        onClick={() =>navigate(`/movies/${movie.id}/details`)}
-                        className="flex flex-row gap-4 md:gap-8 max-w-4xl w-full bg-slate-800 border border-slate-700  overflow-hidden shadow-lg hover:bg-slate-750 transition-colors cursor-pointer group"
-                    >
-                    
-                            <Movie
-                                poster_path={movie.poster_path}
-                                title={movie.title}
-                                id={movie.id}
-                            />
-                        
+                    // Poster-ul
+                    <div key={movie.id} className="flex flex-row gap-4 md:gap-8 max-w-4xl w-full bg-slate-800 border border-slate-700  overflow-hidden shadow-lg hover:bg-slate-750 transition-colors cursor-pointer group">
+                        <Movie
 
-                        {/* Right: Info */}
+                            poster_path={movie.poster_path}
+                            title={movie.title}
+                            id={movie.id}
+                        />
+                        {/* //Overview+ anul */}
                         <div className="flex flex-col justify-center p-4 pr-6 overflow-hidden flex-1">
-                            <h2  onClick={() =>navigate(`/movies/${movie.id}/details`)} className="text-sm md:text-xl font-bold text-white mb-2 group-hover:text-pink-500 transition-colors truncate">
+                            <h2 onClick={() => navigate(`/movies/${movie.id}/details`)} className="text-sm md:text-xl font-bold text-white mb-2 group-hover:text-pink-500 transition-colors truncate">
                                 {movie.title}
                             </h2>
-                            
-                            {/* Year & Badge (Optional flair) */}
+                            {/*Anul  */}
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">
                                     {movie.release_date?.split('-')[0]}
                                 </span>
                             </div>
-
-                            {/* Overview - Hidden on mobile, shown on md+ screens */}
                             <p className="hidden md:block text-slate-400 text-sm md:text-base leading-relaxed line-clamp-3 lg:line-clamp-4">
                                 {movie.overview}
                             </p>
-                            
-                            {/* Mobile replacement for overview */}
-                           
+
+
                         </div>
                     </div>
                 )

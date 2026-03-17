@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // 1. Added useNavigate
 import { getMovieDetails } from "../../Actions/MovieActions";
-
+import Providers from "./Providers/Providers";
 export default function MovieCard() {
     const { id } = useParams();
    
@@ -26,14 +26,17 @@ export default function MovieCard() {
 
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
                 {/* Left: Poster */}
-                <div className="w-full md:w-1/3 shrink-0">
+                <div className="w-full md:w-1/3 shrink-0 ">
                     <img
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                         alt={movie.title}
-                        className="rounded-2xl shadow-2xl border border-slate-700 w-full"
+                        className="rounded-2xl shadow-2xl border border-slate-700 w-full mb-5"
                     />
+                    <div className="ml-6">
+                    <Providers watchProviders={movie.watchProviderDTO}></Providers>
+                    </div>
+                    
                 </div>
-
                 {/* Right: Info */}
                 <div className="flex-1">
                     <div className="flex items-baseline gap-4 flex-wrap">

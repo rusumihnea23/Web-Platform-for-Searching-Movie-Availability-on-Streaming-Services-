@@ -3,6 +3,7 @@ package com.mihnea.restapi.dtos;
 import com.mihnea.restapi.Models.Movie;
 import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
+import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class MovieMapper {
     }
 
 
-    public MovieDetailDTO mapToDetailedDTO(MovieDetailDTO details, CreditsDTO credits) {
+    public MovieDetailDTO mapToDetailedDTO(MovieDetailDTO details, CreditsDTO credits, WatchProviderDTO provider) {
         if (credits.getCast() != null) {
             details.setCast(credits.getCast().stream()
                     .limit(10)
@@ -56,7 +57,7 @@ public class MovieMapper {
                             .contains(member.getJob()))
                     .toList());
         }
-
+            details.setWatchProviderDTO(provider);
         return details;
     }
 }

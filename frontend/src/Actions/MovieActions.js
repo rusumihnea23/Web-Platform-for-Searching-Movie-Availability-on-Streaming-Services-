@@ -27,7 +27,6 @@ const getQueryMovieList =async (query) => {
 const getMovieDetails=async(id)=>{
 try {
     const res = await api.get(`${mainpath}/${id}/details`,);
-    console.log(res.data)
     return res.data;
   } catch (err) {
     console.error(err);

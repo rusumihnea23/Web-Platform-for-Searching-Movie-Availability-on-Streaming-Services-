@@ -1,6 +1,7 @@
 package com.mihnea.restapi.dtos.DetailedMovieDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ public class MovieDetailDTO extends MovieDTO {
     private List<String> genres;
     private List<CastMemberDTO> cast;
     private List<CrewMemberDTO> crew;
-
+    private WatchProviderDTO watchProviderDTO;
     @JsonProperty("genres")
     private void unpackGenres(List<Map<String, Object>> genreEntries) {
         this.genres = genreEntries.stream()

@@ -4,6 +4,7 @@ package com.mihnea.restapi.Models;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +18,7 @@ import java.util.List;
 @Table(name="users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class User implements UserDetails {
 
     @Id
@@ -33,7 +35,7 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-
+    private String profilePicturePath;
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -45,29 +47,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
     public User( String firstName, String lastName, String email, String password) {
 
         this.firstName = firstName;
@@ -111,10 +90,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 

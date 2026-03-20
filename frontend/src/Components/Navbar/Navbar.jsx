@@ -2,9 +2,10 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import logo from "../../assets/logo.png";
 import defaultpp from "../../assets/default-pp.webp"
+import { useState,useEffect } from 'react';
 // 1. IMPORT Link HERE
 import { useNavigate, useLocation, Link } from "react-router-dom" 
-
+import { getUserDetails } from "../../Actions/UserActions";
 import { logout } from "../../Actions/AuthActions"
 
 const navigation = [
@@ -17,6 +18,16 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+  const[UserDetails,setUserDetails]=useState("");
+      useEffect(() => {
+          const fetchDetails=async ()=>{
+              const user=await getUserDetails();
+              setUserDetails(user);
+          }
+          if(localStorage.getItem("token") )
+          fetchDetails();
+          
+      }, [])
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,7 +82,7 @@ export default function Navbar() {
 
                 <Menu as="div" className="relative ml-3">
                   <MenuButton className="relative flex rounded-full">
-                    <img alt="" src={defaultpp} className="size-8 rounded-full" />
+                    <img alt="" src={UserDetails.profilePicturePath} className="size-8 rounded-full" />
                   </MenuButton>
                   <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1">
                     <MenuItem>

@@ -1,7 +1,7 @@
 import { React,useState } from 'react'
 import './App.css'
 import LoginForm from './Components/Authentication/LoginForm/LoginForm'
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
+import {HashRouter,Routes,Route} from 'react-router-dom'
 import RegisterForm from './Components/Authentication/RegisterForm/RegisterForm'
 import PrivateRoutes from './Routes/PrivateRoutes'
 import NavbarLayout from './Components/Navbar/NavbarLayout'
@@ -9,19 +9,21 @@ import Notfound from './Components/Notfound/Notfound'
 import HomePage from './Components/HomePage/HomePage'
 import SearchResult from './Components/Search/SearchResults/SearchResults'
 import MovieCard from './Components/MovieCard/MovieCard'
+import ProfileTab from './Components/ProfileTab/ProfileTab'
 function App() {
-  const [count, setCount] = useState(0)
+ 
 
   return (
     <div className='font-semibold bg-sky-900'>
       
-        <BrowserRouter>
+        <HashRouter>
     <Routes>
     {/* Pagini cu navbar are un outlet inauntru care ii spune ca mai are nevoie de ceva */}
     <Route element={<NavbarLayout />}> 
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<HomePage/>} />
+        <Route path="/profile" element={<ProfileTab></ProfileTab>}/>
       </Route>
 
       {/* Pagini publice */}
@@ -35,7 +37,7 @@ function App() {
     <Route path="/login" element={<LoginForm />} />
     <Route path="/register" element={<RegisterForm />} />
   </Routes>
-        </BrowserRouter>
+        </HashRouter>
     </div>
 
   )

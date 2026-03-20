@@ -15,7 +15,6 @@ const register = async (firstName,lastName,email, password) => {
   try {
     const res = await api.post("/api/auth/register", { firstName,lastName,email, password });
     localStorage.setItem("token", res.data.token);
-    localStorage.setItem("")
     alert("Register successful!");
   
   } catch (err) {

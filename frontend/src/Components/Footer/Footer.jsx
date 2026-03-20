@@ -24,7 +24,7 @@ export default function Footer() {
                             </a>
                             <div className='w-full max-w-52 h-px mt-8 bg-linear-to-r from-black via-white/25 to-black'></div>
                             <p className='text-sm text-white/60 mt-6 max-w-sm leading-relaxed'>
-                                TODO SA SCHIMB TOATE LINKURILE ASTEA SA LE FAC FOLOSITOARE, SA SCHIMB IMAGINEA, SA FAC SETARILE UNUI USER SI SA POATA SA AIBA POZA DE PROFIL, SA VEZI DETALII DESPRE FILME , SA VEZI PROVIDERII LA FILME
+                                TODO SA SCHIMB TOATE LINKURILE ASTEA SA LE FAC FOLOSITOARE, SA SCHIMB IMAGINEA, SA REPAR SETARILE UNUI USER SI SA POATA SA AIBA POZA DE PROFI
                             </p>
                         </div>
             

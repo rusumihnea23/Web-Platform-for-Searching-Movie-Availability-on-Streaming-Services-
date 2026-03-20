@@ -7,23 +7,32 @@ export default function MovieCard() {
    
     const [movie, setMovie] = useState(null);
     const [activeTab, setActiveTab] = useState("cast");
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         getMovieDetails(id).then((data) => {
             setMovie(data);
+            setLoading(false);
         });
     }, [id]);
 
     const director = movie?.crew?.find(member => member.job === "Director");
 
-    if (!movie) return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
+    if (loading) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-pink-500"></div>
+        </div>
+    );
+}
+
+if (!movie) {
+    return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
+}
 
     return (
         <div className="min-h-screen bg-slate-900 text-white p-4 md:p-8 relative">
             
     
-          
-
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
                 {/* Left: Poster */}
                 <div className="w-full md:w-1/3 shrink-0 ">

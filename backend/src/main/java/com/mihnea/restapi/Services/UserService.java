@@ -59,6 +59,7 @@ public class UserService implements IUserService{
         dtoToReturn.setEmail(userToReturn.getEmail());
         dtoToReturn.setFirstName(userToReturn.getFirstName());
         dtoToReturn.setLastName(userToReturn.getLastName());
+        dtoToReturn.setProfilePicturePath(userToReturn.getProfilePicturePath());
         return dtoToReturn;
     }
 
@@ -67,6 +68,20 @@ public class UserService implements IUserService{
         if(userOptional.isPresent()){
             throw new IllegalStateException(String.format("Email address %s already exists", email));
         }
+    }
+
+    public void updateUserProfilePicture(Authentication authentication,String profilePicturePath) {
+        User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+       userToUpdate.setProfilePicturePath(profilePicturePath);
+        userRespository.save(userToUpdate);
+    }
+
+    public String getUserProfilePicture(Authentication authentication){
+        User userToReturn=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+
+        return userToReturn.getProfilePicturePath();
     }
 
 }

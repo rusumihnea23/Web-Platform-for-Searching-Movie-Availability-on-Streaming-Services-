@@ -12,5 +12,23 @@ const getUserDetails= async()=>{
 }
 
 }
+const updateFirstName= async(Name)=>{
+  try{
+    const res = await api.patch(`${mainpath}/profile/firstName`,{Name});
+    console.log(res.data)
+  }catch(err){
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+}
+const updateLastName= async(Name)=>{
+  try{
+    const res = await api.patch(`${mainpath}/profile/lastName`,{Name});
+    console.log(res.data)
+  }catch(err){
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+}
 
-export  {getUserDetails}
+export  {getUserDetails,updateFirstName,updateLastName}

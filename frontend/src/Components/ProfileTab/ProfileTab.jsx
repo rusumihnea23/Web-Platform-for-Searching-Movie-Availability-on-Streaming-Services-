@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUserDetails } from "../../Actions/UserActions";
+import { getUserDetails,updateFirstName, updateLastName} from "../../Actions/UserActions";
 import ProfileField from "./ProfileFIeld";
 
 export default function ProfileTab() {
@@ -9,7 +9,7 @@ export default function ProfileTab() {
     email: "",
     profilePicturePath: ""
   });
-
+  
   useEffect(() => {
     const fetchDetails = async () => {
       const user = await getUserDetails();
@@ -23,9 +23,17 @@ export default function ProfileTab() {
     setUserDetails(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (fieldName) => {
-    console.log(`Saving ${fieldName}:`, userDetails[fieldName]);
-    // Call your API update action here
+const handleSave = async (fieldName) => {
+    try {
+      if (fieldName === "firstName") {
+        await updateFirstName(userDetails.firstName);
+      } else if (fieldName === "lastName") {
+        await updateLastName(userDetails.lastName);
+     }
+      alert(`${fieldName} updated successfully!`);
+    } catch (error) {
+      console.error("Failed to update:", error);
+    }
   };
 
   return (

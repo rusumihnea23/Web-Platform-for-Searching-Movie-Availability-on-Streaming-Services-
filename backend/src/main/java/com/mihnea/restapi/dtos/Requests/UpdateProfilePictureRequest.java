@@ -1,4 +1,4 @@
-package com.mihnea.restapi.dtos;
+package com.mihnea.restapi.dtos.Requests;
 
 public class UpdateProfilePictureRequest {
     private String profilePicturePath;

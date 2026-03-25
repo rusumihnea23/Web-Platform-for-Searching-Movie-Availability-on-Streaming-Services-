@@ -23,7 +23,7 @@ function App() {
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<HomePage/>} />
-        <Route path="/profile" element={<ProfileTab></ProfileTab>}/>
+        <Route path="/profile/settings" element={<ProfileTab></ProfileTab>}/>
       </Route>
 
       {/* Pagini publice */}

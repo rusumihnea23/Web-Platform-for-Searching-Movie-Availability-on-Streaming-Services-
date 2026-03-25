@@ -3,14 +3,16 @@ package com.mihnea.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
 @Entity
-@Table(name="movies")
+@Table(name="user_movie_log")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Movie {
+@Data
+public class UserMovieLog {
 
     @Id
     @SequenceGenerator(
@@ -22,28 +24,24 @@ public class Movie {
             strategy = GenerationType.SEQUENCE
     )
     private Long id;
-    @Setter
-    @Getter
-    private String Title;
-    @Setter
-    @Getter
-    private Long apiId;
-    @Setter
-    @Getter
-    private String overview;
-    @Setter
-    @Getter
-    private String releaseDate;
+
     @Getter
     @Setter
-    private String posterPath;
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
+    @Getter
+    @Setter
+    @ManyToOne
+    @JoinColumn(name="movie_id")
+    private Movie movie;
+    @Getter
+    @Setter
+    private Float personalGrade;
 
-
-
-    @OneToMany(mappedBy = "movie")
-    private List<UserMovieLog> userMovieLog;
-    //genres& genreIds
-
-
+    @ElementCollection
+    @CollectionTable(name = "user_movie_watch_dates", joinColumns = @JoinColumn(name = "log_id"))
+    @Column(name = "watch_date")
+    private List<LocalDate> userWatchDates;
 
 }

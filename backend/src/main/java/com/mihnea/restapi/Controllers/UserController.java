@@ -2,12 +2,11 @@ package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Services.UserService;
-import com.mihnea.restapi.dtos.UpdateProfilePictureRequest;
+import com.mihnea.restapi.dtos.Requests.UpdateNameRequest;
+import com.mihnea.restapi.dtos.Requests.UpdateProfilePictureRequest;
 import com.mihnea.restapi.dtos.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,5 +46,14 @@ public class UserController {
     public String getUserDetailsProfilePicturePath(Authentication authentication) {
         return userService.getUserProfilePicture(authentication);
     }
+    @PatchMapping("/profile/lastName")
+    public void updateUserLastName(Authentication authentication,@RequestBody UpdateNameRequest request){
+        userService.updateUserLasttName(authentication,request.getName());
+    }
+    @PatchMapping("/profile/firstName")
+    public void updateUserFirstName(Authentication authentication,@RequestBody UpdateNameRequest request){
+        userService.updateUserFirstName(authentication,request.getName());
+    }
+
   }
 

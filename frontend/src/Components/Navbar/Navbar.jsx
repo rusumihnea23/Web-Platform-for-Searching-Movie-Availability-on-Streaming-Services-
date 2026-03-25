@@ -79,18 +79,22 @@ export default function Navbar() {
                 <button type="button" className="relative rounded-full p-1 text-sky-950 hover:text-white">
                   <BellIcon aria-hidden="true" className="size-6" />
                 </button>
+                    <button onClick={() => navigate("/LogMovie")} className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-500 cursor-pointer">
+                Log
+              </button>
 
                 <Menu as="div" className="relative ml-3">
                   <MenuButton className="relative flex rounded-full">
-                    <img alt="" src={UserDetails.profilePicturePath} className="size-8 rounded-full" />
+                    <img alt="" src={!UserDetails.profilePicturePath?defaultpp: UserDetails.profilePicturePath } className="size-8 rounded-full" />
                   </MenuButton>
                   <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1">
                     <MenuItem>
-                      <Link to="/profile" className="block px-4 py-2 text-sm text-gray-300 hover:text-gray-400">Your profile</Link>
+                      <Link to="profile/settings" className="block px-4 py-2 text-sm text-gray-300 hover:text-gray-400">Your profile</Link>
                     </MenuItem>
                     <MenuItem>
                       <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-gray-300 cursor-pointer hover:text-gray-400">Sign out</button>
                     </MenuItem>
+                    
                   </MenuItems>
                 </Menu>
               </>

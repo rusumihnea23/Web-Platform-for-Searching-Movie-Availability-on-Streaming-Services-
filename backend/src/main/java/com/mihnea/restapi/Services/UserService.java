@@ -84,4 +84,18 @@ public class UserService implements IUserService{
         return userToReturn.getProfilePicturePath();
     }
 
+
+
+    public void updateUserFirstName(Authentication authentication,String firstName) {
+        User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+        userToUpdate.setFirstName(firstName);
+        userRespository.save(userToUpdate);
+    }
+    public void updateUserLasttName(Authentication authentication,String lastName) {
+        User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+        userToUpdate.setLastName(lastName);
+        userRespository.save(userToUpdate);
+    }
 }

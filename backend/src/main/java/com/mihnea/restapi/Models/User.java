@@ -39,6 +39,20 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private List<UserMovieLog> userMovieLog;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_watchlist",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
+    )
+    private List<Movie> watchlist;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<MovieList> customLists;
+
     public long getId() {
         return id;
     }

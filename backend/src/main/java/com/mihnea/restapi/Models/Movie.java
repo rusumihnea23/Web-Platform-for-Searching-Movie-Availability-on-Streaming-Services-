@@ -21,6 +21,7 @@ public class Movie {
             generator = "user_sequence",
             strategy = GenerationType.SEQUENCE
     )
+    @Getter
     private Long id;
     @Setter
     @Getter
@@ -30,6 +31,7 @@ public class Movie {
     private Long apiId;
     @Setter
     @Getter
+    @Column(columnDefinition = "TEXT")
     private String overview;
     @Setter
     @Getter

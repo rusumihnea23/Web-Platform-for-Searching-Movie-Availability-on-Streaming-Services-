@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { getUserDetails,updateFirstName, updateLastName} from "../../Actions/UserActions";
 import ProfileField from "./ProfileFIeld";
+import MovieList from '../MovieList/MovieList/MovieList'
 
+import {getUserLogsMovieList} from '../../Actions/UserMovieActions'
 export default function ProfileTab() {
   const [userDetails, setUserDetails] = useState({
     firstName: "",
@@ -9,12 +11,18 @@ export default function ProfileTab() {
     email: "",
     profilePicturePath: ""
   });
-  
+  const [movieList, setmovieList] = useState([]);
   useEffect(() => {
     const fetchDetails = async () => {
       const user = await getUserDetails();
       setUserDetails(user);
+        
     };
+    const fetchMovies = async () => {
+            const movies = await getUserLogsMovieList();
+            setmovieList(movies);
+        };
+    fetchMovies();
     fetchDetails();
   }, []);
 
@@ -38,6 +46,7 @@ const handleSave = async (fieldName) => {
 
   return (
     <div className="flex flex-col items-center px-4 py-10 gap-8 h-screen">
+       
       <img 
         alt="Profile" 
         src={userDetails.profilePicturePath} 
@@ -68,6 +77,7 @@ const handleSave = async (fieldName) => {
           readOnly={true} 
         />
       </div>
+      <MovieList Movies={movieList} />
     </div>
   );
 }

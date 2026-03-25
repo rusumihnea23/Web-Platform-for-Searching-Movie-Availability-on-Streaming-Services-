@@ -41,4 +41,7 @@ public class MovieController {
     public Mono<MovieDetailDTO> getMovieDetails(@PathVariable Long id) {
         return TMDBService.getDetailedMovie(id);
 
+
+
+
 }}

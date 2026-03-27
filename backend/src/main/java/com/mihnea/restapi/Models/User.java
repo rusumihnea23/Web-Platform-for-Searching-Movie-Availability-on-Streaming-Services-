@@ -47,8 +47,10 @@ public class User implements UserDetails {
             name = "user_watchlist",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "movie_id")
+
     )
     private List<Movie> watchlist;
+
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<MovieList> customLists;

@@ -33,6 +33,18 @@ public class UserMovieLogController {
                 ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
 
         List<MovieDTO> movies=userMovieLogService.getUserLoggedMovies(user.getId());
-return  movies;
+         return  movies;
+    }
+
+    @PatchMapping("/watchlist/add/{id}")
+    public ResponseEntity<String> addToUserWatchlist(Authentication authentication,@PathVariable Long id){
+        try {
+            userMovieLogService.addMovieToWatchlist(authentication, id);
+            return ResponseEntity.ok("Movie watchlisted successfully!");
+        }
+        catch (RuntimeException r){
+            return ResponseEntity.ok("Movie already in watchlist!");
+        }
+
     }
 }

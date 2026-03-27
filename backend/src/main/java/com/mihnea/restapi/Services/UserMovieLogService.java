@@ -3,6 +3,7 @@ package com.mihnea.restapi.Services;
 import com.mihnea.restapi.Models.Movie;
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Models.UserMovieLog;
+import com.mihnea.restapi.Repositories.MovieRepository;
 import com.mihnea.restapi.Repositories.UserMovieLogRepository;
 import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.MovieDTO;
@@ -21,7 +22,6 @@ public class UserMovieLogService {
 private final UserMovieLogRepository logRepository;
 private final MovieService movieService;
 private final UserRespository userRespository;
-
 public void logMovie(Authentication authentication,MovieLogRequest request){
     User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
     Movie movie=movieService.getOrCreateMovie(request.getMovieId());
@@ -47,5 +47,13 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                 })
                 .collect(Collectors.toList());
     }
-
+    public void addMovieToWatchlist(Authentication authentication,Long movieId) throws RuntimeException{
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        Movie movie= movieService.getOrCreateMovie(movieId);
+        if( user.getWatchlist().contains(movie))
+           throw  new RuntimeException("Movie already in watchlist ");
+        user.getWatchlist().add(movie);
+        userRespository.save(user);
+        System.out.println(user.getWatchlist());
+    }
 }

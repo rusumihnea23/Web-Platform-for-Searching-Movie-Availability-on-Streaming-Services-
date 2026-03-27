@@ -47,5 +47,14 @@ public class Movie {
     //genres& genreIds
 
 
-
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "releaseDate='" + releaseDate + '\'' +
+                ", overview='" + overview + '\'' +
+                ", Title='" + Title + '\'' +
+                ", apiId=" + apiId +
+                ", id=" + id +
+                '}';
+    }
 }

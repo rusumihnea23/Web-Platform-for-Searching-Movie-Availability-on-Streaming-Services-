@@ -1,33 +1,105 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { getQueryMovieList } from "@/Actions/MovieActions";
+export default function SearchBar() {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
 
-export default function SearchBar(){
-     const [query, setQuery] = useState("");
-    const navigate = useNavigate();
-
-    const handleSearch = () => {
-        if(query.trim() !== ""){
-            navigate(`/search?query=${query}`);
-        }
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
     };
-    return(   <div className="relative flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="absolute w-5 h-5 top-2.5 left-2.5 text-slate-600">
-                            <path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z" clipRule="evenodd" />
-                        </svg>
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-                        <input  value={query}
-                     onChange={(e) => setQuery(e.target.value)}
-                            className="w-full bg-transparent placeholder:text-slate-400 text-pink-600 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
-                            placeholder="Search a movie"
-                           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                        />
+  // Debounce la api call
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (query.trim().length > 1) {
+        const data = await getQueryMovieList(query);
+        if (data) {
+          
+          setSuggestions(Array.isArray(data) ? data.slice(0, 6) : []);
+          setShowDropdown(true);
+        }
+      } else {
+        setSuggestions([]);
+        setShowDropdown(false);
+      }
+    }, 300); 
 
-                        <button onClick={handleSearch}
-                            className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2 cursor-pointer"
-                            type="button"
-                        >
-                            Search
-                        </button>
-                    </div>)
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
+
+  const handleSearch = () => {
+    if (query.trim() !== "") {
+      setShowDropdown(false);
+      navigate(`/search?query=${query}`);
+    }
+  };
+
+  return (
+    <div className="relative flex w-full max-w-sm items-center" ref={dropdownRef}>   
+      {/* aici scrii */}
+      <div className="relative flex-1">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => query.length > 1 && setShowDropdown(true)}
+          className="w-full bg-white placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 transition duration-300 focus:outline-none focus:border-slate-400 shadow-sm"
+          placeholder="Search a movie"
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+        />
+        {/*sugestii*/}
+        {showDropdown && suggestions.length > 0 && (
+          <div className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-slate-200 bg-white shadow-lg">
+            <ul className="py-1">
+              {suggestions.map((movie) => (
+                <li key={movie.id}>
+                  <button
+                    onClick={() => {
+                      setQuery(movie.title);
+                      setShowDropdown(false);
+                      navigate(`/movies/${movie.id}/details`);
+                    }}
+                    className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 text-left"
+                  >
+                    <span className="truncate">{movie.title}</span>
+                    {movie.release_date && (
+                      <span className="ml-2 text-xs text-slate-400">
+                        ({movie.release_date.split('-')[0]})
+                      </span>
+                    )}
+                  </button>
+                </li>
+              ))}
+              <li className="border-t border-slate-100">
+                <button
+                  onClick={handleSearch}
+                  className="w-full px-4 py-2 text-xs font-bold text-sky-600 hover:bg-slate-50 text-center uppercase"
+                >
+                  See all results for "{query}"
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <button 
+        onClick={handleSearch}
+        className="ml-2 rounded-md bg-slate-800 py-2 px-4 text-sm text-white shadow-md hover:bg-slate-700 transition-all"
+        type="button"
+      >
+        Search
+      </button>
+    </div>
+  );
 }

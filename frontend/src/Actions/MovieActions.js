@@ -11,18 +11,18 @@ const getPopularMovieList =async () => {
 };
 
 
-const getQueryMovieList =async (query) => {
-  try {
-    const res = await api.get(`${mainpath}/search`,{params:{
-      query:String(query)
-    }});
-    console.log(res.data)
-    return res.data;
-  } catch (err) {
-    console.error(err);
-     alert(err.response?.data?.message || err.message);
-  }
-};
+  const getQueryMovieList =async (query) => {
+    try {
+      const res = await api.get(`${mainpath}/search`,{params:{
+        query:String(query)
+      }});
+      console.log(res.data)
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || err.message);
+    }
+  };
 
 const getMovieDetails=async(id)=>{
 try {

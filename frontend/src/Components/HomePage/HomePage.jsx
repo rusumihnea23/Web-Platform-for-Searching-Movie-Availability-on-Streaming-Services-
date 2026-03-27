@@ -4,6 +4,7 @@ import SearchBar from "../Search/SearchBar/SearchBar";
 import { useEffect } from "react";
 import {getPopularMovieList} from "../../Actions/MovieActions";
 import { getUserDetails } from "../../Actions/UserActions";
+import NewSearchBar from "../Search/NewSearchBar/NewSearchBar";
 
 
 export default function HomePage() {
@@ -44,7 +45,8 @@ if (loading) {
     <>
         <MovieList Movies={movieList} max={5} />
         <div className="w-full max-w-sm min-w-[200px]">
-            <SearchBar />
+            
+            <NewSearchBar/>
         </div>
     </>
 )}             

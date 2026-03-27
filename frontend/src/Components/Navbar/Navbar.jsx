@@ -7,7 +7,7 @@ import { useState,useEffect } from 'react';
 import { useNavigate, useLocation, Link } from "react-router-dom" 
 import { getUserDetails } from "../../Actions/UserActions";
 import { logout } from "../../Actions/AuthActions"
-
+import { LogModal } from '../LogModal/LogModal';
 const navigation = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' }
@@ -79,9 +79,7 @@ export default function Navbar() {
                 <button type="button" className="relative rounded-full p-1 text-sky-950 hover:text-white">
                   <BellIcon aria-hidden="true" className="size-6" />
                 </button>
-                    <button onClick={() => navigate("/LogMovie")} className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-500 cursor-pointer">
-                Log
-              </button>
+                   <LogModal></LogModal>
 
                 <Menu as="div" className="relative ml-3">
                   <MenuButton className="relative flex rounded-full">

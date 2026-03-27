@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getQueryMovieList } from "../../../Actions/MovieActions";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import DetailedMovieList from "../../MovieList/DetailedMovieList/DetailedMovieList";
-import SearchBar from "../SearchBar/SearchBar";
+import NewSearchBar from "../NewSearchBar/NewSearchBar";
 
 export default function SearchResult() {
     const [movieList, setmovieList] = useState([]);
@@ -24,7 +24,7 @@ export default function SearchResult() {
     return (
 
         <div className="flex flex-col items-center gap-2 my-2">
-            <SearchBar />
+            <NewSearchBar/>
             <h1>
                 <span className="text-white"> All results for</span>
                 <span className="text-pink-600"> "{query}"</span>

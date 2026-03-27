@@ -69,7 +69,7 @@ export default function SearchBar() {
                       setShowDropdown(false);
                       navigate(`/movies/${movie.id}/details`);
                     }}
-                    className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 text-left"
+                    className="flex w-full items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 text-left cursor-pointer"
                   >
                     <span className="truncate">{movie.title}</span>
                     {movie.release_date && (
@@ -83,7 +83,7 @@ export default function SearchBar() {
               <li className="border-t border-slate-100">
                 <button
                   onClick={handleSearch}
-                  className="w-full px-4 py-2 text-xs font-bold text-sky-600 hover:bg-slate-50 text-center uppercase"
+                  className="w-full px-4 py-2 text-xs font-bold text-sky-600 hover:bg-slate-50 text-center uppercase cursor-pointer"
                 >
                   See all results for "{query}"
                 </button>
@@ -95,7 +95,7 @@ export default function SearchBar() {
 
       <button 
         onClick={handleSearch}
-        className="ml-2 rounded-md bg-slate-800 py-2 px-4 text-sm text-white shadow-md hover:bg-slate-700 transition-all"
+        className="ml-2 rounded-md bg-slate-800 py-2 px-4 text-sm text-white shadow-md hover:bg-slate-700 transition-all cursor-pointer"
         type="button"
       >
         Search

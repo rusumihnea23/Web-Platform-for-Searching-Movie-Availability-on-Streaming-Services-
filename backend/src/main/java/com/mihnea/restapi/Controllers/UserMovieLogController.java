@@ -22,8 +22,8 @@ public class UserMovieLogController {
     private final UserRespository userRespository;
     private final MovieRepository movieRepository;
     @PostMapping("/add")
-    public ResponseEntity<String> LogMovie(@RequestBody MovieLogRequest request) {
-        userMovieLogService.logMovie(request);
+    public ResponseEntity<String> LogMovie(Authentication authentication,@RequestBody MovieLogRequest request) {
+        userMovieLogService.logMovie(authentication,request);
         return ResponseEntity.ok("Movie logged successfully!");
     }
 

@@ -8,6 +8,7 @@ import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.MovieLogRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,8 +22,8 @@ private final UserMovieLogRepository logRepository;
 private final MovieService movieService;
 private final UserRespository userRespository;
 
-public void logMovie(MovieLogRequest request){
-    User user=userRespository.findById(request.getUserId()).orElseThrow(()->new RuntimeException("User not found"));
+public void logMovie(Authentication authentication,MovieLogRequest request){
+    User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
     Movie movie=movieService.getOrCreateMovie(request.getMovieId());
 
     UserMovieLog log=logRepository.findByUserIdAndMovieId(user.getId(), movie.getId()).orElse(UserMovieLog.builder().

@@ -11,5 +11,16 @@ const getUserLogsMovieList =async () => {
   }
 };
 
+const userLogMovie= async({movieId,personalGrade,watchDate})=>{
+ try {
+    const res = await api.post(`${mainpath}/add`, { movieId,personalGrade,watchDate});
+    alert("movie logged succesfully");
+  
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.message || err.message); 
+  }
 
-export {getUserLogsMovieList};
+}
+
+export {getUserLogsMovieList,userLogMovie};

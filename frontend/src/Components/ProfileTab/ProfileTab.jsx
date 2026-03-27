@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { getUserDetails,updateFirstName, updateLastName} from "../../Actions/UserActions";
 import ProfileField from "./ProfileFIeld";
 import MovieList from '../MovieList/MovieList/MovieList'
-
+import defaultpp from "../../assets/default-pp.webp"
 import {getUserLogsMovieList} from '../../Actions/UserMovieActions'
+
+
 export default function ProfileTab() {
   const [userDetails, setUserDetails] = useState({
     firstName: "",
@@ -49,7 +51,7 @@ const handleSave = async (fieldName) => {
        
       <img 
         alt="Profile" 
-        src={userDetails.profilePicturePath} 
+        src={!userDetails.profilePicturePath?defaultpp: userDetails.profilePicturePath }
         className="size-32 rounded-full object-cover shadow-md ring-2 ring-slate-100" 
       />
 

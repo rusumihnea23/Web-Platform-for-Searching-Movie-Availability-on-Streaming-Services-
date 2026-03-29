@@ -47,13 +47,7 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                 })
                 .collect(Collectors.toList());
     }
-    public void addMovieToWatchlist(Authentication authentication,Long movieId) throws RuntimeException{
-        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
-        Movie movie= movieService.getOrCreateMovie(movieId);
-        if( user.getWatchlist().contains(movie))
-           throw  new RuntimeException("Movie already in watchlist ");
-        user.getWatchlist().add(movie);
-        userRespository.save(user);
-        System.out.println(user.getWatchlist());
-    }
+
+
+
 }

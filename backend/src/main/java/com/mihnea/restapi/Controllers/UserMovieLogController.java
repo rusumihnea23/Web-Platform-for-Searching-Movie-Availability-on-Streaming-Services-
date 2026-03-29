@@ -36,15 +36,4 @@ public class UserMovieLogController {
          return  movies;
     }
 
-    @PatchMapping("/watchlist/add/{id}")
-    public ResponseEntity<String> addToUserWatchlist(Authentication authentication,@PathVariable Long id){
-        try {
-            userMovieLogService.addMovieToWatchlist(authentication, id);
-            return ResponseEntity.ok("Movie watchlisted successfully!");
-        }
-        catch (RuntimeException r){
-            return ResponseEntity.ok("Movie already in watchlist!");
-        }
-
-    }
 }

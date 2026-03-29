@@ -83,7 +83,7 @@ export default function Navbar() {
 
                 <Menu as="div" className="relative ml-3">
                   <MenuButton className="relative flex rounded-full">
-                    <img alt="" src={!UserDetails.profilePicturePath?defaultpp: UserDetails.profilePicturePath } className="size-8 rounded-full cursor-pointer" />
+                    <img alt="" src={!UserDetails.profilePicturePath?defaultpp: UserDetails.profilePicturePath } className="size-8 rounded-full cursor-pointer  hover:outline-pink-600 hover:outline-2 outline-offset-1" />
                   </MenuButton>
                   <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1">
                     <MenuItem>

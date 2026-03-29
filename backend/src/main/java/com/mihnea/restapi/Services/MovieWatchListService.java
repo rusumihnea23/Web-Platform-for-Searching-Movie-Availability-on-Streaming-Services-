@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 public class MovieWatchListService {
 
 
-    UserRespository userRespository;
-    MovieService movieService;
+    private final UserRespository userRespository;
+    private final MovieService movieService;
     public void addMovieToWatchlist(Authentication authentication, Long movieId) throws RuntimeException{
 
         User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));

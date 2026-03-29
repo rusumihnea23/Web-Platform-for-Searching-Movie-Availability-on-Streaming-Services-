@@ -9,6 +9,7 @@ import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,18 @@ public class MovieWatchListService {
         user.getWatchlist().add(movie);
         userRespository.save(user);
 
+    }
+
+    @Transactional
+    public void removeFromUserWatchlist(Authentication authentication, Long movieId) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Movie movie = movieService.getOrCreateMovie(movieId);
+        boolean removed = user.getWatchlist().remove(movie);
+        if (!removed) {
+            throw new RuntimeException("Movie isn't in watchlist");
+        }
+        userRespository.save(user);
     }
     public List<MovieDTO> getUserWatchlist(Authentication authentication){
         User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));

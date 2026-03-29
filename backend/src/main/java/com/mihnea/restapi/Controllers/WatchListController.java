@@ -28,7 +28,17 @@ public class WatchListController {
             return ResponseEntity.ok("Movie already in watchlist!");
         }
 
+    }
 
+    @PatchMapping("/remove/{id}")
+    public ResponseEntity<String> removeFromUserWatchlist(Authentication authentication, @PathVariable Long id) {
+        try {
+
+            movieWatchListService.removeFromUserWatchlist(authentication, id);
+            return ResponseEntity.ok("Movie removed from watchlist successfully!");
+        } catch (RuntimeException r) {
+            return ResponseEntity.ok("Movie isnt in watchlist!");
+        }
     }
     @GetMapping("")
     public List<MovieDTO> getUserWatchlist(Authentication authentication){

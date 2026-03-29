@@ -66,7 +66,7 @@ const res = await api.patch(`${watchlistpath}/remove/${id}`);
   }
 };
 
-
+//de mutat astea cu watchlist in usermovieactions
 
 
 export {getPopularMovieList,getQueryMovieList,getMovieDetails,watchlistMovie,unWatchlistMovie};

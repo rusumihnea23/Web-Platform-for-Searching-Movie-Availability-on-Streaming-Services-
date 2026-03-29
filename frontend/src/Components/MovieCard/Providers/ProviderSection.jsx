@@ -1,5 +1,5 @@
 
-export default function ProviderSection({ title, list }) {
+export default function ProviderSection({movieTitle, title, list }) {
     if (!list || list.length === 0) return null;
 
     return (
@@ -14,7 +14,7 @@ export default function ProviderSection({ title, list }) {
                         title={provider.provider_name}
                     >
                         <a
-                            href={`https://www.google.com/search?q=${encodeURIComponent(provider.provider_name)} `}
+                            href={`https://www.google.com/search?q=${encodeURIComponent(provider.provider_name)+" "+movieTitle} `}
                             target="_blank"
                             rel="noreferrer"
                         >

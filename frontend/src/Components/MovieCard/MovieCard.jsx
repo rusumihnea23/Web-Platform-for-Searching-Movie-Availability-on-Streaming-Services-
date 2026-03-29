@@ -62,7 +62,8 @@ const handleWatchlistToggle = async () => {
                         className="rounded-2xl shadow-2xl border border-slate-700 w-full mb-5"
                     />
                     <div className="ml-6">
-                    <Providers watchProviders={movie.watchProviderDTO}></Providers>
+                    <Providers movieTitle={movie.title}
+                    watchProviders={movie.watchProviderDTO}></Providers>
                     </div>
                     
                 </div>
@@ -94,8 +95,8 @@ const handleWatchlistToggle = async () => {
                         <span className="italic">{movie.genres?.join(", ")}</span>
                         <button
                             onClick={handleWatchlistToggle}
-                            className={`mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.watchlisted
-                                    ? "bg-pink-600 text-white shadow-pink-500/20"
+                            className={`cursor-pointer mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.watchlisted
+                                    ? "bg-green-600 text-white shadow-green-500/20"
                                     : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-slate-500"
                                 }`}
                         >

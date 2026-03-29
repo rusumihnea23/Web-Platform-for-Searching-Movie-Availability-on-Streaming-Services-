@@ -87,7 +87,7 @@ export default function Navbar() {
                   </MenuButton>
                   <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1">
                     <MenuItem>
-                      <Link to="profile/settings" className="block px-4 py-2 text-sm text-gray-300 hover:text-gray-400">Your profile</Link>
+                      <Link to="profile" className="block px-4 py-2 text-sm text-gray-300 hover:text-gray-400">Your profile</Link>
                     </MenuItem>
                     <MenuItem>
                       <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-gray-300 cursor-pointer hover:text-gray-400">Sign out</button>

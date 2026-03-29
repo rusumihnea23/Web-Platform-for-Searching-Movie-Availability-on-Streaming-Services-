@@ -9,7 +9,7 @@ import Notfound from './Components/Notfound/Notfound'
 import HomePage from './Components/HomePage/HomePage'
 import SearchResult from './Components/Search/SearchResults/SearchResults'
 import MovieCard from './Components/MovieCard/MovieCard'
-import ProfileTab from './Components/ProfileTab/ProfileTab'
+import Profile from './Components/Profile/Profile'
 function App() {
  
 
@@ -23,7 +23,7 @@ function App() {
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<HomePage/>} />
-        <Route path="/profile/settings" element={<ProfileTab></ProfileTab>}/>
+        <Route path="/profile" element={<Profile/>}/>
       </Route>
 
       {/* Pagini publice */}

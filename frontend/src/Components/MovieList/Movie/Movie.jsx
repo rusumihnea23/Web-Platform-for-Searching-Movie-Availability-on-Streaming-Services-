@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom"
 export default function Movie({ poster_path, title,id}) {
   const hasPoster = poster_path && poster_path !== "";
   const navigate=useNavigate();
+  // de schimbat culoarea la border daca un film e vizionat sau daca e in watchlist
   return (
-    <div  onClick={()=>{navigate(`/movies/${id}/details`)}}  className="
+    <div  onClick={()=>{navigate(`/movies/${id}/details`)}}   className="
 
       group/film 
       relative 

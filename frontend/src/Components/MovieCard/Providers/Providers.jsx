@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ProviderSection from "./ProviderSection";
 
-export default function Providers({ watchProviders }) {
+export default function Providers({ movieTitle,watchProviders }) {
 
     const countryCodes = watchProviders?.results ? Object.keys(watchProviders.results) : [];
 
@@ -31,9 +31,9 @@ export default function Providers({ watchProviders }) {
 
 
                 <div className="space-y-4">
-                    <ProviderSection title="Stream" list={selectedCountryData.flatrate} />
-                    <ProviderSection title="Rent" list={selectedCountryData.rent} />
-                    <ProviderSection title="Buy" list={selectedCountryData.buy} />
+                    <ProviderSection movieTitle={movieTitle} title="Stream" list={selectedCountryData.flatrate} />
+                    <ProviderSection movieTitle={movieTitle} title="Rent" list={selectedCountryData.rent} />
+                    <ProviderSection movieTitle={movieTitle} title="Buy" list={selectedCountryData.buy} />
                 </div></div>)
 
                 : (<p className="text-slate-400">Not available for streaming.</p>)}

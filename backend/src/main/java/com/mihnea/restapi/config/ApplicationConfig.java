@@ -48,7 +48,10 @@ public class ApplicationConfig {
     public WebClient webClient(WebClient.Builder builder){
         return builder.baseUrl("https://api.themoviedb.org/3")
                 .defaultHeader("Authorization", "Bearer " + tmdbApiKey
-                        ) //todo api key care sa fie sigura cand dau push pe git
+                        )
+                .codecs(configurer ->
+                        configurer.defaultCodecs()
+                                .maxInMemorySize(2 * 1024 * 1024))//todo api key care sa fie sigura cand dau push pe git
                 .build();
     }
     @Bean

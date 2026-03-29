@@ -7,9 +7,14 @@ import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MovieMapper {
 
+    private static final Set<String> IMPORTANT_JOBS = Set.of(
+            "Director", "Screenplay", "Writer", "Story",
+            "Producer", "Executive Producer", "Editor", "Director of Photography"
+    );
     public MovieDTO toDTO(Movie movie){
         MovieDTO movieDTO =new MovieDTO();
         movieDTO.setId(movie.getApiId());
@@ -53,8 +58,7 @@ public class MovieMapper {
         }
         if (credits.getCrew() != null) {
             details.setCrew(credits.getCrew().stream()
-                    .filter(member -> List.of("Director", "Screenplay", "Writer", "Story","Producer","Executive Producer","Editor","Director of Photography")
-                            .contains(member.getJob()))
+                    .filter(member -> IMPORTANT_JOBS.contains(member.getJob()))
                     .toList());
         }
             details.setWatchProviderDTO(provider);

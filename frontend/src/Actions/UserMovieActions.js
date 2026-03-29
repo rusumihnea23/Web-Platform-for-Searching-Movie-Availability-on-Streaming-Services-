@@ -1,6 +1,7 @@
 
 import api from "../Services/api";
 const mainpath="/api/log"
+const watchlistpath="/api/watchlist"
 const getUserLogsMovieList =async () => {
   try {
     const res = await api.get(`${mainpath}/movies`);
@@ -23,4 +24,16 @@ const userLogMovie= async({movieId,personalGrade,watchDate})=>{
 
 }
 
-export {getUserLogsMovieList,userLogMovie};
+const getUserWatchlist=async(id)=>{
+  try{
+    
+const res = await api.get(`${watchlistpath}`);
+    
+    return res.data
+  } catch (err) {
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+};
+
+export {getUserLogsMovieList,userLogMovie,getUserWatchlist};

@@ -6,6 +6,12 @@ import { userLogMovie } from "@/Actions/UserMovieActions";
 export function LogModal() {
   const [open, setOpen] = useState(false);
   
+  const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+
+
+const maxDate = yesterday.toISOString().split("T")[0];
 
   const [movieId, setMovieId] = useState(null);
   const [personalGrade, setPersonalGrade] = useState(0);
@@ -81,6 +87,7 @@ export function LogModal() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Watch Date</label>
                 <input
                   type="date"
+                  max={maxDate}
                   value={watchDate}
                   onChange={(e) => setWatchDate(e.target.value)}
                   className="w-full rounded-md border border-gray-300 p-2 text-sm focus:ring-1 focus:ring-sky-500 outline-none"

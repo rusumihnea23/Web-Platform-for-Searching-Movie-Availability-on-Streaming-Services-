@@ -4,8 +4,13 @@ import { getMovieDetails, } from "../../Actions/MovieActions";
 import { userLogMovie, watchlistMovie, unWatchlistMovie } from "../../Actions/UserMovieActions";
 import Providers from "./Providers/Providers";
 export default function MovieCard() {
+    
+    const today = new Date();
+const yesterday = new Date(today);
+yesterday.setDate(today.getDate() - 1);
+const maxDate = yesterday.toISOString().split("T")[0];
     const { id } = useParams();
-
+    
     const [movie, setMovie] = useState(null);
     const [activeTab, setActiveTab] = useState("cast");
     const [loading, setLoading] = useState(true);
@@ -253,6 +258,7 @@ export default function MovieCard() {
                             <label className="block mb-1">Watch Date</label>
                             <input
                                 type="date"
+                                max={maxDate}
                                 value={watchDate}
                                 onChange={(e) => setWatchDate(e.target.value)}
                                 className="w-full border p-2 rounded"

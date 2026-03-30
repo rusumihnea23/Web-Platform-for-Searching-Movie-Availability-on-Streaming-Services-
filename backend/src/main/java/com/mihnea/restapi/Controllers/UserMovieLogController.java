@@ -36,4 +36,8 @@ public class UserMovieLogController {
          return  movies;
     }
 
+    @GetMapping("/{id}")
+    public Boolean isMovieLogged(Authentication authentication,@PathVariable Long id){
+        return userMovieLogService.isMovieInLogs(authentication,id);
+    }
 }

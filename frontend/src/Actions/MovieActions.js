@@ -1,6 +1,8 @@
 import api from "../Services/api";
 const mainpath="/api/movies"
 const watchlistpath="/api/watchlist"
+const logpath="/api/log";
+
 const getPopularMovieList =async () => {
   try {
     const res = await api.get(`${mainpath}/popular`);
@@ -29,10 +31,11 @@ const getMovieDetails=async(id)=>{
 try {
     const res = await api.get(`${mainpath}/${id}/details`,);
     const res2=await api.get(`${watchlistpath}/${id}`)
-
+    const res3=await api.get(`${logpath}/${id}`)
     const combinedMovieData = {
-      ...res.data,           // This "unpacks" title, id, overview, etc.
-      watchlisted: res2.data // This adds the boolean from your second API call
+      ...res.data,          
+      watchlisted: res2.data,
+      logged: res3.data 
     };
     //console.log(combinedMovieData)
     return combinedMovieData;
@@ -43,30 +46,6 @@ try {
 };
 
 
-const watchlistMovie=async(id)=>{
-  try{
-    
-const res = await api.patch(`${watchlistpath}/add/${id}`);
-    
-    alert("Watchlist successful!");
-  } catch (err) {
-    console.error(err);
-     alert(err.response?.data?.message || err.message);
-  }
-};
-const unWatchlistMovie=async(id)=>{
-  try{
-    
-const res = await api.patch(`${watchlistpath}/remove/${id}`);
-    
-    alert("unWatchlisted successfully!");
-  } catch (err) {
-    console.error(err);
-     alert(err.response?.data?.message || err.message);
-  }
-};
-
-//de mutat astea cu watchlist in usermovieactions
 
 
-export {getPopularMovieList,getQueryMovieList,getMovieDetails,watchlistMovie,unWatchlistMovie};
+export {getPopularMovieList,getQueryMovieList,getMovieDetails};

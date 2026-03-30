@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // 1. Added useNavigate
-import { getMovieDetails,watchlistMovie,unWatchlistMovie } from "../../Actions/MovieActions";
+import { getMovieDetails, } from "../../Actions/MovieActions";
+import { userLogMovie, watchlistMovie, unWatchlistMovie } from "../../Actions/UserMovieActions";
 import Providers from "./Providers/Providers";
 export default function MovieCard() {
     const { id } = useParams();
-   
+
     const [movie, setMovie] = useState(null);
     const [activeTab, setActiveTab] = useState("cast");
     const [loading, setLoading] = useState(true);
@@ -14,45 +15,87 @@ export default function MovieCard() {
             setLoading(false);
         });
     }, [id]);
+    //logs
+    const [logModalOpen, setLogModalOpen] = useState(false);
+    const openLogModal = () => {
+    setPersonalGrade(0);
+    setWatchDate(new Date().toISOString().split("T")[0]);
+    setLogModalOpen(true);
+};
+    const [personalGrade, setPersonalGrade] = useState(0);
+    const [watchDate, setWatchDate] = useState(
+        new Date().toISOString().split("T")[0]
+    );
+    const [logging, setLogging] = useState(false);
 
     const director = movie?.crew?.find(member => member.job === "Director");
 
     if (loading) {
-    return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-pink-500"></div>
-        </div>
-    );
-}
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-pink-500"></div>
+            </div>
+        );
+    }
 
-if (!movie) {
-    return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
-}
-const handleWatchlistToggle = async () => {
-    try {
-        // Determine which action to call based on current state
-        if (movie.watchlisted) {
-            await unWatchlistMovie(id);
-        } else {
-            await watchlistMovie(id);
+    if (!movie) {
+        return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
+    }
+    const handleWatchlistToggle = async () => {
+        try {
+            // Determine which action to call based on current state
+            if (movie.watchlisted) {
+                await unWatchlistMovie(id);
+            } else {
+                await watchlistMovie(id);
+            }
+
+            // Update local state to flip the UI
+            setMovie(prevMovie => ({
+                ...prevMovie,
+                watchlisted: !prevMovie.watchlisted
+            }));
+
+        } catch (err) {
+            console.error("Failed to update watchlist:", err);
+            const errorMessage = err.response?.data?.message || "You must be logged in to manage your watchlist.";
+            alert(errorMessage);
+        }
+    };
+
+    const handleLogMovie = async () => {
+        if (personalGrade === 0) {
+            alert("Please select a rating.");
+            return;
         }
 
-        // Update local state to flip the UI
-        setMovie(prevMovie => ({
-            ...prevMovie,
-            watchlisted: !prevMovie.watchlisted
-        }));
-        
-    } catch (err) {
-        console.error("Failed to update watchlist:", err);
-        const errorMessage = err.response?.data?.message || "You must be logged in to manage your watchlist.";
-        alert(errorMessage);
-    }
-};
+        try {
+            setLogging(true);
+
+            await userLogMovie({
+                movieId: id,
+                personalGrade,
+                watchDate
+            });
+
+            setMovie(prev => ({
+                ...prev,
+                logged: true
+            }));
+
+            setLogModalOpen(false);
+
+        } catch (err) {
+            console.error("Failed to log movie:", err);
+            alert(err.response?.data?.message || err.message);
+        } finally {
+            setLogging(false);
+        }
+    };
     return (
         <div className="min-h-screen bg-slate-900 text-white p-4 md:p-8 relative">
-            
-    
+
+
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
                 {/* Left: Poster */}
                 <div className="w-full md:w-1/3 shrink-0 ">
@@ -62,10 +105,10 @@ const handleWatchlistToggle = async () => {
                         className="rounded-2xl shadow-2xl border border-slate-700 w-full mb-5"
                     />
                     <div className="ml-6">
-                    <Providers movieTitle={movie.title}
-                    watchProviders={movie.watchProviderDTO}></Providers>
+                        <Providers movieTitle={movie.title}
+                            watchProviders={movie.watchProviderDTO}></Providers>
                     </div>
-                    
+
                 </div>
                 {/* Right: Info */}
                 <div className="flex-1">
@@ -96,8 +139,8 @@ const handleWatchlistToggle = async () => {
                         <button
                             onClick={handleWatchlistToggle}
                             className={`cursor-pointer mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.watchlisted
-                                    ? "bg-green-600 text-white shadow-green-500/20"
-                                    : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-slate-500"
+                                ? "bg-green-600 text-white shadow-green-500/20"
+                                : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-slate-500"
                                 }`}
                         >
                             {movie.watchlisted ? (
@@ -113,6 +156,29 @@ const handleWatchlistToggle = async () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                     </svg>
                                     <span>Add to Watchlist</span>
+                                </>
+                            )}
+                        </button>
+                        <button
+                            onClick={openLogModal}
+                            className={`cursor-pointer mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.logged
+                                    ? "bg-green-600 text-white shadow-green-500/20"
+                                    : "bg-sky-600 hover:bg-sky-700 text-white"
+                                }`}
+                        >
+                            {movie.logged ? (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    <span>Log Again</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    <span>Log Movie</span>
                                 </>
                             )}
                         </button>
@@ -151,6 +217,65 @@ const handleWatchlistToggle = async () => {
                     </div>
                 </div>
             </div>
+            {logModalOpen && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    <div
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setLogModalOpen(false)}
+                    />
+
+                    <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-2xl text-black">
+                        <h4 className="text-xl font-bold mb-4">Log Movie Entry</h4>
+
+                        {/* Rating */}
+                        <div className="mb-4">
+                            <label className="block mb-2">
+                                Rating ({personalGrade}/10)
+                            </label>
+                            <div className="flex gap-1 flex-wrap">
+                                {[...Array(10)].map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setPersonalGrade(i + 1)}
+                                        className={`h-8 w-8 rounded ${personalGrade === i + 1
+                                            ? "bg-slate-800 text-white"
+                                            : "bg-gray-200"
+                                            }`}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Date */}
+                        <div className="mb-4">
+                            <label className="block mb-1">Watch Date</label>
+                            <input
+                                type="date"
+                                value={watchDate}
+                                onChange={(e) => setWatchDate(e.target.value)}
+                                className="w-full border p-2 rounded"
+                            />
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button onClick={() => setLogModalOpen(false)}>
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleLogMovie}
+                                disabled={logging}
+                                className="bg-sky-600 text-white px-4 py-2 rounded"
+                            >
+                                {logging ? "Logging..." : "Confirm"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+
     );
 }

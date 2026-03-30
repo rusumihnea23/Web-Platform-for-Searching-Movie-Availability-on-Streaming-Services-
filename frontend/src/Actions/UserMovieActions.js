@@ -24,7 +24,7 @@ const userLogMovie= async({movieId,personalGrade,watchDate})=>{
 
 }
 
-const getUserWatchlist=async(id)=>{
+const getUserWatchlist=async()=>{
   try{
     
 const res = await api.get(`${watchlistpath}`);
@@ -35,5 +35,27 @@ const res = await api.get(`${watchlistpath}`);
      alert(err.response?.data?.message || err.message);
   }
 };
+const watchlistMovie=async(id)=>{
+  try{
+    
+const res = await api.patch(`${watchlistpath}/add/${id}`);
+    
+    alert("Watchlist successful!");
+  } catch (err) {
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+};
+const unWatchlistMovie=async(id)=>{
+  try{
+    
+const res = await api.patch(`${watchlistpath}/remove/${id}`);
+    
+    alert("unWatchlisted successfully!");
+  } catch (err) {
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+};
 
-export {getUserLogsMovieList,userLogMovie,getUserWatchlist};
+export {getUserLogsMovieList,userLogMovie,getUserWatchlist,watchlistMovie,unWatchlistMovie};

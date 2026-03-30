@@ -47,7 +47,13 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                 })
                 .collect(Collectors.toList());
     }
+    public Boolean isMovieInLogs(Authentication authentication,Long id){
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        Movie movie=movieService.getOrCreateMovie(id);
 
+
+        return(logRepository.findByUserIdAndMovieId(user.getId(),movie.getId())).isPresent();
+    }
 
 
 }

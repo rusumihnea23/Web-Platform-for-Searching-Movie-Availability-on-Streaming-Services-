@@ -31,6 +31,7 @@ public class MovieList {
     @JoinColumn(name = "user_id")
     private User owner;
 
+
     @ManyToMany
     @JoinTable(
             name = "list_movies",

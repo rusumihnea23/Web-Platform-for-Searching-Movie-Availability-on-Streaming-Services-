@@ -22,19 +22,17 @@ public class UserMovieLogService {
 private final UserMovieLogRepository logRepository;
 private final MovieService movieService;
 private final UserRespository userRespository;
+
 public void logMovie(Authentication authentication,MovieLogRequest request){
     User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
     Movie movie=movieService.getOrCreateMovie(request.getMovieId());
-
     UserMovieLog log=logRepository.findByUserIdAndMovieId(user.getId(), movie.getId()).orElse(UserMovieLog.builder().
             movie(movie).
             user(user).
             userWatchDates(new ArrayList<>())
             .build());
-
             log.setPersonalGrade(request.getPersonalGrade());
             log.getUserWatchDates().add(request.getWatchDate());
-
             logRepository.save(log);
 }
 

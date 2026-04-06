@@ -60,13 +60,5 @@ public class MovieWatchListService {
         Movie movie=movieRepository.findMovieByApiId(id);
         return(user.getWatchlist().contains(movie));
     }
-//    public List<MovieDTO> getUserLoggedMovies(Long userId){
-//        List<UserMovieLog> logs = logRepository.findByUserId(userId);
-//        return  logs.stream()
-//                .map(log -> {
-//                    Movie m = log.getMovie();
-//                    return new MovieDTO(m.getApiId(),m.getTitle(), m.getOverview(),m.getReleaseDate(),m.getPosterPath());
-//                })
-//                .collect(Collectors.toList());
-//    }
+
 }

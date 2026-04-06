@@ -22,7 +22,7 @@ public class MovieListController {
         movieListService.createList(authentication,request);
         return ResponseEntity.ok("List created successfully!");
     }
-    @GetMapping("/sparce")
+    @GetMapping("/sparse")
     public List<LightListMovieDTO> getUserListsNames(Authentication authentication){
         return movieListService.getAllLightList(authentication);
 
@@ -32,5 +32,34 @@ public class MovieListController {
         return movieListService.getAllListsFull(authentication);
 
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateList(Authentication authentication, @PathVariable Long id, @RequestBody MovieListRequest request) {
+        movieListService.updateListDetails(authentication, id, request);
+        return ResponseEntity.ok("List updated successfully");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteList(Authentication auth, @PathVariable Long id) {
+        movieListService.deleteList(auth, id);
+        return ResponseEntity.ok("List deleted successfully");
+    }
+    @GetMapping("/{id}")
+    public List<ListMovieDTO> getSingleList(Authentication authentication, @PathVariable Long id) {
+        return movieListService.getList(authentication, id);
+    }
+
+    @PostMapping("/{listId}/movies/{movieId}")
+    public ResponseEntity<String> addMovieToList(Authentication authentication, @PathVariable Long listId, @PathVariable Long movieId) {
+        movieListService.addMovieToList(authentication, listId, movieId);
+        return ResponseEntity.ok("Movie added to list successfully");
+    }
+
+
+    @DeleteMapping("/{listId}/movies/{movieId}")
+    public ResponseEntity<String> removeMovieFromList(Authentication authentication, @PathVariable Long listId, @PathVariable Long movieId) {
+        movieListService.removeMovieFromList(authentication, listId, movieId);
+        return ResponseEntity.ok("Movie removed from list successfully");
+    }
+
 
 }

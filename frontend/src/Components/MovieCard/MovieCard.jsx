@@ -1,288 +1,97 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // 1. Added useNavigate
-import { getMovieDetails, } from "../../Actions/MovieActions";
-import { userLogMovie, watchlistMovie, unWatchlistMovie } from "../../Actions/UserMovieActions";
+import { useParams } from "react-router-dom";
+import { getMovieDetails } from "../../Actions/MovieActions";
+
+// Components
 import Providers from "./Providers/Providers";
 import ListActionMenu from "./ListActionsMenu";
+import { LogModal } from "../LogModal/LogModal";
+import CreditsSection from "./CreditsSection";
+import WatchlistButton from "./WatchlistButton";
+
 export default function MovieCard() {
-    
-    const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-const maxDate = yesterday.toISOString().split("T")[0];
-    const { id } = useParams();
-    
-    const [movie, setMovie] = useState(null);
-    const [activeTab, setActiveTab] = useState("cast");
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        getMovieDetails(id).then((data) => {
-            setMovie(data);
-            setLoading(false);
-        });
-    }, [id]);
-    //logs
-    const [logModalOpen, setLogModalOpen] = useState(false);
-    const openLogModal = () => {
-    setPersonalGrade(0);
-    setWatchDate(new Date().toISOString().split("T")[0]);
-    setLogModalOpen(true);
-};
-    const [personalGrade, setPersonalGrade] = useState(0);
-    const [watchDate, setWatchDate] = useState(
-        new Date().toISOString().split("T")[0]
-    );
-    const [logging, setLogging] = useState(false);
+  const { id } = useParams();
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const director = movie?.crew?.find(member => member.job === "Director");
+  useEffect(() => {
+    getMovieDetails(id).then((data) => {
+      setMovie(data);
+      setLoading(false);
+    });
+  }, [id]);
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-pink-500"></div>
-            </div>
-        );
-    }
-
-    if (!movie) {
-        return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
-    }
-    const handleWatchlistToggle = async () => {
-        try {
-            // Determine which action to call based on current state
-            if (movie.watchlisted) {
-                await unWatchlistMovie(id);
-            } else {
-                await watchlistMovie(id);
-            }
-
-            // Update local state to flip the UI
-            setMovie(prevMovie => ({
-                ...prevMovie,
-                watchlisted: !prevMovie.watchlisted
-            }));
-
-        } catch (err) {
-            console.error("Failed to update watchlist:", err);
-            const errorMessage = err.response?.data?.message || "You must be logged in to manage your watchlist.";
-            alert(errorMessage);
-        }
-    };
-
-    const handleLogMovie = async () => {
-        if (personalGrade === 0) {
-            alert("Please select a rating.");
-            return;
-        }
-
-        try {
-            setLogging(true);
-
-            await userLogMovie({
-                movieId: id,
-                personalGrade,
-                watchDate
-            });
-
-            setMovie(prev => ({
-                ...prev,
-                logged: true
-            }));
-
-            setLogModalOpen(false);
-
-        } catch (err) {
-            console.error("Failed to log movie:", err);
-            alert(err.response?.data?.message || err.message);
-        } finally {
-            setLogging(false);
-        }
-    };
+  if (loading) {
     return (
-        <div className="min-h-screen bg-slate-900 text-white p-4 md:p-8 relative">
-
-
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
-                {/* Left: Poster */}
-                <div className="w-full md:w-1/3 shrink-0 ">
-                    <img
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        alt={movie.title}
-                        className="rounded-2xl shadow-2xl border border-slate-700 w-full mb-5"
-                    />
-                    <div className="ml-6">
-                        <Providers movieTitle={movie.title}
-                            watchProviders={movie.watchProviderDTO}></Providers>
-                    </div>
-                    <ListActionMenu movieId={id} />
-                </div>
-                {/* Right: Info */}
-                <div className="flex-1">
-                    <div className="flex items-baseline gap-4 flex-wrap">
-                        <h1 className="text-4xl md:text-6xl mb-4 tracking-tighter font-bold">
-                            {movie.title}
-                        </h1>
-                        {/* Fixed: Added a check for director */}
-                        {director && (
-                            <h3 className="text-lg md:text-xl text-white/50 mb-4">
-                                Directed by <span className="text-white">{director.name}</span>
-                            </h3>
-                        )}
-                    </div>
-
-                    <h2 className="text-xl text-white/50 mb-4 tracking-tighter">
-                        {movie.original_language?.toUpperCase()}: "{movie.original_title}"
-                    </h2>
-
-                    <div className="flex flex-wrap gap-3 text-sm text-slate-400 mb-6 items-center">
-                        <span className="bg-slate-800 px-3 py-1 rounded-full text-pink-500">
-                            {movie.release_date?.split('-')[0]}
-                        </span>
-                        <span>•</span>
-                        <span>{movie.runtime} min</span>
-                        <span>•</span>
-                        <span className="italic">{movie.genres?.join(", ")}</span>
-                        <button
-                            onClick={handleWatchlistToggle}
-                            className={`cursor-pointer mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.watchlisted
-                                ? "bg-green-600 text-white shadow-green-500/20"
-                                : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 hover:border-slate-500"
-                                }`}
-                        >
-                            {movie.watchlisted ? (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                    <span>In Watchlist</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    <span>Add to Watchlist</span>
-                                </>
-                            )}
-                        </button>
-                        <button
-                            onClick={openLogModal}
-                            className={`cursor-pointer mb-6 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg ${movie.logged
-                                    ? "bg-green-600 text-white shadow-green-500/20"
-                                    : "bg-sky-600 hover:bg-sky-700 text-white"
-                                }`}
-                        >
-                            {movie.logged ? (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                    <span>Log Again</span>
-                                </>
-                            ) : (
-                                <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    <span>Log Movie</span>
-                                </>
-                            )}
-                        </button>
-                    </div>
-
-                    <p className="text-lg leading-relaxed mb-10 text-slate-300 max-w-2xl">
-                        {movie.overview}
-                    </p>
-
-                    {/* Toggle Buttons */}
-                    <div className="flex gap-4 mb-6 border-b border-slate-800 pb-4">
-                        <button
-                            onClick={() => setActiveTab("cast")}
-                            className={`px-6 py-2 rounded-full transition-all ${activeTab === 'cast' ? 'bg-pink-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-                        >
-                            Cast
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("crew")}
-                            className={`px-6 py-2 rounded-full transition-all ${activeTab === 'crew' ? 'bg-pink-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-                        >
-                            Crew
-                        </button>
-                    </div>
-
-                    {/* Bubbles Container */}
-                    <div className="flex flex-wrap gap-3">
-                        {(activeTab === "cast" ? movie.cast : movie.crew)?.map((person, index) => (
-                            <div key={index} className="bg-slate-800 border border-slate-700 px-4 py-2 rounded-full hover:scale-105 transition-transform">
-                                <span className="text-sm font-medium">{person.name}</span>
-                                <span className="text-xs text-pink-500 ml-2 opacity-80">
-                                    {activeTab === "cast" ? person.character : person.job}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-            {logModalOpen && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
-                    <div
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-                        onClick={() => setLogModalOpen(false)}
-                    />
-
-                    <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-2xl text-black">
-                        <h4 className="text-xl font-bold mb-4">Log Movie Entry</h4>
-
-                        {/* Rating */}
-                        <div className="mb-4">
-                            <label className="block mb-2">
-                                Rating ({personalGrade}/10)
-                            </label>
-                            <div className="flex gap-1 flex-wrap">
-                                {[...Array(10)].map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setPersonalGrade(i + 1)}
-                                        className={`h-8 w-8 rounded ${personalGrade === i + 1
-                                            ? "bg-slate-800 text-white"
-                                            : "bg-slate-200"
-                                            }`}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Date */}
-                        <div className="mb-4">
-                            <label className="block mb-1">Watch Date</label>
-                            <input
-                                type="date"
-                                max={maxDate}
-                                value={watchDate}
-                                onChange={(e) => setWatchDate(e.target.value)}
-                                className="w-full border p-2 rounded"
-                            />
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex justify-end gap-3 mt-6">
-                            <button onClick={() => setLogModalOpen(false)}>
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleLogMovie}
-                                disabled={logging}
-                                className="bg-sky-600 text-white px-4 py-2 rounded"
-                            >
-                                {logging ? "Logging..." : "Confirm"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
-
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-pink-500"></div>
+      </div>
     );
+  }
+
+  if (!movie) return <div className="text-center mt-20 text-red-500">Movie not found.</div>;
+
+  const director = movie?.crew?.find((member) => member.job === "Director");
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-white p-4 md:p-8 relative">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10">
+        {/* Left Column: Poster & Utilities */}
+        <div className="w-full md:w-1/3 shrink-0">
+          <img
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={movie.title}
+            className="rounded-2xl shadow-2xl border border-slate-700 w-full mb-5"
+          />
+          <div className="mb-6">
+            <Providers movieTitle={movie.title} watchProviders={movie.watchProviderDTO} />
+          </div>
+          <ListActionMenu movieId={id} />
+        </div>
+        {/* Right Column: Info & Actions */}
+        <div className="flex-1">
+          <header className="mb-6">
+            <div className="flex items-baseline gap-4 flex-wrap">
+              <h1 className="text-4xl md:text-6xl tracking-tighter font-bold">{movie.title}</h1>
+              {director && (
+                <h3 className="text-lg md:text-xl text-white/50">
+                  Directed by <span className="text-white">{director.name}</span>
+                </h3>
+              )}
+            </div>
+            <h2 className="text-xl text-white/50 mt-2 tracking-tighter italic">
+              {movie.original_language?.toUpperCase()}: "{movie.original_title}"
+            </h2>
+          </header>
+
+          <div className="flex flex-wrap gap-4 text-sm text-slate-400 mb-8 items-center">
+            <span className="bg-slate-800 px-3 py-1 rounded-full text-pink-500 font-bold">
+              {movie.release_date?.split("-")[0]}
+            </span>
+            <span>• {movie.runtime} min</span>
+            <span>• {movie.genres?.join(", ")}</span>
+          </div>
+
+          {/* Core Actions */}
+          <div className="flex flex-wrap gap-3 mb-10">
+            <WatchlistButton movie={movie} setMovie={setMovie} movieId={id} className="cursor-pointer" />
+            {/* Pass current ID to LogModal to skip the search bar */}
+            <LogModal 
+                preSelectedMovieId={id} 
+                onLogSuccess={() => setMovie(prev => ({ ...prev, logged: true }))} 
+            />
+            {movie.logged && (
+              <span className="flex items-center text-green-500 font-medium ml-2">
+                ✓ Logged in your history
+              </span>
+            )}
+          </div>
+          <p className="text-lg leading-relaxed mb-10 text-slate-300 max-w-2xl border-l-4 border-pink-500 pl-6">
+            {movie.overview}
+          </p>
+          <CreditsSection cast={movie.cast} crew={movie.crew} />
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -1,25 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import MovieIdSelector from "./MovieIdSelector.jsx"; 
 import { userLogMovie } from "@/Actions/UserMovieActions";
 
-export function LogModal() {
+export function LogModal({ preSelectedMovieId = null, onLogSuccess = null }) {
   const [open, setOpen] = useState(false);
   
+  // Date Logic
   const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-const maxDate = yesterday.toISOString().split("T")[0];
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const maxDate = yesterday.toISOString().split("T")[0];
 
-  const [movieId, setMovieId] = useState(null);
+  // If a preSelectedMovieId is passed (from MovieCard), use it. Otherwise, null.
+  const [movieId, setMovieId] = useState(preSelectedMovieId);
   const [personalGrade, setPersonalGrade] = useState(0);
   const [watchDate, setWatchDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
 
-  const toggleModal = () => setOpen(!open);
+  // Synchronize movieId if the prop changes (important for navigation between movies)
+  useEffect(() => {
+    if (preSelectedMovieId) {
+      setMovieId(preSelectedMovieId);
+    }
+  }, [preSelectedMovieId]);
+
+  const toggleModal = () => {
+    setOpen(!open);
+    if (open && !preSelectedMovieId) {
+      setMovieId(null);
+      setPersonalGrade(0);
+    }
+  };
 
   const userLogMovieFunction = async () => {
-    if (!movieId || personalGrade === 0) {
+    const finalMovieId = preSelectedMovieId || movieId;
+
+    if (!finalMovieId || personalGrade === 0) {
       alert("Please select a movie and a rating.");
       return;
     }
@@ -27,18 +44,14 @@ const maxDate = yesterday.toISOString().split("T")[0];
     setLoading(true);
     try {
       await userLogMovie({ 
-        movieId, 
+        movieId: finalMovieId, 
         personalGrade, 
         watchDate 
       });
-
-      // --- ADD THIS LINE ---
       window.dispatchEvent(new Event("movieLogged"));
-      // --------------------
+      if (onLogSuccess) onLogSuccess();
 
       setOpen(false); 
-      // Reset state for next time
-      setMovieId(null);
       setPersonalGrade(0);
     } catch (err) {
       console.error(err);
@@ -50,8 +63,12 @@ const maxDate = yesterday.toISOString().split("T")[0];
 
   return (
     <>
-      <button onClick={toggleModal} className="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-900 cursor-pointer">
-        Log [+]
+      <button 
+        onClick={toggleModal} 
+        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg bg-sky-600 hover:bg-sky-700 text-white cursor-pointer`}
+      >
+        
+        <span>{preSelectedMovieId ? "Log Movie" : "Log [+]"}</span>
       </button>
 
       {open && createPortal(
@@ -62,14 +79,15 @@ const maxDate = yesterday.toISOString().split("T")[0];
             <h4 className="text-xl font-bold text-gray-900 mb-4">Log Movie Entry</h4>
 
             <div className="space-y-5">
-              {/* 1.pentru api call avem nevoie de id*/}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Search Movie</label>
-                <MovieIdSelector onSelect={(id) => setMovieId(id)} />
-                
-              </div>
+              
+              {/* Only show the search selector if we don't already have an ID */}
+              {!preSelectedMovieId && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Search Movie</label>
+                  <MovieIdSelector onSelect={(id) => setMovieId(id)} />
+                </div>
+              )}
 
-             
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Personal Grade ({personalGrade}/10)</label>
                 <div className="flex justify-between gap-1">
@@ -88,7 +106,6 @@ const maxDate = yesterday.toISOString().split("T")[0];
                 </div>
               </div>
 
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Watch Date</label>
                 <input
@@ -96,12 +113,11 @@ const maxDate = yesterday.toISOString().split("T")[0];
                   max={maxDate}
                   value={watchDate}
                   onChange={(e) => setWatchDate(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 p-2 text-sm focus:ring-1 focus:ring-sky-500 outline-none"
+                  className="w-full rounded-md border border-gray-300 p-2 text-sm focus:ring-1 focus:ring-sky-500 outline-none text-black"
                 />
               </div>
             </div>
 
-           
             <div className="mt-8 flex justify-end gap-3">
               <button onClick={toggleModal} className="text-sm font-medium text-gray-500 hover:text-gray-700">
                 Cancel

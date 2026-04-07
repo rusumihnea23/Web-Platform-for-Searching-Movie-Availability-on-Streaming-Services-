@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"; // 1. Added useNaviga
 import { getMovieDetails, } from "../../Actions/MovieActions";
 import { userLogMovie, watchlistMovie, unWatchlistMovie } from "../../Actions/UserMovieActions";
 import Providers from "./Providers/Providers";
+import ListActionMenu from "./ListActionsMenu";
 export default function MovieCard() {
     
     const today = new Date();
@@ -113,7 +114,7 @@ const maxDate = yesterday.toISOString().split("T")[0];
                         <Providers movieTitle={movie.title}
                             watchProviders={movie.watchProviderDTO}></Providers>
                     </div>
-
+                    <ListActionMenu movieId={id} />
                 </div>
                 {/* Right: Info */}
                 <div className="flex-1">
@@ -244,7 +245,7 @@ const maxDate = yesterday.toISOString().split("T")[0];
                                         onClick={() => setPersonalGrade(i + 1)}
                                         className={`h-8 w-8 rounded ${personalGrade === i + 1
                                             ? "bg-slate-800 text-white"
-                                            : "bg-gray-200"
+                                            : "bg-slate-200"
                                             }`}
                                     >
                                         {i + 1}

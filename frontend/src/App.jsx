@@ -14,7 +14,7 @@ function App() {
  
 
   return (
-    <div className='font-semibold bg-sky-900'>
+    <div className='font-semibold bg-sky-900 min-h-screen'>
       
         <HashRouter>
     <Routes>

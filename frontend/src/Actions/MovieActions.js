@@ -35,7 +35,7 @@ try {
     const combinedMovieData = {
       ...res.data,          
       watchlisted: res2.data,
-      logged: res3.data 
+      logged: res3.data // This adds the boolean from your second API call
     };
     //console.log(combinedMovieData)
     return combinedMovieData;
@@ -46,6 +46,9 @@ try {
 };
 
 
+
+
+//de mutat astea cu watchlist in usermovieactions
 
 
 export {getPopularMovieList,getQueryMovieList,getMovieDetails};

@@ -9,8 +9,6 @@ export function LogModal() {
   const today = new Date();
 const yesterday = new Date(today);
 yesterday.setDate(today.getDate() - 1);
-
-
 const maxDate = yesterday.toISOString().split("T")[0];
 
   const [movieId, setMovieId] = useState(null);
@@ -28,12 +26,20 @@ const maxDate = yesterday.toISOString().split("T")[0];
 
     setLoading(true);
     try {
-     await userLogMovie({ 
-      movieId, 
-      personalGrade, 
-      watchDate 
-    });
+      await userLogMovie({ 
+        movieId, 
+        personalGrade, 
+        watchDate 
+      });
+
+      // --- ADD THIS LINE ---
+      window.dispatchEvent(new Event("movieLogged"));
+      // --------------------
+
       setOpen(false); 
+      // Reset state for next time
+      setMovieId(null);
+      setPersonalGrade(0);
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || err.message);

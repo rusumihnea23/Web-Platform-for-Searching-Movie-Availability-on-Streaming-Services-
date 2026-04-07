@@ -63,7 +63,7 @@ private final MovieService movieService;
                         .description(list.getDescription())
                         .movies(list.getMovies().stream()
                                 .map(movie -> new MovieDTO(
-                                        movie.getId(),
+                                        movie.getApiId(),
                                         movie.getTitle(),
                                         movie.getOverview(),
                                         movie.getReleaseDate(),
@@ -85,7 +85,7 @@ private final MovieService movieService;
                 .description(movieList.getDescription())
                 .movies(movieList.getMovies().stream()
                         .map(movie -> new MovieDTO(
-                                movie.getId(),
+                                movie.getApiId(),
                                 movie.getTitle(),
                                 movie.getOverview(),
                                 movie.getReleaseDate(),

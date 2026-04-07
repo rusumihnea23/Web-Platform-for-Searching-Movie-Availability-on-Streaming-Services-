@@ -51,7 +51,7 @@ export default function MovieIdSelector({ onSelect }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Type to find a movie..."
-          className="w-full rounded-md border border-slate-200 bg-white px-4 py-2 text-sm focus:border-slate-400 focus:outline-none shadow-sm"
+          className="text-gray-600 w-full rounded-md border border-slate-200 bg-white px-4 py-2 text-sm focus:border-slate-400 focus:outline-none shadow-sm"
         />
         
         

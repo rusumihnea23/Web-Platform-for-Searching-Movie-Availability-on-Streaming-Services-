@@ -106,7 +106,8 @@ private final MovieService movieService;
         if (!movieList.getMovies().contains(movie)) {
             movieList.getMovies().add(movie);
             listRepository.save(movieList);
-        }
+        }else throw new RuntimeException("List already contains movie");
+
     }
 
 
@@ -115,8 +116,12 @@ private final MovieService movieService;
                 .orElseThrow(() -> new RuntimeException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
                 .orElseThrow(() -> new RuntimeException("List not found or access denied"));
-        movieList.getMovies().removeIf(m -> m.getId().equals(movieId));
-        listRepository.save(movieList);
+        Movie movie = movieService.getOrCreateMovie(movieId);
+        if (movieList.getMovies().contains(movie)) {
+            movieList.getMovies().remove(movie);
+            listRepository.save(movieList);
+        }else throw new RuntimeException("List dosent contain movie");
+
     }
 
 

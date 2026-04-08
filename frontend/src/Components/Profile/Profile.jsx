@@ -3,6 +3,7 @@ import SettingsTab from "./SettingsTab";
 import LoggedMoviesTab from "./LoggedMoviesTab";
 import WatchlistTab from "./WatchlistTab";
 import ListsTab from "./ListsTab"; // New import
+import ReviewsTab from "./ReviewsTab";
 
 const baseStyle = "cursor-pointer rounded-md px-3 py-2 text-sm font-medium";
 const activeStyle = "text-blue-500 border-b-2 border-blue-500";
@@ -11,7 +12,8 @@ const inactiveStyle = "text-gray-300 hover:bg-white/5 hover:text-white";
 const tabs = [
   { id: "logged", label: "Logged Movies", component: <LoggedMoviesTab /> },
   { id: "watchlist", label: "Watchlist", component: <WatchlistTab /> },
-  { id: "lists", label: "My Lists", component: <ListsTab /> }, // New Tab
+  { id: "lists", label: "My Lists", component: <ListsTab /> }, 
+  { id: "reviews", label: "My Reviews", component: <ReviewsTab /> },
   { id: "settings", label: "Settings", component: <SettingsTab /> },
 ];
 

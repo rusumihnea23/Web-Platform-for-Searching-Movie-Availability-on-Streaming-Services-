@@ -1,15 +1,15 @@
 package com.mihnea.restapi.dtos;
 
 import com.mihnea.restapi.Models.Movie;
+import com.mihnea.restapi.Models.Review;
 import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MovieMapper {
+public class Mapper {
 
     private static final Set<String> IMPORTANT_JOBS = Set.of(
             "Director", "Screenplay", "Writer", "Story",
@@ -63,5 +63,15 @@ public class MovieMapper {
         }
             details.setWatchProviderDTO(provider);
         return details;
+    }
+    public ReviewDTO mapReviewToDTO(Review review) {
+        return ReviewDTO.builder()
+                .id(review.getId())
+                .content(review.getContent())
+                .userFirstName(review.getUser().getFirstName())
+                .userLastName(review.getUser().getLastName())
+                .movieTitle(review.getMovie().getTitle())
+                .createdAt(review.getCreatedAt().toString())
+                .build();
     }
 }

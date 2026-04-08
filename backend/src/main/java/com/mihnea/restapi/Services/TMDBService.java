@@ -4,7 +4,7 @@ import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
-import com.mihnea.restapi.dtos.MovieMapper;
+import com.mihnea.restapi.dtos.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class TMDBService {
     private final WebClient webClient;
-    private final MovieMapper mapper;
+    private final Mapper mapper;
 
 
     public List<MovieDTO> fetchPopularMovies() {

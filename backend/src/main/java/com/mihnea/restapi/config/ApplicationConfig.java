@@ -1,7 +1,7 @@
 package com.mihnea.restapi.config;
 
 import com.mihnea.restapi.Repositories.UserRespository;
-import com.mihnea.restapi.dtos.MovieMapper;
+import com.mihnea.restapi.dtos.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -59,7 +58,7 @@ public class ApplicationConfig {
         return WebClient.builder();
     }
     @Bean
-    MovieMapper movieMapper(){
-        return new MovieMapper();
+    Mapper movieMapper(){
+        return new Mapper();
     }
 }

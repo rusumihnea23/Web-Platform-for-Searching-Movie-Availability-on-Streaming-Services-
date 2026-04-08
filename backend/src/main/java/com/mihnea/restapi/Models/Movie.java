@@ -40,7 +40,8 @@ public class Movie {
     @Setter
     private String posterPath;
 
-
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "movie")
     private List<UserMovieLog> userMovieLog;

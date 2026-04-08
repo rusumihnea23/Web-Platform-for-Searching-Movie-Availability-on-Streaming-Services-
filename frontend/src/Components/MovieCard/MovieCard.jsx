@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getMovieDetails } from "../../Actions/MovieActions";
+import { getReviewsByMovie } from "../../Actions/ReviewActions";
 
 // Components
 import Providers from "./Providers/Providers";
@@ -8,19 +9,31 @@ import ListActionMenu from "./ListActionsMenu";
 import { LogModal } from "../LogModal/LogModal";
 import CreditsSection from "./CreditsSection";
 import WatchlistButton from "./WatchlistButton";
+import ReviewForm from "./Reviews/ReviewForm";
+import ReviewList from "./Reviews/ReviewList";
 
 export default function MovieCard() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
+
+
+const fetchMovieData = async () => {
+    const movieData = await getMovieDetails(id);
+    const reviewData = await getReviewsByMovie(id);
+    setMovie(movieData);
+    setReviews(reviewData || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    getMovieDetails(id).then((data) => {
-      setMovie(data);
-      setLoading(false);
-    });
+      fetchMovieData();
+  
   }, [id]);
 
+
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-900">
@@ -74,8 +87,7 @@ export default function MovieCard() {
 
           {/* Core Actions */}
           <div className="flex flex-wrap gap-3 mb-10">
-            <WatchlistButton movie={movie} setMovie={setMovie} movieId={id} className="cursor-pointer" />
-            {/* Pass current ID to LogModal to skip the search bar */}
+            <WatchlistButton movie={movie} setMovie={setMovie} movieId={id} />
             <LogModal 
                 preSelectedMovieId={id} 
                 onLogSuccess={() => setMovie(prev => ({ ...prev, logged: true }))} 
@@ -90,6 +102,19 @@ export default function MovieCard() {
             {movie.overview}
           </p>
           <CreditsSection cast={movie.cast} crew={movie.crew} />
+          <section className="mt-20 pt-10 border-t border-slate-800">
+            <h2 className="text-3xl font-bold mb-8">Reviews</h2>
+            
+            <ReviewForm 
+              movieId={id} 
+              onReviewAdded={() => getReviewsByMovie(id).then(setReviews)} 
+            />
+            
+            <ReviewList 
+              reviews={reviews} 
+              onReviewDeleted={() => getReviewsByMovie(id).then(setReviews)}
+            />
+          </section>
         </div>
       </div>
     </div>

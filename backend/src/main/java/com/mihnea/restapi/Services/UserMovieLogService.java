@@ -8,6 +8,7 @@ import com.mihnea.restapi.Repositories.UserMovieLogRepository;
 import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.MovieLogRequest;
+import com.mihnea.restapi.dtos.UserLogDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,24 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
         return(logRepository.findByUserIdAndMovieId(user.getId(),movie.getId())).isPresent();
     }
 
+    public List<UserLogDTO> getUserLogsWithGrades(Authentication authentication) {
+        // 1. Get the logged-in user
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 2. Fetch all logs for this user
+        List<UserMovieLog> logs = logRepository.findByUserId(user.getId());
+
+        // 3. Map Entity -> DTO
+        return logs.stream()
+                .map(log -> {
+                    UserLogDTO dto = new UserLogDTO();
+                    dto.setMovieId(log.getMovie().getApiId()); // Assuming apiId is the TMDB ID
+                    dto.setTitle(log.getMovie().getTitle());
+                    dto.setPersonalGrade(log.getPersonalGrade());
+                    dto.setWatchDates(log.getUserWatchDates());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 }

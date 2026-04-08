@@ -57,5 +57,13 @@ const res = await api.patch(`${watchlistpath}/remove/${id}`);
      alert(err.response?.data?.message || err.message);
   }
 };
-
-export {getUserLogsMovieList,userLogMovie,getUserWatchlist,watchlistMovie,unWatchlistMovie};
+const getUserLogsDetailed = async () => {
+  try {
+    const res = await api.get(`${mainpath}/details`);
+    return res.data; // This now contains personalGrade!
+  } catch (err) {
+    console.error("Failed to fetch detailed logs:", err);
+    return [];
+  }
+};
+export {getUserLogsMovieList,userLogMovie,getUserWatchlist,watchlistMovie,unWatchlistMovie,getUserLogsDetailed};

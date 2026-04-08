@@ -13,17 +13,13 @@ export default function WatchlistTab() {
     fetchMovies();
   }, []);
 
-  // Handler to call the API and then update the local state
   const handleRemove = async (id) => {
-    // Optional: add a confirm dialog
     if (window.confirm("Remove this movie from your watchlist?")) {
       try {
         await unWatchlistMovie(id);
         
-        // Remove the movie from the local list so it disappears instantly
         setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== id));
       } catch (err) {
-        // Error is already handled/alerted inside unWatchlistMovie based on your code
         console.error("Failed to remove movie:", err);
       }
     }

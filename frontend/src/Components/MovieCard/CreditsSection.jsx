@@ -26,7 +26,7 @@ export default function CreditsSection({ cast, crew }) {
             <span className="text-sm font-medium">{person.name}</span>
             <span className="text-xs text-pink-500 ml-2 opacity-80">
               {activeTab === "cast" ? person.character : person.job}
-            </span>
+            </span>         
           </div>
         ))}
       </div>

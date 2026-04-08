@@ -6,19 +6,16 @@ import { userLogMovie } from "@/Actions/UserMovieActions";
 export function LogModal({ preSelectedMovieId = null, onLogSuccess = null }) {
   const [open, setOpen] = useState(false);
   
-  // Date Logic
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
   const maxDate = yesterday.toISOString().split("T")[0];
 
-  // If a preSelectedMovieId is passed (from MovieCard), use it. Otherwise, null.
   const [movieId, setMovieId] = useState(preSelectedMovieId);
   const [personalGrade, setPersonalGrade] = useState(0);
   const [watchDate, setWatchDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
 
-  // Synchronize movieId if the prop changes (important for navigation between movies)
   useEffect(() => {
     if (preSelectedMovieId) {
       setMovieId(preSelectedMovieId);
@@ -67,10 +64,8 @@ export function LogModal({ preSelectedMovieId = null, onLogSuccess = null }) {
         onClick={toggleModal} 
         className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 transform active:scale-95 shadow-lg bg-sky-600 hover:bg-sky-700 text-white cursor-pointer`}
       >
-        
         <span>{preSelectedMovieId ? "Log Movie" : "Log [+]"}</span>
       </button>
-
       {open && createPortal(
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={toggleModal} />
@@ -80,14 +75,12 @@ export function LogModal({ preSelectedMovieId = null, onLogSuccess = null }) {
 
             <div className="space-y-5">
               
-              {/* Only show the search selector if we don't already have an ID */}
               {!preSelectedMovieId && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Search Movie</label>
                   <MovieIdSelector onSelect={(id) => setMovieId(id)} />
                 </div>
               )}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Personal Grade ({personalGrade}/10)</label>
                 <div className="flex justify-between gap-1">

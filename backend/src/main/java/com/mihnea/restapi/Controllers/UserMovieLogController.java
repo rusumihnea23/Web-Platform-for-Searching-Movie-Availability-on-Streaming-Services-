@@ -7,6 +7,7 @@ import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.Services.UserMovieLogService;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.MovieLogRequest;
+import com.mihnea.restapi.dtos.UserLogDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,5 +40,9 @@ public class UserMovieLogController {
     @GetMapping("/{id}")
     public Boolean isMovieLogged(Authentication authentication,@PathVariable Long id){
         return userMovieLogService.isMovieInLogs(authentication,id);
+    }
+    @GetMapping("/details")
+    public ResponseEntity<List<UserLogDTO>> getDetailedLogs(Authentication authentication) {
+        return ResponseEntity.ok(userMovieLogService.getUserLogsWithGrades(authentication));
     }
 }

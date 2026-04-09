@@ -38,7 +38,7 @@ export default function ReviewForm({ movieId, onReviewAdded }) {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-pink-600 hover:bg-pink-500 disabled:bg-slate-700 text-white font-bold py-2 px-6 rounded-full self-end transition-colors"
+          className="bg-pink-600 hover:bg-pink-500 disabled:bg-slate-700 text-white font-bold py-2 px-6 rounded-full self-end transition-colors cursor-pointer"
         >
           {submitting ? "Posting..." : "Post Review"}
         </button>

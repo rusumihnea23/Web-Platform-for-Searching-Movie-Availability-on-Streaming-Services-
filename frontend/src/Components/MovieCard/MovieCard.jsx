@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { getMovieDetails } from "../../Actions/MovieActions";
 import { getReviewsByMovie } from "../../Actions/ReviewActions";
@@ -11,27 +11,45 @@ import CreditsSection from "./CreditsSection";
 import WatchlistButton from "./WatchlistButton";
 import ReviewForm from "../Reviews/ReviewForm";
 import ReviewList from "../Reviews/ReviewList";
+import SortControls from "../Sort/SortControls";
+
 export default function MovieCard() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
+  
+  // 1. Add Filter/Sort States
+  const [sortBy, setSortBy] = useState("newest");
+  const [grade, setGrade] = useState(null);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
+  // 2. Separate Review Fetching
+  const fetchReviews = useCallback(async () => {
+    setReviewsLoading(true);
+    const reviewData = await getReviewsByMovie(id, sortBy, grade);
+    setReviews(reviewData || []);
+    setReviewsLoading(false);
+  }, [id, sortBy, grade]);
 
   const fetchMovieData = async () => {
     const movieData = await getMovieDetails(id);
-    const reviewData = await getReviewsByMovie(id);
     setMovie(movieData);
-    setReviews(reviewData || []);
+    await fetchReviews();
     setLoading(false);
   };
 
+  // 3. Effect for Movie ID changes
   useEffect(() => {
     fetchMovieData();
-
   }, [id]);
 
-
+  // 4. Effect specifically for Sort/Filter changes
+  useEffect(() => {
+    if (!loading) { // Don't run on initial mount as fetchMovieData handles it
+      fetchReviews();
+    }
+  }, [sortBy, grade]);
 
   if (loading) {
     return (
@@ -60,6 +78,7 @@ export default function MovieCard() {
           </div>
           <ListActionMenu movieId={id} />
         </div>
+
         {/* Right Column: Info & Actions */}
         <div className="flex-1">
           <header className="mb-6">
@@ -84,12 +103,14 @@ export default function MovieCard() {
             <span>• {movie.genres?.join(", ")}</span>
           </div>
 
-          {/* Core Actions */}
           <div className="flex flex-wrap gap-3 mb-10">
             <WatchlistButton movie={movie} setMovie={setMovie} movieId={id} />
             <LogModal
               preSelectedMovieId={id}
-              onLogSuccess={() => setMovie(prev => ({ ...prev, logged: true }))}
+              onLogSuccess={() => {
+                setMovie(prev => ({ ...prev, logged: true }));
+                fetchReviews(); // Refetch reviews to update grades/isOwnReview logic
+              }}
             />
             {movie.logged && (
               <span className="flex items-center text-green-500 font-medium ml-2">
@@ -97,24 +118,34 @@ export default function MovieCard() {
               </span>
             )}
           </div>
+          
           <p className="text-lg leading-relaxed mb-10 text-slate-300 max-w-2xl border-l-4 border-pink-500 pl-6">
             {movie.overview}
           </p>
           <CreditsSection cast={movie.cast} crew={movie.crew} />
           
           <section className="mt-20 pt-10 border-t border-slate-800">
-            <h2 className="text-3xl font-bold mb-8 text-white">Reviews</h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <h2 className="text-3xl font-bold text-white">Reviews</h2>
+                {/* 5. Add SortControls here */}
+               
+            </div>
 
             <ReviewForm
               movieId={id}
-              onReviewAdded={fetchMovieData} // Refetches both movie and reviews
+              onReviewAdded={fetchReviews} 
             />
-
-            <div className="mt-8">
+ <SortControls 
+                    sortBy={sortBy} 
+                    setSortBy={setSortBy} 
+                    grade={grade} 
+                    setGrade={setGrade} 
+                />
+            <div className={`mt-8 transition-opacity duration-300 ${reviewsLoading ? 'opacity-50' : 'opacity-100'}`}>
               <ReviewList
                 reviews={reviews}
                 showMovieTitle={false}
-                onReviewDeleted={fetchMovieData} // Refetches to ensure grades/list are current
+                onReviewDeleted={fetchReviews}
               />
             </div>
           </section>

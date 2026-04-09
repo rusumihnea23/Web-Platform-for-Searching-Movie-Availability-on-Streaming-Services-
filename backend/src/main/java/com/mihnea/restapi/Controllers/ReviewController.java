@@ -22,14 +22,19 @@ public class ReviewController {
     }
 
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<List<ReviewDTO>> getReviewsByMovie(Authentication authentication, @PathVariable Long movieId) {
-        // Now passing authentication!
-        return ResponseEntity.ok(reviewService.getReviewsByMovie(authentication, movieId));
-    }
+    public ResponseEntity<List<ReviewDTO>> getMovieReviews(
+            Authentication authentication,
+            @PathVariable Long movieId,
+            @RequestParam(defaultValue = "newest") String sortBy,
+            @RequestParam(required = false) Integer grade) {
 
+        return ResponseEntity.ok(reviewService.getReviewsByMovie(authentication, movieId, sortBy, grade));
+    }
     @GetMapping("/user")
-    public ResponseEntity<List<ReviewDTO>> getReviewsByUser(Authentication authentication) {
-        return ResponseEntity.ok(reviewService.getAllUserReviews(authentication));
+    public ResponseEntity<List<ReviewDTO>> getReviewsByUser(Authentication authentication,@RequestParam(defaultValue = "newest") String sortBy, @RequestParam(required = false) Integer grade) {
+
+        return ResponseEntity.ok(reviewService.getAllUserReviews(authentication, sortBy, grade));
+
     }
 
     @DeleteMapping("/delete/{reviewId}")

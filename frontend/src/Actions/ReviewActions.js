@@ -2,10 +2,17 @@ import api from "../Services/api";
 
 const mainpath = "/api/reviews";
 
+// Helper to build query strings efficiently
+const buildQuery = (sortBy, grade) => {
+  const params = new URLSearchParams();
+  if (sortBy) params.append("sortBy", sortBy);
+  if (grade) params.append("grade", grade);
+  const queryString = params.toString();
+  return queryString ? `?${queryString}` : "";
+};
 
 const addReview = async (reviewData) => {
   try {
-    // reviewData should match your ReviewRequest DTO
     const res = await api.post(`${mainpath}/add`, reviewData);
     alert("Review added successfully!");
     return res.data;
@@ -15,29 +22,29 @@ const addReview = async (reviewData) => {
   }
 };
 
-
-const getReviewsByMovie = async (movieId) => {
+// Updated to include sortBy and grade
+const getReviewsByMovie = async (movieId, sortBy = "newest", grade = null) => {
   try {
-    const res = await api.get(`${mainpath}/movie/${movieId}`);
-    console.log(res.data)
+    const query = buildQuery(sortBy, grade);
+    const res = await api.get(`${mainpath}/movie/${movieId}${query}`);
     return res.data;
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || err.message);
+    return [];
   }
 };
 
-
-const getUserReviews = async () => {
+// Updated to include sortBy and grade, and corrected path
+const getUserReviews = async (sortBy = "newest", grade = null) => {
   try {
-    const res = await api.get(`${mainpath}/user`);
+    const query = buildQuery(sortBy, grade);
+    const res = await api.get(`${mainpath}/user${query}`);
     return res.data;
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || err.message);
+    return [];
   }
 };
-
 
 const getAllReviews = async () => {
   try {
@@ -45,25 +52,23 @@ const getAllReviews = async () => {
     return res.data;
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.message || err.message);
+    return [];
   }
 };
-
 
 const deleteReview = async (reviewId) => {
   try {
     const res = await api.delete(`${mainpath}/delete/${reviewId}`);
-    alert("Review deleted successfully");
     return res.data;
   } catch (err) {
     console.error(err);
     alert(err.response?.data?.message || err.message);
   }
 };
-const editReview = async (reviewId,content) => {
+
+const editReview = async (reviewId, content) => {
   try {
-    const res = await api.patch(`${mainpath}/edit/${reviewId}`,{ content });
-    alert("Review edited successfully");
+    const res = await api.patch(`${mainpath}/edit/${reviewId}`, { content });
     return res.data;
   } catch (err) {
     console.error(err);
@@ -72,14 +77,13 @@ const editReview = async (reviewId,content) => {
 };
 
 const toggleReviewLike = async (reviewId) => {
-    try {
-        
-        const response = await api.post(`/api/reviews/${reviewId}/like`);
-        return response.status === 200;
-    } catch (error) {
-        console.error("Error toggling like:", error);
-        return false;
-    }
+  try {
+    const response = await api.post(`${mainpath}/${reviewId}/like`);
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    return false;
+  }
 };
 
 export {
@@ -88,5 +92,6 @@ export {
   getUserReviews,
   getAllReviews,
   deleteReview,
-  editReview,toggleReviewLike
+  editReview,
+  toggleReviewLike,
 };

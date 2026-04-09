@@ -24,7 +24,8 @@ import java.util.List;
                 "JOIN r.movie m " +
                 "JOIN r.user u " +
                 "LEFT JOIN UserMovieLog l ON l.user = u AND l.movie = m " +
-                "WHERE m.apiId = :movieId")
+                "WHERE m.apiId = :movieId "+
+                "ORDER BY r.id ASC")
         List<ReviewDTO> findReviewsWithGrades(@Param("movieId") Long movieId, @Param("currentUserId") Long currentUserId);
 
         @Query("SELECT new com.mihnea.restapi.dtos.ReviewDTO(" +
@@ -34,6 +35,6 @@ import java.util.List;
                 "JOIN r.movie m " +
                 "JOIN r.user u " +
                 "LEFT JOIN UserMovieLog l ON l.user = u AND l.movie = m " +
-                "WHERE u.id = :userId")
+                "WHERE u.id = :userId "+" ORDER BY r.id ASC")
         List<ReviewDTO> findUserReviewsWithGrades(@Param("userId") Long userId);
 }

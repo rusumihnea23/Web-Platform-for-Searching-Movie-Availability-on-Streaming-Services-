@@ -59,4 +59,17 @@ public class ReviewService {
             throw new RuntimeException("Unauthorized");
         }
         reviewRepository.delete(review);
-    }}
+    }
+    public void editReview(Authentication authentication, Long reviewId,ReviewRequest request) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        review.setContent(request.getContent());
+        if (review.getUser().getId()!=(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        reviewRepository.save(review);
+    }
+
+}

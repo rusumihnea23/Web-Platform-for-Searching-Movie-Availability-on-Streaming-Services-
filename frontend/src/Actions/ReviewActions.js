@@ -60,11 +60,21 @@ const deleteReview = async (reviewId) => {
     alert(err.response?.data?.message || err.message);
   }
 };
-
+const editReview = async (reviewId,content) => {
+  try {
+    const res = await api.patch(`${mainpath}/edit/${reviewId}`,{ content });
+    alert("Review edited successfully");
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.message || err.message);
+  }
+};
 export {
   addReview,
   getReviewsByMovie,
   getUserReviews,
   getAllReviews,
-  deleteReview
+  deleteReview,
+  editReview
 };

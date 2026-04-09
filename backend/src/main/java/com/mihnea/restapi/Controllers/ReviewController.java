@@ -37,5 +37,10 @@ public class ReviewController {
         reviewService.deleteReview(authentication, reviewId);
         return ResponseEntity.ok("Review deleted successfully");
     }
+    @PatchMapping("/edit/{reviewId}")
+    public ResponseEntity<String> editReview(Authentication authentication, @PathVariable Long reviewId,@RequestBody ReviewRequest request) {
+        reviewService.editReview(authentication, reviewId,request);
+        return ResponseEntity.ok("Review edited successfully");
+    }
 
 }

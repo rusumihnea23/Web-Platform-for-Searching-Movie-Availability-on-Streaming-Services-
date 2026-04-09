@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { getUserListsDetailed, createMovieList, deleteList } from "../../Actions/UserListActions";
+import { getUserListsDetailed, createMovieList, deleteList } from "../../../../Actions/UserListActions";
 import DetailedListItems from "./DetailedListItems";
 
 export default function ListsTab() {

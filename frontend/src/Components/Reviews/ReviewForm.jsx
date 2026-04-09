@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addReview } from "../../../Actions/ReviewActions";
+import { addReview } from "../../Actions/ReviewActions";
 
 export default function ReviewForm({ movieId, onReviewAdded }) {
   const [content, setContent] = useState("");

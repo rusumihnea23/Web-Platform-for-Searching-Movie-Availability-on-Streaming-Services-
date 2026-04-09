@@ -20,10 +20,25 @@ public class ReviewService {
     private final UserRespository userRespository;
     private final MovieService movieService;
 
+    private Long getCurrentUserId(Authentication authentication) {
+        if (authentication == null) return -1L;
+        return userRespository.getUserByEmail(authentication.getName())
+                .map(User::getId).orElse(-1L);
+    }
+
+    public List<ReviewDTO> getReviewsByMovie(Authentication authentication, Long movieId) {
+        return reviewRepository.findReviewsWithGrades(movieId, getCurrentUserId(authentication));
+    }
+
+    public List<ReviewDTO> getAllUserReviews(Authentication authentication) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return reviewRepository.findUserReviewsWithGrades(user.getId());
+    }
+
     public void addReview(Authentication authentication, ReviewRequest request) {
         User user = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         Movie movie = movieService.getOrCreateMovie(request.getMovieId());
 
         Review review = Review.builder()
@@ -31,53 +46,17 @@ public class ReviewService {
                 .user(user)
                 .movie(movie)
                 .build();
-
         reviewRepository.save(review);
-    }
-
-    public List<ReviewDTO> getReviewsByMovie(Long movieId) {
-        return reviewRepository.findByMovie_ApiId(movieId).stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    public List<ReviewDTO> getAllReviews() {
-        return reviewRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    public List<ReviewDTO> getAllUserReviews(Authentication authentication){
-        User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return reviewRepository.findByUserId(user.getId()).stream()
-                .map(this::mapToDTO)
-                .toList();
     }
 
     public void deleteReview(Authentication authentication, Long reviewId) {
         User user = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
-        if (review.getUser().getId()!= user.getId()) {
-            throw new RuntimeException("Unauthorized to delete this review");
+        if (review.getUser().getId()!=(user.getId())) {
+            throw new RuntimeException("Unauthorized");
         }
-
         reviewRepository.delete(review);
-    }
-
-    private ReviewDTO mapToDTO(Review review) {
-        return ReviewDTO.builder()
-                .id(review.getId())
-                .content(review.getContent())
-                .userFirstName(review.getUser().getFirstName())
-                .userLastName(review.getUser().getLastName())
-                .movieTitle(review.getMovie().getTitle())
-                .movieId(review.getMovie().getApiId())
-                .createdAt(review.getCreatedAt().toString())
-                .build();
-    }
-}
+    }}

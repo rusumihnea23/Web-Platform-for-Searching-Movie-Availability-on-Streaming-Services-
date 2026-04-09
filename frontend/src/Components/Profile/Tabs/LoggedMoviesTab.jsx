@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { getUserLogsMovieList } from "../../Actions/UserMovieActions";
+import { getUserLogsMovieList } from "../../../Actions/UserMovieActions"; 
 
-import MovieList from "../MovieList/MovieList/MovieList";
+import MovieList from "../../MovieList/MovieList/MovieList";
 export default function LoggedMoviesTab() {
   const [movies, setMovies] = useState([]);
 

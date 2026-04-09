@@ -1,9 +1,9 @@
 import { useState } from "react";
-import SettingsTab from "./SettingsTab";
-import LoggedMoviesTab from "./LoggedMoviesTab";
-import WatchlistTab from "./WatchlistTab";
-import ListsTab from "./ListsTab"; // New import
-import ReviewsTab from "./ReviewsTab";
+import SettingsTab from "./Tabs/SettingsTab";
+import LoggedMoviesTab from "./Tabs/LoggedMoviesTab";
+import WatchlistTab from "./Tabs/WatchlistTab";
+import ListsTab from "./Tabs/ListsTab/ListsTab"; 
+import ReviewsTab from "./Tabs/ReviewsTab";
 
 const baseStyle = "cursor-pointer rounded-md px-3 py-2 text-sm font-medium";
 const activeStyle = "text-blue-500 border-b-2 border-blue-500";

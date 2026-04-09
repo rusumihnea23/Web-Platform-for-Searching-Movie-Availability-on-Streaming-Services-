@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { getUserDetails, updateFirstName, updateLastName } from "../../Actions/UserActions";
-import ProfileField from "./ProfileField";
-import defaultpp from "../../assets/default-pp.webp";
+import { getUserDetails, updateFirstName, updateLastName } from "../../../Actions/UserActions";
+import ProfileField from "./ProfileFIeld";
+import defaultpp from "../../../assets/default-pp.webp";
 
 export default function SettingsTab() {
   const [userDetails, setUserDetails] = useState({

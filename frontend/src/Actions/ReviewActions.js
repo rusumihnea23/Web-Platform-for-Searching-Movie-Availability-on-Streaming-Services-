@@ -19,6 +19,7 @@ const addReview = async (reviewData) => {
 const getReviewsByMovie = async (movieId) => {
   try {
     const res = await api.get(`${mainpath}/movie/${movieId}`);
+    console.log(res.data)
     return res.data;
   } catch (err) {
     console.error(err);

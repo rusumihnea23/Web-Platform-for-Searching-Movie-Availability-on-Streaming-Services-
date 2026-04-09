@@ -1,0 +1,133 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { deleteReview } from "../../Actions/ReviewActions";
+
+export default function ReviewList({ 
+  reviews, 
+  onReviewDeleted, 
+  showMovieTitle = false 
+}) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const reviewsPerPage = 5;
+
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Delete this review?")) {
+      await deleteReview(id);
+      onReviewDeleted(id);
+    }
+  };
+
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div className="text-center p-10 bg-slate-900/50 rounded-xl border border-dashed border-slate-700">
+        <p className="text-slate-500 italic">No reviews found.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {currentReviews.map((review) => (
+        <div 
+          key={review.id} 
+          className="bg-slate-900/40 p-6 rounded-xl border border-slate-800 group hover:border-slate-700 transition-all"
+        >
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-3 flex-wrap">
+                {showMovieTitle ? (
+                  <h3 
+                    onClick={() => navigate(`/movies/${review.movieId}/details`)} 
+                    className="text-blue-400 font-bold text-lg cursor-pointer hover:text-blue-300 transition-colors"
+                  >
+                    {review.movieTitle}
+                  </h3>
+                ) : (
+                  <span className="font-bold text-slate-100 text-lg">
+                    {review.userFirstName} {review.userLastName}
+                  </span>
+                )}
+
+
+                {review.personalGrade != null && (
+                  <div className="flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">
+                    <span className="text-yellow-500 text-xs font-black">★</span>
+                    <span className="text-yellow-500 text-xs font-bold">
+                      {review.personalGrade.toFixed(1)}/10
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <span className="text-slate-500 text-[11px] uppercase tracking-widest font-medium">
+                {new Date(review.createdAt).toLocaleDateString(undefined, {
+                   year: 'numeric', month: 'long', day: 'numeric' 
+                })}
+              </span>
+            </div>
+
+            {review.owner && (
+              <button 
+                onClick={() => handleDelete(review.id)}
+                className="cursor-pointer text-slate-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-500/10 transition-all"
+                title="Delete Review"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
+          </div>
+          
+          {/* 4. CONTENT */}
+          <div className="relative">
+            <p className="text-slate-300 leading-relaxed italic pl-2">
+              {review.content}
+            </p>
+          </div>
+        </div>
+      ))}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-10">
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => prev - 1)}
+            className="text-slate-400 hover:text-white disabled:opacity-30 transition-colors cursor-pointer"
+          >
+            Prev
+          </button>
+
+          <div className="flex gap-2">
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => {
+                  setCurrentPage(i + 1);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`w-8 h-8 rounded-full font-bold text-xs transition-all  ${
+                  currentPage === i + 1 
+                    ? "bg-pink-600 text-white shadow-lg shadow-pink-600/20" 
+                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 cursor-pointer"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)} className="text-slate-400 hover:text-white disabled:opacity-30 transition-colors cursor-pointer"   >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

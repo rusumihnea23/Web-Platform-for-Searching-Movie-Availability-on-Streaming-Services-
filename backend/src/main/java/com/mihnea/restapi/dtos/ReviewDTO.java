@@ -15,4 +15,6 @@ public class ReviewDTO {
     private String movieTitle;
     private String createdAt;
     private Long movieId;
+    private Float personalGrade;
+    private boolean isOwner;
 }

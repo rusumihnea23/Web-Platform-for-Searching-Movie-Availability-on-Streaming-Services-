@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getUserWatchlist, unWatchlistMovie } from "../../Actions/UserMovieActions"; // Import here
-import MovieList from "../MovieList/MovieList/MovieList";
+import { getUserWatchlist,unWatchlistMovie } from "../../../Actions/UserMovieActions";
+import MovieList from "../../MovieList/MovieList/MovieList";
 
 export default function WatchlistTab() {
   const [movies, setMovies] = useState([]);

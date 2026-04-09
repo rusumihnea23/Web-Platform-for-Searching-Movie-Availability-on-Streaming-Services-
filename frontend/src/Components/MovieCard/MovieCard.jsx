@@ -9,9 +9,8 @@ import ListActionMenu from "./ListActionsMenu";
 import { LogModal } from "../LogModal/LogModal";
 import CreditsSection from "./CreditsSection";
 import WatchlistButton from "./WatchlistButton";
-import ReviewForm from "./Reviews/ReviewForm";
-import ReviewList from "./Reviews/ReviewList";
-
+import ReviewForm from "../Reviews/ReviewForm";
+import ReviewList from "../Reviews/ReviewList";
 export default function MovieCard() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
@@ -19,7 +18,7 @@ export default function MovieCard() {
   const [reviews, setReviews] = useState([]);
 
 
-const fetchMovieData = async () => {
+  const fetchMovieData = async () => {
     const movieData = await getMovieDetails(id);
     const reviewData = await getReviewsByMovie(id);
     setMovie(movieData);
@@ -28,12 +27,12 @@ const fetchMovieData = async () => {
   };
 
   useEffect(() => {
-      fetchMovieData();
-  
+    fetchMovieData();
+
   }, [id]);
 
 
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-900">
@@ -88,9 +87,9 @@ const fetchMovieData = async () => {
           {/* Core Actions */}
           <div className="flex flex-wrap gap-3 mb-10">
             <WatchlistButton movie={movie} setMovie={setMovie} movieId={id} />
-            <LogModal 
-                preSelectedMovieId={id} 
-                onLogSuccess={() => setMovie(prev => ({ ...prev, logged: true }))} 
+            <LogModal
+              preSelectedMovieId={id}
+              onLogSuccess={() => setMovie(prev => ({ ...prev, logged: true }))}
             />
             {movie.logged && (
               <span className="flex items-center text-green-500 font-medium ml-2">
@@ -102,18 +101,22 @@ const fetchMovieData = async () => {
             {movie.overview}
           </p>
           <CreditsSection cast={movie.cast} crew={movie.crew} />
+          
           <section className="mt-20 pt-10 border-t border-slate-800">
-            <h2 className="text-3xl font-bold mb-8">Reviews</h2>
-            
-            <ReviewForm 
-              movieId={id} 
-              onReviewAdded={() => getReviewsByMovie(id).then(setReviews)} 
+            <h2 className="text-3xl font-bold mb-8 text-white">Reviews</h2>
+
+            <ReviewForm
+              movieId={id}
+              onReviewAdded={fetchMovieData} // Refetches both movie and reviews
             />
-            
-            <ReviewList 
-              reviews={reviews} 
-              onReviewDeleted={() => getReviewsByMovie(id).then(setReviews)}
-            />
+
+            <div className="mt-8">
+              <ReviewList
+                reviews={reviews}
+                showMovieTitle={false}
+                onReviewDeleted={fetchMovieData} // Refetches to ensure grades/list are current
+              />
+            </div>
           </section>
         </div>
       </div>

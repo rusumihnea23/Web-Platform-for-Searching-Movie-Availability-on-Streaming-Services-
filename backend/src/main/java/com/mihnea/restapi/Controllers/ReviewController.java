@@ -42,5 +42,9 @@ public class ReviewController {
         reviewService.editReview(authentication, reviewId,request);
         return ResponseEntity.ok("Review edited successfully");
     }
-
+    @PostMapping("/{reviewId}/like")
+    public ResponseEntity<?> toggleLike(Authentication authentication, @PathVariable Long reviewId) {
+        reviewService.toggleLike(authentication, reviewId);
+        return ResponseEntity.ok().build();
+    }
 }

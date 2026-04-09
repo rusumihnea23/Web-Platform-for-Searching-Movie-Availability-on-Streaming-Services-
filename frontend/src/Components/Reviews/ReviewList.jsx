@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteReview, editReview } from "../../Actions/ReviewActions";
-
+import LikeButton from "./LikeButton";
 export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = false }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [editingId, setEditingId] = useState(null);
@@ -31,7 +31,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
     const success = await editReview(id, editContent);
     if (success) {
       setEditingId(null);
-      onReviewDeleted(); // Refresh list to show new content
+      onReviewDeleted(); 
     }
   };
 
@@ -71,7 +71,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
             {review.owner && (
               <div className="flex gap-2">
                 {/* Edit Button */}
-                <button 
+                <button
                   onClick={() => handleStartEdit(review)}
                   className="cursor-pointer text-slate-500 hover:text-blue-400 p-2 rounded-lg hover:bg-blue-400/10 transition-all"
                   title="Edit Review"
@@ -82,7 +82,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
                 </button>
 
                 {/* Delete Button */}
-                <button 
+                <button
                   onClick={() => handleDelete(review.id)}
                   className="cursor-pointer text-slate-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-500/10 transition-all"
                   title="Delete Review"
@@ -94,7 +94,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
               </div>
             )}
           </div>
-          
+
           <div className="relative">
             {editingId === review.id ? (
               <div className="space-y-3">
@@ -109,9 +109,13 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
                 </div>
               </div>
             ) : (
-              <p className="text-slate-300 leading-relaxed italic pl-2 border-l-2 border-slate-800">
-                {review.content}
-              </p>
+              <>
+                <p className="text-slate-300 leading-relaxed italic pl-2 border-l-2 border-slate-800">
+                  {review.content}
+                </p>
+                <div className="flex items-center justify-start mt-4">
+                  <LikeButton review={review} />
+                </div></>
             )}
           </div>
         </div>
@@ -120,7 +124,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-10">
-          <button 
+          <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(prev => prev - 1)}
             className="text-slate-400 hover:text-white disabled:opacity-30 transition-colors cursor-pointer"
@@ -136,11 +140,10 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
                   setCurrentPage(i + 1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`w-8 h-8 rounded-full font-bold text-xs transition-all  ${
-                  currentPage === i + 1 
-                    ? "bg-pink-600 text-white shadow-lg shadow-pink-600/20" 
+                className={`w-8 h-8 rounded-full font-bold text-xs transition-all  ${currentPage === i + 1
+                    ? "bg-pink-600 text-white shadow-lg shadow-pink-600/20"
                     : "bg-slate-800 text-slate-400 hover:bg-slate-700 cursor-pointer"
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>

@@ -4,6 +4,8 @@ package com.mihnea.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Entity
@@ -31,10 +33,8 @@ public class Review {
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
-    // Optional: If you want to link it to the specific log entry/grade
-    // @OneToOne
-    // @JoinColumn(name = "log_id")
-    // private UserMovieLog log;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewLike> likes = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

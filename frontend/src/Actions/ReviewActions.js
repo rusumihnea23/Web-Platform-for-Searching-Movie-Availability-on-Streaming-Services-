@@ -70,11 +70,23 @@ const editReview = async (reviewId,content) => {
     alert(err.response?.data?.message || err.message);
   }
 };
+
+const toggleReviewLike = async (reviewId) => {
+    try {
+        
+        const response = await api.post(`/api/reviews/${reviewId}/like`);
+        return response.status === 200;
+    } catch (error) {
+        console.error("Error toggling like:", error);
+        return false;
+    }
+};
+
 export {
   addReview,
   getReviewsByMovie,
   getUserReviews,
   getAllReviews,
   deleteReview,
-  editReview
+  editReview,toggleReviewLike
 };

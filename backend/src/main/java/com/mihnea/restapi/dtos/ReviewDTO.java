@@ -17,4 +17,6 @@ public class ReviewDTO {
     private Long movieId;
     private Float personalGrade;
     private boolean isOwner;
+    private long likeCount;
+    private boolean likedByMe;
 }

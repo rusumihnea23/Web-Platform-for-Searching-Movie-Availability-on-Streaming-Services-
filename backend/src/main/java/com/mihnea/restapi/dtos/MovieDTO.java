@@ -1,9 +1,10 @@
 package com.mihnea.restapi.dtos;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+
+
+import java.util.List;
+
 @Data
 
 public class MovieDTO {
@@ -15,7 +16,7 @@ public class MovieDTO {
 
     String overview;
     String release_date;
-
+    private List<GenreDTO> genres;
     public MovieDTO(Long id,String title, String overview, String release_date, String poster_path) {
         this.id=id;
         this.title = title;

@@ -6,6 +6,7 @@ import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,14 +16,21 @@ public class Mapper {
             "Director", "Screenplay", "Writer", "Story",
             "Producer", "Executive Producer", "Editor", "Director of Photography"
     );
-    public MovieDTO toDTO(Movie movie){
-        MovieDTO movieDTO =new MovieDTO();
-        movieDTO.setId(movie.getApiId());
-        movieDTO.setOverview(movie.getOverview());
-        movieDTO.setTitle(movie.getTitle());
-        movieDTO.setRelease_date(movie.getReleaseDate());
-        movieDTO.setPoster_path(movie.getPosterPath());
-        return movieDTO;
+    public MovieDTO toDTO(Movie movie) {
+        MovieDTO dto = new MovieDTO();
+        dto.setId(movie.getApiId());
+        dto.setTitle(movie.getTitle());
+        dto.setOverview(movie.getOverview());
+        dto.setPoster_path(movie.getPosterPath());
+        dto.setRelease_date(movie.getReleaseDate());
+
+        // Convert Entity Set to DTO List
+        if (movie.getGenres() != null) {
+            dto.setGenres(movie.getGenres().stream()
+                    .map(g -> new GenreDTO(g.getId(), g.getName()))
+                    .toList());
+        }
+        return dto;
     }
 
     public Movie toMovie(MovieDTO movieDTO){
@@ -45,10 +53,18 @@ public class Mapper {
         dto.setRelease_date((String) tmdbMovie.get("release_date"));
         String posterPath = (String) tmdbMovie.get("poster_path");
         dto.setPoster_path(posterPath);
-
+        if (tmdbMovie.containsKey("genres")) {
+            List<Map<String, Object>> genresList = (List<Map<String, Object>>) tmdbMovie.get("genres");
+            List<GenreDTO> genreDTOs = genresList.stream()
+                    .map(g -> new GenreDTO(
+                            ((Number) g.get("id")).longValue(),
+                            (String) g.get("name")
+                    ))
+                    .toList();
+            dto.setGenres(genreDTOs);
+        }
         return dto;
     }
-
 
     public MovieDetailDTO mapToDetailedDTO(MovieDetailDTO details, CreditsDTO credits, WatchProviderDTO provider) {
         if (credits.getCast() != null) {
@@ -61,17 +77,9 @@ public class Mapper {
                     .filter(member -> IMPORTANT_JOBS.contains(member.getJob()))
                     .toList());
         }
-            details.setWatchProviderDTO(provider);
+        details.setWatchProviderDTO(provider);
+
         return details;
     }
-    public ReviewDTO mapReviewToDTO(Review review) {
-        return ReviewDTO.builder()
-                .id(review.getId())
-                .content(review.getContent())
-                .userFirstName(review.getUser().getFirstName())
-                .userLastName(review.getUser().getLastName())
-                .movieTitle(review.getMovie().getTitle())
-                .createdAt(review.getCreatedAt().toString())
-                .build();
-    }
+
 }

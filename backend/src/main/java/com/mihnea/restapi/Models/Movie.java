@@ -3,7 +3,9 @@ package com.mihnea.restapi.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Entity
@@ -46,7 +48,16 @@ public class Movie {
     @OneToMany(mappedBy = "movie")
     private List<UserMovieLog> userMovieLog;
     //genres& genreIds
-
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    @Getter
+    @Setter
+    @Builder.Default
+    private Set<Genre> genres=new HashSet<>();
 
     @Override
     public String toString() {

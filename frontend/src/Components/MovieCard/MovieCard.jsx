@@ -18,7 +18,7 @@ export default function MovieCard() {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
-  
+
   // 1. Add Filter/Sort States
   const [sortBy, setSortBy] = useState("newest");
   const [grade, setGrade] = useState(null);
@@ -100,7 +100,7 @@ export default function MovieCard() {
               {movie.release_date?.split("-")[0]}
             </span>
             <span>• {movie.runtime} min</span>
-            <span>• {movie.genres?.join(", ")}</span>
+            <span>• {movie.genres?.map(g => g.name).join(", ")}</span>
           </div>
 
           <div className="flex flex-wrap gap-3 mb-10">
@@ -118,29 +118,29 @@ export default function MovieCard() {
               </span>
             )}
           </div>
-          
+
           <p className="text-lg leading-relaxed mb-10 text-slate-300 max-w-2xl border-l-4 border-pink-500 pl-6">
             {movie.overview}
           </p>
           <CreditsSection cast={movie.cast} crew={movie.crew} />
-          
+
           <section className="mt-20 pt-10 border-t border-slate-800">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <h2 className="text-3xl font-bold text-white">Reviews</h2>
-                {/* 5. Add SortControls here */}
-               
+              <h2 className="text-3xl font-bold text-white">Reviews</h2>
+              {/* 5. Add SortControls here */}
+
             </div>
 
             <ReviewForm
               movieId={id}
-              onReviewAdded={fetchReviews} 
+              onReviewAdded={fetchReviews}
             />
- <SortControls 
-                    sortBy={sortBy} 
-                    setSortBy={setSortBy} 
-                    grade={grade} 
-                    setGrade={setGrade} 
-                />
+            <SortControls
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              grade={grade}
+              setGrade={setGrade}
+            />
             <div className={`mt-8 transition-opacity duration-300 ${reviewsLoading ? 'opacity-50' : 'opacity-100'}`}>
               <ReviewList
                 reviews={reviews}

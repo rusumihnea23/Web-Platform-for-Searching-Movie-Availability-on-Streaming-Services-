@@ -37,7 +37,8 @@ try {
       watchlisted: res2.data,
       logged: res3.data // This adds the boolean from your second API call
     };
-    //console.log(combinedMovieData)
+    console.log(combinedMovieData)
+
     return combinedMovieData;
   } catch (err) {
     console.error(err);

@@ -1,6 +1,7 @@
 package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Models.Movie;
+import com.mihnea.restapi.Services.RecommendationService;
 import com.mihnea.restapi.Services.TMDBService;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/movies")
 public class MovieController {
     private final TMDBService TMDBService;
+
     @GetMapping
     public ResponseEntity<String> sayHello(){
         return ResponseEntity.ok("Buna dimineata viata mea!");

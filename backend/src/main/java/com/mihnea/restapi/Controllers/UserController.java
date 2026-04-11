@@ -1,7 +1,9 @@
 package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Models.User;
+import com.mihnea.restapi.Services.RecommendationService;
 import com.mihnea.restapi.Services.UserService;
+import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.UpdateNameRequest;
 import com.mihnea.restapi.dtos.Requests.UpdateProfilePictureRequest;
 import com.mihnea.restapi.dtos.UserDTO;
@@ -16,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    private final RecommendationService recommendationService;
     @GetMapping
     public List<User> getUsers(){
         return userService.getUsers();
@@ -45,6 +47,10 @@ public class UserController {
     @GetMapping(value = "/profile/picture")
     public String getUserDetailsProfilePicturePath(Authentication authentication) {
         return userService.getUserProfilePicture(authentication);
+    }
+    @GetMapping(value = "/recommended")
+    public List<MovieDTO> getRecommendedMovieList(Authentication authentication) {
+        return recommendationService.getRecommendations(authentication);
     }
     @PatchMapping("/profile/lastName")
     public void updateUserLastName(Authentication authentication,@RequestBody UpdateNameRequest request){

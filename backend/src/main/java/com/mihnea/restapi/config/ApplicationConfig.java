@@ -61,4 +61,8 @@ public class ApplicationConfig {
     Mapper movieMapper(){
         return new Mapper();
     }
+    @Bean
+    public org.springframework.web.client.RestTemplate restTemplate() {
+        return new org.springframework.web.client.RestTemplate();
+    }
 }

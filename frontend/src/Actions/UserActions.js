@@ -30,5 +30,13 @@ const updateLastName= async(Name)=>{
      alert(err.response?.data?.message || err.message);
   }
 }
-
-export  {getUserDetails,updateFirstName,updateLastName}
+const getRecommendedMovieList =async () => {
+  try {
+    const res = await api.get(`${mainpath}/recommended`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+};
+export  {getUserDetails,updateFirstName,updateLastName,getRecommendedMovieList}

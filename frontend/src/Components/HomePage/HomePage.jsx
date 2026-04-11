@@ -8,30 +8,36 @@ export default function HomePage() {
     const [movieList, setmovieList] = useState([]);
     const [recomendedMovieList, setrecomendedMovieList] = useState([]);
     const [userDetails, setUserDetails] = useState(null);
+useEffect(() => {
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+  
+            const [user, popular] = await Promise.all([
+                getUserDetails(),
+                getPopularMovieList(),
+            ]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
+            setUserDetails(user);
+            setmovieList(popular);
             try {
-                // Rulăm toate cererile în paralel pentru viteză
-                const [user, popular, recommended] = await Promise.all([
-                    getUserDetails(),
-                    getPopularMovieList(),
-                    getRecommendedMovieList()
-                ]);
-
-                setUserDetails(user);
-                setmovieList(popular);
-                setrecomendedMovieList(recommended);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setLoading(false);
+                const recommended = await getRecommendedMovieList();
+                setrecomendedMovieList(recommended || []);
+            } catch (recError) {
+                console.warn("Recommender system is offline, skipping section.");
+                setrecomendedMovieList([]); 
             }
-        };
 
-        fetchData();
-    }, []);
+        } catch (error) {
+            console.error("Critical error fetching data:", error);
+            
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+}, []);
 
     if (loading) {
         return (
@@ -69,7 +75,7 @@ export default function HomePage() {
                             </div>
                         </div>
                         <div className="bg-slate-900/50 p-6 rounded-2xl backdrop-blur-sm border border-white/5">
-                            <MovieList Movies={recomendedMovieList} max={5} />
+                            <MovieList Movies={recomendedMovieList}  />
                         </div>
                     </section>
                 )}

@@ -1,98 +1,163 @@
 import pandas as pd
-from sqlalchemy import create_engine
+import numpy as np
+import uvicorn
+from sqlalchemy import create_engine, text
 from fastapi import FastAPI
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
+from contextlib import asynccontextmanager
 
-app = FastAPI()
-
+# --- CONFIGURATION ---
 DATABASE_URL = "postgresql://postgres:stud@localhost:5432/MyApiDB"
 engine = create_engine(DATABASE_URL)
+ml_model = {}
 
 
-def get_movie_data():
-    query = """
-    SELECT m.id, m.title, m.overview, 
-           string_agg(g.name, ' ') as genres
-    FROM movies m
-    LEFT JOIN movie_genres mg ON m.id = mg.movie_id
-    LEFT JOIN genre g ON mg.genre_id = g.id
-    GROUP BY m.id
-    """
-    df = pd.read_sql(query, engine)
-    df['combined_features'] = df['genres'].fillna('') + " " + df['overview'].fillna('')
-    return df
+def load_data_and_train():
 
+    print("Loading movies and global metadata...")
 
-def get_user_preferences(user_id):
+    query = text("""
+        SELECT 
+            m.id, 
+            m.title, 
+            m.overview, 
+            string_agg(DISTINCT g.name, ' ') as genres,
+            COALESCE(AVG(log.personal_grade), 0) as avg_rating
+        FROM movies m
+        LEFT JOIN movie_genres mg ON m.id = mg.movie_id
+        LEFT JOIN genre g ON mg.genre_id = g.id
+        LEFT JOIN user_movie_log log ON m.id = log.movie_id
+        GROUP BY m.id
+    """)
 
-    query_logs = f"SELECT movie_id, personal_grade FROM user_movie_log WHERE user_id = {user_id}"
-    logs = pd.read_sql(query_logs, engine)
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
 
-
-    query_likes = f"""
-    SELECT r.movie_id 
-    FROM review_likes rl
-    JOIN reviews r ON rl.review_id = r.id
-    WHERE rl.user_id = {user_id}
-    """
-    likes = pd.read_sql(query_likes, engine)
-    return logs, likes
-
-
-@app.get("/recommend/{user_id}")
-def recommend_movies(user_id: int):
-    movies_df = get_movie_data()
-    user_logs, user_likes = get_user_preferences(user_id)
-
-    movies_df = get_movie_data()
-    user_logs, user_likes = get_user_preferences(user_id)
-
-    if user_logs.empty and user_likes.empty:
-
-        top_random = movies_df.head(10)
-        return [{"id": int(row['id']), "title": row['title'], "score": 0.0} for _, row in top_random.iterrows()]
-
+    # Weight genres by repeating them in the text block
+    df['combined_features'] = (df['genres'].fillna('') + " ") * 2 + df['overview'].fillna('')
 
     tfidf = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = tfidf.fit_transform(movies_df['combined_features'])
+    tfidf_matrix = tfidf.fit_transform(df['combined_features'])
 
-    user_profile_vector = np.zeros((1, tfidf_matrix.shape[1]))
+    ml_model['df'] = df
+    ml_model['tfidf_matrix'] = tfidf_matrix
+    ml_model['id_to_idx'] = {movie_id: i for i, movie_id in enumerate(df['id'])}
+    print("Hybrid Model Ready.")
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_data_and_train()
+    yield
+    ml_model.clear()
+
+
+app = FastAPI(lifespan=lifespan)
+
+
+# --- HYBRID HELPERS ---
+
+def get_collaborative_candidates(user_id: int):
+    """Finds movies liked by users with similar taste."""
+    with engine.connect() as conn:
+
+        user_likes_query = text("SELECT movie_id FROM user_movie_log WHERE user_id = :uid AND personal_grade >= 7")
+        user_movies_df = pd.read_sql(user_likes_query, conn, params={"uid": user_id})
+
+        # FIX: Convert to standard Python integers
+        user_movies = [int(x) for x in user_movies_df['movie_id'].tolist()]
+
+        if not user_movies:
+            return {}
+
+        others_query = text("""
+            SELECT user_id, movie_id, personal_grade 
+            FROM user_movie_log 
+            WHERE movie_id IN :m_ids AND user_id != :uid AND personal_grade >= 7
+        """)
+
+        others = pd.read_sql(others_query, conn, params={"m_ids": tuple(user_movies), "uid": user_id})
+
+        if others.empty:
+            return {}
+
+         # 'taste-mates'
+        similar_users = [int(x) for x in others['user_id'].unique()]
+
+        if not similar_users:
+            return {}
+
+        recs_query = text("""
+            SELECT movie_id, AVG(personal_grade) as collab_score
+            FROM user_movie_log
+            WHERE user_id IN :u_ids AND movie_id NOT IN :m_ids
+            GROUP BY movie_id
+            HAVING AVG(personal_grade) >= 7
+        """)
+
+        collab_recs = pd.read_sql(recs_query, conn, params={
+            "u_ids": tuple(similar_users),
+            "m_ids": tuple(user_movies)
+        })
+
+        return dict(zip(collab_recs['movie_id'], collab_recs['collab_score'] / 10.0))
+
+@app.get("/recommend/{user_id}")
+async def recommend_movies(user_id: int):
+    df = ml_model.get('df')
+    tfidf_matrix = ml_model.get('tfidf_matrix')
+    id_to_idx = ml_model.get('id_to_idx')
+
+    if df is None:
+        return {"error": "Model not initialized"}
+
+    with engine.connect() as conn:
+        user_logs = pd.read_sql(text("SELECT movie_id, personal_grade FROM user_movie_log WHERE user_id = :uid"),
+                                conn, params={"uid": user_id})
+
+    collab_scores = get_collaborative_candidates(user_id)
+
+
+    user_prof = np.zeros(tfidf_matrix.shape[1])
     for _, row in user_logs.iterrows():
-        idx = movies_df.index[movies_df['id'] == row['movie_id']]
-        if not idx.empty:
-            weight = row['personal_grade'] / 10.0
-            user_profile_vector += tfidf_matrix[idx[0]] * weight
+        idx = id_to_idx.get(row['movie_id'])
+        if idx is not None:
+
+            user_prof += tfidf_matrix[idx].toarray().flatten() * (row['personal_grade'] / 10.0)
+
+    content_sim = cosine_similarity(np.asarray(user_prof).reshape(1, -1), tfidf_matrix).flatten()
 
 
-    for _, row in user_likes.iterrows():
-        idx = movies_df.index[movies_df['id'] == row['movie_id']]
-        if not idx.empty:
-            user_profile_vector += tfidf_matrix[idx[0]] * 0.5
+    final_scores = []
+    seen_ids = set(user_logs['movie_id'].tolist())
 
-    cosine_sim = cosine_similarity(np.asarray(user_profile_vector), tfidf_matrix)
+    for i, row in df.iterrows():
+        m_id = row['id']
+        if m_id in seen_ids:
+            continue
+
+        c_sim = content_sim[i]
+        c_coll = collab_scores.get(m_id, 0)
+        c_glob = row['avg_rating'] / 10.0
+
+        total_score = (c_sim * 0.5) + (c_coll * 0.3) + (c_glob * 0.2)
+
+        final_scores.append({
+            "id": int(m_id),
+            "title": row['title'],
+            "final_score": round(total_score, 4),
+            "breakdown": {
+                "content_similarity": round(c_sim, 2),
+                "collaborative_boost": round(c_coll, 2),
+                "global_popularity": round(c_glob, 2)
+            }
+        })
 
 
-    seen_movie_ids = user_logs['movie_id'].tolist()
-    similar_indices = cosine_sim[0].argsort()[::-1]
-
-    recommendations = []
-    for i in similar_indices:
-        m_id = int(movies_df.iloc[i]['id'])
-        if m_id not in seen_movie_ids:
-            recommendations.append({
-                "id": m_id,
-                "title": movies_df.iloc[i]['title'],
-                "score": float(cosine_sim[0][i])
-            })
-        if len(recommendations) >= 10: break
-
-    return recommendations
+    final_scores = sorted(final_scores, key=lambda x: x['final_score'], reverse=True)
+    return final_scores[:10]
 
 
 if __name__ == "__main__":
-    import uvicorn
-
     uvicorn.run(app, host="0.0.0.0", port=8000)

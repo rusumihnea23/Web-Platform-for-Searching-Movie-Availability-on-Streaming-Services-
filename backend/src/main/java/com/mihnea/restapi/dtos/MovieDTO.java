@@ -26,4 +26,10 @@ public class MovieDTO {
     }
 
     String poster_path;
+
+    public static List<String> toTitleList(List<MovieDTO> movies) {
+        return movies == null ? List.of() : movies.stream()
+                .map(MovieDTO::getTitle)
+                .toList();
+    }
 }

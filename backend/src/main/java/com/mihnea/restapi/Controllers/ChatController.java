@@ -1,11 +1,9 @@
 package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Services.ChatService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -21,6 +19,12 @@ public class ChatController {
 
     @GetMapping("/ask")
     public Map<String, String> ask(Authentication authentication, @RequestParam String prompt) {
-        return Map.of("answer", chatService.getAiResponse(prompt,authentication));
+        return Map.of("answer", chatService.getAiResponse(prompt, authentication));
+    }
+
+    @PatchMapping("/delete")
+    public ResponseEntity<String> deleteChat(Authentication authentication) {
+        chatService.clearHistory(authentication);
+        return ResponseEntity.ok("Deleted chat succesfuly");
     }
 }

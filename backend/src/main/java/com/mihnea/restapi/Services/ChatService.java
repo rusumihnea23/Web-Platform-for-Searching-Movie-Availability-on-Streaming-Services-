@@ -1,5 +1,6 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.Message;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.ChatRequest;
@@ -45,7 +46,7 @@ public class ChatService {
             messages.remove(1);
         }
 
-        ChatRequest request = new ChatRequest("openai/gpt-oss-120b", messages);
+        ChatRequest request = new ChatRequest("llama-3.3-70b-versatile", messages);
 
         ChatResponse response = restClient.post()
                 .body(request)
@@ -53,7 +54,7 @@ public class ChatService {
                 .body(ChatResponse.class);
 
         if (response == null || response.choices().isEmpty()) {
-            return "Ne pare rău, AI-ul nu a putut genera un răspuns.";
+            return "We are sorry, the Ai coldn't generate a response.";
         }
 
         String aiAnswer = response.choices().get(0).message().content();
@@ -65,8 +66,8 @@ public class ChatService {
     }
 
 
-    public void clearHistory(String username) {
-        chatHistory.remove(username);
+    public void clearHistory(Authentication authentication) {
+        chatHistory.remove(authentication.getName());
     }
 
 
@@ -80,28 +81,25 @@ public class ChatService {
         String watchlistTitles = String.join(", ", MovieDTO.toTitleList(watchlistMoviesDtos));
 
         return """
-            You are a cinema expert. Your role is to recommend movies based on the user's preferences.
-            User Context:
-            - Already watched movies: %s
-            - Movies that we recommend for him: %s
-            - Movies that the user has watchlisted: %s
-            
-                Rules:
-                1. Do NOT recommend movies the user has already seen.
-                2. Prioritize movies from our recommendation list if relevant.
-                3. Only recommend movies if the user clearly asks for recommendations or describes preferences.
-                4. If the user input is vague (e.g. "hello", "hi"), ask a short follow-up question instead.
-                5. Keep responses VERY SHORT.
-                6. Maximum 3-5 movies.
-                7. Each movie = 1 short sentence (max 12 words).
-                8. NO tables, NO paragraphs, NO formatting.
-                9. Output ONLY a simple list when recommending.
+               # ROLE
+                           Expert Cinema Assistant.
                 
-                Format (when recommending):
-                - Movie Title (Year) – short reason
+                           # KNOWLEDGE BASE
+                           - User's Watched: %s
+                           - Curated Suggestions: %s
+                           - User's Watchlist: %s
                 
-                Format (when unclear):
-                Ask ONE short question to clarify preferences.
+                           # CRITICAL DIRECTIVE (READ CAREFULLY)
+                           - If the user specifies a genre (e.g., "romantic", "scary", "horror"), you MUST provide 3-5 movies of THAT genre immediately.
+                           - IGNORE the 'Curated Suggestions' list if those movies do not match the genre the user requested.\s
+                           - If the user asks for "Romantic" and the Curated list is Sci-Fi, suggest any famous Romantic movies instead.
+                           - Start with "Salut!" and then give the list.
+                           - Never ask "What kind of movies do you like?" if the user already mentioned a genre.
+                
+                           # FORMAT
+                           Salut! Here are some picks:
+                           - Movie (Year) – Reason.
+                           (NO BOLDING, NO TABLES)
             """.formatted(watchedTitles, recommendedTitles, watchlistTitles);
     }
 }

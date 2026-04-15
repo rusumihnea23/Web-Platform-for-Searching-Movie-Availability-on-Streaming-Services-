@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import { jwtDecode } from "jwt-decode";
+import AIChat from "../Components/AiChat/AIChat";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -32,9 +33,9 @@ const PrivateRoutes = () => {
   }
 
   return (
-
-    <Outlet />
-
+    <div><Outlet />
+    <AIChat></AIChat></div>
+    
   );
 };
 

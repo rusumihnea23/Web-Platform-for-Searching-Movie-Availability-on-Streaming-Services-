@@ -3,6 +3,7 @@ import MovieList from "../MovieList/MovieList/MovieList";
 import { getPopularMovieList } from "../../Actions/MovieActions";
 import { getRecommendedMovieList, getUserDetails } from "../../Actions/UserActions";
 
+
 export default function HomePage() {
     const [loading, setLoading] = useState(true);
     const [movieList, setmovieList] = useState([]);
@@ -59,7 +60,7 @@ useEffect(() => {
                         Ready for a movie night? Explore the latest trends and personalized picks just for you.
                     </p>
                 </div>
-             
+            
             </div>
 
             {/* Content Sections */}
@@ -76,6 +77,7 @@ useEffect(() => {
                         </div>
                         <div className="bg-slate-900/50 p-6 rounded-2xl backdrop-blur-sm border border-white/5">
                             <MovieList Movies={recomendedMovieList}  />
+                            
                         </div>
                     </section>
                 )}

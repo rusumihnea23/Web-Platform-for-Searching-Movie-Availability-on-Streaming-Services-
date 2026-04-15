@@ -35,7 +35,7 @@ try {
     const combinedMovieData = {
       ...res.data,          
       watchlisted: res2.data,
-      logged: res3.data // This adds the boolean from your second API call
+      logged: res3.data 
     };
     console.log(combinedMovieData)
 

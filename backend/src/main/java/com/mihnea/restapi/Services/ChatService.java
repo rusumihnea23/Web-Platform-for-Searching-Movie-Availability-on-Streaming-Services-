@@ -4,6 +4,7 @@ import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.Message;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.ChatRequest;
+import com.mihnea.restapi.dtos.Response.ChatParsedResult;
 import com.mihnea.restapi.dtos.Response.ChatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -11,9 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -27,9 +31,8 @@ public class ChatService {
 
     private final Map<String, List<Message>> chatHistory = new ConcurrentHashMap<>();
 
-    public String getAiResponse(String userPrompt, Authentication authentication) {
+    public ChatParsedResult getAiResponse(String userPrompt, Authentication authentication) {
         String username = authentication.getName();
-
         String systemInstruction = buildSystemInstruction(authentication);
 
         List<Message> messages = chatHistory.computeIfAbsent(username, k -> {
@@ -37,9 +40,7 @@ public class ChatService {
             initial.add(new Message("system", systemInstruction));
             return initial;
         });
-
         messages.set(0, new Message("system", systemInstruction));
-
         messages.add(new Message("user", userPrompt));
 
         if (messages.size() > 11) {
@@ -54,22 +55,56 @@ public class ChatService {
                 .body(ChatResponse.class);
 
         if (response == null || response.choices().isEmpty()) {
-            return "We are sorry, the Ai coldn't generate a response.";
+            return new ChatParsedResult("We are sorry, the AI couldn't generate a response.", List.of());
         }
 
         String aiAnswer = response.choices().get(0).message().content();
-
-
         messages.add(new Message("assistant", aiAnswer));
 
-        return aiAnswer;
+        // Return the parsed object instead of the raw string
+        return parseAiResponse(aiAnswer);
+    }
+
+    private ChatParsedResult parseAiResponse(String rawContent) {
+        // 1. Clean up the content (sometimes AI adds markdown backticks or extra whitespace)
+        String cleanContent = rawContent.replace("```", "").trim();
+
+        // 2. Updated Regex:
+        // ^(?:Message\s*:\s*)? -> Optional "Message:" at the start
+        // (.*?)                -> Captures the text into Group 1
+        // \n?\s*Movies\s*:\s* -> Looks for "Movies:" (case insensitive via flag)
+        // (.*)$                -> Captures the list into Group 2
+        Pattern pattern = Pattern.compile("^(?:Message\\s*:\\s*)?(.*?)\\s*Movies\\s*:\\s*(.*)$",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+
+        Matcher matcher = pattern.matcher(cleanContent);
+
+        if (matcher.find()) {
+            String messagePart = matcher.group(1).trim();
+            String moviesPart = matcher.group(2).trim();
+
+            // Remove any trailing punctuation from the message if it ends right at the label
+            messagePart = messagePart.replaceAll("\\n+$", "");
+
+            List<String> movies = Arrays.stream(moviesPart.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+
+            return new ChatParsedResult(messagePart, movies);
+        }
+
+        // Fallback: If no "Movies:" label found, return raw text
+        return new ChatParsedResult(cleanContent, List.of());
     }
 
 
     public void clearHistory(Authentication authentication) {
         chatHistory.remove(authentication.getName());
     }
-
+    public List<Message> getHistory(Authentication authentication) {
+        return chatHistory.get(authentication.getName());
+    }
 
     private String buildSystemInstruction(Authentication authentication) {
         List<MovieDTO> recommendedDtos = recommendationService.getRecommendations(authentication);
@@ -90,16 +125,15 @@ public class ChatService {
                            - User's Watchlist: %s
                 
                            # CRITICAL DIRECTIVE (READ CAREFULLY)
-                           - If the user specifies a genre (e.g., "romantic", "scary", "horror"), you MUST provide 3-5 movies of THAT genre immediately.
+                           - If the user specifies a genre (e.g., "romantic", "scary", "horror"), you MUST provide 1-3 movies of THAT genre immediately.
                            - IGNORE the 'Curated Suggestions' list if those movies do not match the genre the user requested.\s
                            - If the user asks for "Romantic" and the Curated list is Sci-Fi, suggest any famous Romantic movies instead.
-                           - Start with "Salut!" and then give the list.
+                           - Start with a greeting and then give the list.
                            - Never ask "What kind of movies do you like?" if the user already mentioned a genre.
                 
                            # FORMAT
-                           Salut! Here are some picks:
-                           - Movie (Year) – Reason.
-                           (NO BOLDING, NO TABLES)
+                         Message: <Your text here>
+                         Movies: <Movie 1>, <Movie 2>, <Movie 3>
             """.formatted(watchedTitles, recommendedTitles, watchlistTitles);
     }
 }

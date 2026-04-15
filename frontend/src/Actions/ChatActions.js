@@ -14,7 +14,16 @@ const askChatBot = async (prompt) => {
     alert(err.response?.data?.message || err.message);
   }
 };
-
+const getChatHistory = async () => { 
+  try {
+    const res = await api.get(`${mainpath}/history`, {
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Chat Error:", err);
+    alert(err.response?.data?.message || err.message);
+  }
+};
 const deleteChat=async () => {
   try {
       const res = await api.patch(`${mainpath}/delete`
@@ -26,4 +35,4 @@ const deleteChat=async () => {
   }
 };
 
-export {askChatBot,deleteChat};
+export {askChatBot,deleteChat,getChatHistory};

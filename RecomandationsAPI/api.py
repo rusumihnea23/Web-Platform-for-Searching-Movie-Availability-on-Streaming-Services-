@@ -231,16 +231,16 @@ async def get_review_trends(days: int = 30):
 @app.get("/stats/top-movies")
 async def get_top_movies(limit: int = 5):
     with engine.connect() as conn:
-        # Join logs and movies to get the top performers
         query = text("""
-            SELECT m.title, COUNT(l.id) as total_logs, AVG(l.personal_grade) as avg_grade
+            SELECT m.title, m.api_id, COUNT(l.id) as total_logs, AVG(l.personal_grade) as avg_grade
             FROM user_movie_log l
             JOIN movies m ON l.movie_id = m.id
-            GROUP BY m.id, m.title
-            ORDER BY total_logs DESC
+            GROUP BY m.id, m.title, m.api_id
+            ORDER BY total_logs DESC, avg_grade DESC  -- Primary sort: Logs, Secondary sort: Grade
             LIMIT :limit
         """)
         df = pd.read_sql(query, conn, params={"limit": limit})
+        return df.to_dict(orient="records")
 
     return df.to_dict(orient="records")
 @app.get("/stats/general")

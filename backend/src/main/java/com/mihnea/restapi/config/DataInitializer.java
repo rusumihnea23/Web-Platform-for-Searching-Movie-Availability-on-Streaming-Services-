@@ -1,9 +1,13 @@
 package com.mihnea.restapi.config;
 
 import com.mihnea.restapi.Models.Genre;
+import com.mihnea.restapi.Models.Role;
 import com.mihnea.restapi.Repositories.GenreRepository;
+import com.mihnea.restapi.Repositories.UserRespository;
 import lombok.RequiredArgsConstructor;
+import com.mihnea.restapi.Models.User;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,8 +17,8 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     public final GenreRepository genreRepository;
-
-    @Override
+    public final UserRespository userRespository;
+    private final PasswordEncoder passwordEncoder;
     public void run(String... args) throws Exception {
 
         List<Genre> tmdbGenres = List.of(
@@ -38,6 +42,19 @@ public class DataInitializer implements CommandLineRunner {
                 new Genre(10752L, "War", null),
                 new Genre(37L, "Western", null)
         );
+
+        if(userRespository.getUserByEmail("admin2").isPresent())
+            System.out.println("admin already exist");
+        else {
+            var admin=User.builder().
+                    email("admin2").
+                    password(passwordEncoder.
+                            encode("123"))
+                    .role(Role.ROLE_ADMIN).build();
+
+            userRespository.save(admin);
+            System.out.println("admin created");
+        }
 
         genreRepository.saveAll(tmdbGenres);
     }

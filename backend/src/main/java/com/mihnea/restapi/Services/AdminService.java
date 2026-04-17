@@ -30,7 +30,6 @@ public class AdminService {
     }
     public Map<String, Integer> getGeneralStats() {
         String url = pythonApiUrl + "/stats/general";
-
         // Spring's RestTemplate will automatically convert the Python JSON
         // into a Java Map<String, Integer>
         return restTemplate.getForObject(url, Map.class);

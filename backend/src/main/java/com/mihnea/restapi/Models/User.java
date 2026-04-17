@@ -42,7 +42,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<UserMovieLog> userMovieLog;
 
     @ManyToMany

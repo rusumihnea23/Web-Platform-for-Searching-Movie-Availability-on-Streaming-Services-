@@ -10,6 +10,7 @@ import HomePage from './Components/HomePage/HomePage'
 import SearchResult from './Components/Search/SearchResults/SearchResults'
 import MovieCard from './Components/MovieCard/MovieCard'
 import Profile from './Components/Profile/Profile'
+import AdminDashboard from './Components/AdminDashboard/AdminDashboard'
 function App() {
  
 
@@ -23,6 +24,7 @@ function App() {
       {/* Pagini private umple primul outlet si inauntru mai are unul unde vine magina propriu zisa */}
       <Route element={<PrivateRoutes />}>
         <Route path="/" element={<HomePage/>} />
+        <Route path="/admin" element={<AdminDashboard/>} />
         <Route path="/profile" element={<Profile/>}/>
       </Route>
 

@@ -35,7 +35,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getReviewTrends(days)); // Changed from getTopMovies
     }
 
-    // 4. Top Performing Movies Table (Added this one!)
+    // 4. Top Performing Movies Table 
     @GetMapping("/top-movies")
     public ResponseEntity<List<Map<String, Object>>> getTopMovies(@RequestParam(defaultValue = "5") int limit) {
         return ResponseEntity.ok(adminService.getTopMovies(limit));

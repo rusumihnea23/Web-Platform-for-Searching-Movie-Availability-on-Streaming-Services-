@@ -60,6 +60,7 @@ public class UserService implements IUserService{
         dtoToReturn.setFirstName(userToReturn.getFirstName());
         dtoToReturn.setLastName(userToReturn.getLastName());
         dtoToReturn.setProfilePicturePath(userToReturn.getProfilePicturePath());
+        dtoToReturn.setRole(userToReturn.getRole());
         return dtoToReturn;
     }
 

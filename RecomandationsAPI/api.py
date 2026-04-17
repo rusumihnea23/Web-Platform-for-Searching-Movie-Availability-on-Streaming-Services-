@@ -159,5 +159,109 @@ async def recommend_movies(user_id: int):
     return final_scores[:10]
 
 
+@app.get("/stats/logs")
+async def get_log_trends(days: int = 30):
+    with engine.connect() as conn:
+        # Get the individual watch dates from the element collection table
+        query = text("""
+            SELECT watch_date 
+            FROM user_movie_watch_dates 
+            WHERE watch_date >= CURRENT_DATE - :days
+        """)
+        df = pd.read_sql(query, conn, params={"days": days})
+
+        # Get distinct movies for the average calculation
+        movie_query = text("SELECT COUNT(DISTINCT movie_id) FROM user_movie_log")
+        total_movies = conn.execute(movie_query).scalar() or 1
+
+    if df.empty:
+        return {"chartData": [], "average": 0.0}
+
+    # Pandas Magic: Group by day and fill missing days
+    df['watch_date'] = pd.to_datetime(df['watch_date'])
+    daily_counts = df.set_index('watch_date').resample('1D').size().reset_index(name='count')
+
+    chart_data = [
+        {"date": row['watch_date'].strftime('%Y-%m-%d'), "count": int(row['count'])}
+        for _, row in daily_counts.iterrows()
+    ]
+
+    average = round(len(df) / days / total_movies, 1)
+
+    return {"chartData": chart_data, "average": average}
+
+
+@app.get("/stats/reviews")
+async def get_review_trends(days: int = 30):
+    with engine.connect() as conn:
+        # Get the creation dates from the reviews table
+        # We cast/date_trunc it to ensure we are just looking at the date part
+        query = text("""
+            SELECT created_at 
+            FROM reviews 
+            WHERE created_at >= CURRENT_DATE - :days
+        """)
+        df = pd.read_sql(query, conn, params={"days": days})
+
+        # Get distinct movies that have been reviewed for the average calculation
+        movie_query = text("SELECT COUNT(DISTINCT movie_id) FROM reviews")
+        total_movies = conn.execute(movie_query).scalar() or 1
+
+    if df.empty:
+        return {"chartData": [], "average": 0.0}
+
+    # Pandas Magic: Group by day and fill missing days
+    df['created_at'] = pd.to_datetime(df['created_at'])
+
+    # Normalize removes the hours/minutes/seconds so resampling by day is perfectly accurate
+    df['created_at'] = df['created_at'].dt.normalize()
+
+    daily_counts = df.set_index('created_at').resample('1D').size().reset_index(name='count')
+
+    chart_data = [
+        {"date": row['created_at'].strftime('%Y-%m-%d'), "count": int(row['count'])}
+        for _, row in daily_counts.iterrows()
+    ]
+
+    # Average: Reviews / Days / Unique Movies Reviewed
+    average = round(len(df) / days / total_movies, 1)
+
+    return {"chartData": chart_data, "average": average}
+
+@app.get("/stats/top-movies")
+async def get_top_movies(limit: int = 5):
+    with engine.connect() as conn:
+        # Join logs and movies to get the top performers
+        query = text("""
+            SELECT m.title, COUNT(l.id) as total_logs, AVG(l.personal_grade) as avg_grade
+            FROM user_movie_log l
+            JOIN movies m ON l.movie_id = m.id
+            GROUP BY m.id, m.title
+            ORDER BY total_logs DESC
+            LIMIT :limit
+        """)
+        df = pd.read_sql(query, conn, params={"limit": limit})
+
+    return df.to_dict(orient="records")
+@app.get("/stats/general")
+async def get_general_stats():
+    with engine.connect() as conn:
+        # NOTE: If your Spring Boot user table is named something else
+        # (like 'users' or 'app_user' because 'user' is a reserved keyword in Postgres),
+        # update the table name below!
+        total_users_query = text("SELECT COUNT(id) FROM users")
+        total_reviews_query = text("SELECT COUNT(id) FROM reviews")
+        total_logs_query = text("SELECT COUNT(id) FROM user_movie_log")
+
+        # .scalar() grabs the first column of the first row directly
+        total_users = conn.execute(total_users_query).scalar() or 0
+        total_reviews = conn.execute(total_reviews_query).scalar() or 0
+        total_logs = conn.execute(total_logs_query).scalar() or 0
+
+    return {
+        "totalUsers": total_users,
+        "totalReviews": total_reviews,
+        "totalLogs": total_logs
+    }
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

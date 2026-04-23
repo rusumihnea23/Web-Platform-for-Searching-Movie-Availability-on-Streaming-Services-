@@ -2,7 +2,7 @@ import { useState } from "react";
 import ReviewItem from "./ReviewItem";
 import Pagination from "./Pagination";
 
-export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = false }) {
+export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = false, isAdmin = false }) {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
@@ -33,6 +33,7 @@ export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = 
           review={review} 
           showMovieTitle={showMovieTitle}
           onUpdate={() => onReviewDeleted()} 
+          isAdmin={isAdmin}
         />
       ))}
 

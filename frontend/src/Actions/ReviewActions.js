@@ -9,7 +9,7 @@ const buildQuery = (sortBy, grade) => {
   if (grade) params.append("grade", grade);
   const queryString = params.toString();
   return queryString ? `?${queryString}` : "";
-};
+};// de mutat asta intr un utils
 
 const addReview = async (reviewData) => {
   try {

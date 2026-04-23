@@ -1,18 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteReview, editReview } from "../../Actions/ReviewActions";
+// Standard actions
+import { deleteReview, editReview } from "../../Actions/ReviewActions"; 
+// Admin actions (imported from your provided dashboard service)
+import { deleteReview as adminDeleteReview } from "../../Actions/GeneralAdminDashboardActions"; 
+
 import LikeButton from "./LikeButton";
 import ReviewContent from "./ReviewContent";
 
-export default function ReviewItem({ review, onUpdate, showMovieTitle }) {
+export default function ReviewItem({ review, onUpdate, showMovieTitle, isAdmin = false }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(review.content);
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (window.confirm("Delete this review?")) {
-      await deleteReview(review.id);
-      onUpdate(); 
+    if (window.confirm("Are you sure you want to delete this review?")) {
+      try {
+        // Use admin-specific delete if isAdmin is true
+        if (isAdmin) {
+          await adminDeleteReview(review.id);
+        } else {
+          await deleteReview(review.id);
+        }
+        onUpdate();
+      } catch (error) {
+        console.error("Failed to delete review:", error);
+      }
     }
   };
 
@@ -31,28 +44,47 @@ export default function ReviewItem({ review, onUpdate, showMovieTitle }) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3 flex-wrap">
             {showMovieTitle ? (
-              <h3 onClick={() => navigate(`/movies/${review.movieId}/details`)} className="text-blue-400 font-bold text-lg cursor-pointer hover:text-blue-300 transition-colors">
-                {review.movieTitle}
-              </h3>
+       <div className="flex flex-col gap-1">
+  {/* Movie Title - Main Link */}
+  <h3 
+    onClick={() => navigate(`/movies/${review.movieId}/details`)} 
+    className="text-blue-400 font-bold text-lg cursor-pointer hover:text-blue-300 transition-colors leading-tight"
+  >
+    {review.movieTitle}
+  </h3>
+
+  {/* Reviewer Name - Subtext */}
+  <span className="text-slate-100 text-sm font-medium">
+    by {review.userFirstName} {review.userLastName}
+  </span>
+</div>
             ) : (
-              <span className="font-bold text-slate-100 text-lg">{review.userFirstName} {review.userLastName}</span>
+              <span className="font-bold text-slate-100 text-lg">
+                {review.userFirstName} {review.userLastName}
+              </span>
             )}
-            {review.personalGrade != null && (
+
+            {/* HIDE GRADE IF ADMIN */}
+            {!isAdmin && review.personalGrade != null && (
               <div className="flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">
                 <span className="text-yellow-500 text-xs font-black">★</span>
-                <span className="text-yellow-500 text-xs font-bold">{review.personalGrade.toFixed(1)}/10</span>
+                <span className="text-yellow-500 text-xs font-bold">
+                  {review.personalGrade.toFixed(1)}/10
+                </span>
               </div>
             )}
           </div>
           <span className="text-slate-500 text-[11px] uppercase tracking-widest font-medium">
-            {new Date(review.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date(review.createdAt).toLocaleDateString(undefined, { 
+              year: 'numeric', month: 'long', day: 'numeric' 
+            })}
           </span>
         </div>
 
-        {/* 1. CHECK: Does your review object have an 'owner' property? */}
-        {review.owner && (
-          <div className="flex gap-2">
-            {/* Edit Button */}
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          {/* HIDE EDIT IF ADMIN */}
+          {!isAdmin && review.owner && (
             <button 
               onClick={() => setIsEditing(true)} 
               className="cursor-pointer text-slate-500 hover:text-blue-400 p-2 rounded-lg hover:bg-blue-400/10 transition-all" 
@@ -62,8 +94,10 @@ export default function ReviewItem({ review, onUpdate, showMovieTitle }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
             </button>
-            
-            {/* Delete Button */}
+          )}
+          
+          {/* DELETE BUTTON (Shown to owner OR admin) */}
+          {(review.owner || isAdmin) && (
             <button 
               onClick={handleDelete} 
               className="cursor-pointer text-slate-500 hover:text-red-500 p-2 rounded-lg hover:bg-red-500/10 transition-all" 
@@ -73,8 +107,8 @@ export default function ReviewItem({ review, onUpdate, showMovieTitle }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="relative">

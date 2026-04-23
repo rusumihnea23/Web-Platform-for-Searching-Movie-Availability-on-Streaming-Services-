@@ -1,7 +1,9 @@
 package com.mihnea.restapi.Services;
 
 import com.mihnea.restapi.dtos.Response.ChartDataResponse;
+import com.mihnea.restapi.dtos.ReviewDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,9 +13,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminService {
     private final RestTemplate restTemplate;
-    // URL of your FastAPI server (ideally injected from application.properties)
-    private final String pythonApiUrl = "http://localhost:8000";
 
+    private final String pythonApiUrl = "http://localhost:8000";
+    private  final ReviewService reviewService;
     public ChartDataResponse getLogTrends(int days) {
         String url = pythonApiUrl + "/stats/logs?days=" + days;
         // Spring automatically maps the JSON response to your DTO!
@@ -33,5 +35,15 @@ public class AdminService {
         // Spring's RestTemplate will automatically convert the Python JSON
         // into a Java Map<String, Integer>
         return restTemplate.getForObject(url, Map.class);
+    }
+
+    public void deleteReview(Authentication authentication,Long reviewId){
+        reviewService.deleteReviewAdmin(authentication,reviewId);
+    }
+
+
+
+    public List<ReviewDTO> getAllReviews(Authentication authentication, String sortBy) {
+        return reviewService.getAllReviews(authentication,sortBy);
     }
 }

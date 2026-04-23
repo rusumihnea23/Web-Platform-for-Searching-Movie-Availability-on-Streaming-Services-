@@ -76,7 +76,7 @@ useEffect(() => {
                             </div>
                         </div>
                         <div className="bg-slate-900/50 p-6 rounded-2xl backdrop-blur-sm border border-white/5">
-                            <MovieList Movies={recomendedMovieList}  />
+                            <MovieList Movies={recomendedMovieList} max={5} />
                             
                         </div>
                     </section>

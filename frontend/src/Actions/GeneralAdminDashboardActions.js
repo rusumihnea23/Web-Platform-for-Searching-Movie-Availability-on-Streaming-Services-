@@ -2,13 +2,21 @@ import api from "../Services/api";
 
 const mainpath = "/api/admin/dashboard";
 
+
+const buildQuery = (sortBy, grade) => {
+  const params = new URLSearchParams();
+  if (sortBy) params.append("sortBy", sortBy);
+  if (grade) params.append("grade", grade);
+  const queryString = params.toString();
+  return queryString ? `?${queryString}` : "";
+};// de mutat asta intr un utils
+
 const getGeneralStats = async () => {
   try {
     const res = await api.get(`${mainpath}/general`);
     return res.data;
   } catch (err) {
     console.error("Error fetching general stats:", err);
-    // Returning an empty object as a fallback so the UI doesn't crash
     return {}; 
   }
 };
@@ -19,7 +27,6 @@ const getLogsChart = async (days = 30) => {
     return res.data;
   } catch (err) {
     console.error("Error fetching logs chart:", err);
-    // Returning the expected DTO structure on failure
     return { chartData: [], average: 0 }; 
   }
 };
@@ -44,9 +51,39 @@ const getTopMovies = async (limit = 5) => {
   }
 };
 
+const deleteReview = async (reviewId) => {
+  try {
+   
+    const res = await api.delete(`${mainpath}/delete`, {
+      data: reviewId, 
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Delete review error:", err);
+    throw err; 
+  }
+};
+const getAllReviews = async (sortBy) => {
+  try {
+    const query = buildQuery(sortBy);
+    const res = await api.get(`${mainpath}/reviews${query}`);
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching review list:", err);
+    return [];
+  }
+};
+
+
+
 export {
   getGeneralStats,
   getLogsChart,
   getReviewsChart,
   getTopMovies,
+  deleteReview,
+  getAllReviews
 };

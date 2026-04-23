@@ -46,4 +46,19 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<ReviewDTO> findUserReviewsWithGrades(@Param("userId") Long userId,
                                               @Param("grade") Integer grade,
                                               Sort sort);
+
+    @Query("SELECT new com.mihnea.restapi.dtos.ReviewDTO(" +
+            "r.id, r.content, u.firstName, u.lastName, m.Title, " +
+            "CAST(r.createdAt as string), m.apiId, " +
+            "l.personalGrade as gradeAlias, " + // Use alias for sorting
+            "false, " +
+            "(SELECT COUNT(rl) FROM ReviewLike rl WHERE rl.review.id = r.id) as likeCount, " + // Use alias for sorting
+            "false" +
+            ") " +
+            "FROM Review r " +
+            "JOIN r.movie m " +
+            "JOIN r.user u " +
+            "LEFT JOIN UserMovieLog l ON l.user = u AND l.movie = m") // Add this Join
+    List<ReviewDTO> findAllReviewsForAdmin(Sort sort);
+
 }

@@ -1,9 +1,6 @@
 package com.mihnea.restapi.Services;
 
-import com.mihnea.restapi.Models.Movie;
-import com.mihnea.restapi.Models.Review;
-import com.mihnea.restapi.Models.ReviewLike;
-import com.mihnea.restapi.Models.User;
+import com.mihnea.restapi.Models.*;
 import com.mihnea.restapi.Repositories.ReviewLikeRepository;
 import com.mihnea.restapi.Repositories.ReviewRepository;
 import com.mihnea.restapi.Repositories.UserRespository;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +48,13 @@ public class ReviewService {
         Integer filterGrade = (grade != null && grade > 0) ? grade : null;
 
         return reviewRepository.findUserReviewsWithGrades(user.getId(), filterGrade, sort);
+    }
+    public List<ReviewDTO> getAllReviews(Authentication authentication, String sortBy) {
+        User currentUser = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Sort sort = getSortOrder(sortBy);
+
+       return reviewRepository.findAllReviewsForAdmin( sort);
     }
 
     private Sort getSortOrder(String sortBy) {
@@ -91,6 +96,17 @@ public class ReviewService {
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
         if (review.getUser().getId()!=(user.getId())) {
+            throw new RuntimeException("Unauthorized");
+        }
+        reviewRepository.delete(review);
+    }
+    public void deleteReviewAdmin(Authentication authentication, Long reviewId) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (user.getRole()!= Role.ROLE_ADMIN) {
             throw new RuntimeException("Unauthorized");
         }
         reviewRepository.delete(review);

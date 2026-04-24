@@ -50,7 +50,7 @@ useEffect(() => {
 
     return (
         <div className="min-h-screen bg-slate-900 text-white pb-20">
-            {/* Hero Section / Welcome Area */}
+            {/* Welcome Area */}
             <div className="relative h-[40vh] flex items-center justify-center overflow-hidden  from-sky-900/20 to-slate-950">
                 <div className="text-center z-10 px-4">
                     <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4">
@@ -66,7 +66,7 @@ useEffect(() => {
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20 space-y-16">
                 
-                {/* Recommended Section (Prioritizează AI-ul tău!) */}
+                {/* Recommended Section  */}
                 {recomendedMovieList.length > 0 && (
                     <section className="space-y-4">
                         <div className="flex items-center justify-between border-l-4 border-sky-500 pl-4">

@@ -22,7 +22,7 @@ const addReview = async (reviewData) => {
   }
 };
 
-// Updated to include sortBy and grade
+
 const getReviewsByMovie = async (movieId, sortBy = "newest", grade = null) => {
   try {
     const query = buildQuery(sortBy, grade);
@@ -34,7 +34,6 @@ const getReviewsByMovie = async (movieId, sortBy = "newest", grade = null) => {
   }
 };
 
-// Updated to include sortBy and grade, and corrected path
 const getUserReviews = async (sortBy = "newest", grade = null) => {
   try {
     const query = buildQuery(sortBy, grade);

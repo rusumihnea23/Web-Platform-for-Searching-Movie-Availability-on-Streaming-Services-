@@ -54,7 +54,7 @@ const getTopMovies = async (limit = 5) => {
 const deleteReview = async (reviewId) => {
   try {
    
-    const res = await api.delete(`${mainpath}/delete`, {
+    const res = await api.delete(`${mainpath}reviews/delete`, {
       data: reviewId, 
       headers: {
         'Content-Type': 'application/json',
@@ -77,7 +77,30 @@ const getAllReviews = async (sortBy) => {
   }
 };
 
-
+const getAllUsers=async(query)=>{
+try{
+  const res = await api.get(`${mainpath}/users${query}`);
+  return res.data;
+}catch (err) {
+    console.error("Error fetching review list:", err);
+    return [];
+  }
+}
+const deleteUser = async (userId) => {
+  try {
+   
+    const res = await api.delete(`${mainpath}/users/delete`, {
+      data: userId, 
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Delete user error:", err);
+    throw err; 
+  }
+};
 
 export {
   getGeneralStats,
@@ -85,5 +108,7 @@ export {
   getReviewsChart,
   getTopMovies,
   deleteReview,
-  getAllReviews
+  getAllReviews,
+  deleteUser,
+  getAllUsers
 };

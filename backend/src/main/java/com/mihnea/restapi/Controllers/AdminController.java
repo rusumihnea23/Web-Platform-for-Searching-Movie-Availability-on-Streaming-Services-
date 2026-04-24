@@ -3,6 +3,7 @@ package com.mihnea.restapi.Controllers;
 import com.mihnea.restapi.Services.AdminService;
 import com.mihnea.restapi.dtos.Response.ChartDataResponse;
 import com.mihnea.restapi.dtos.ReviewDTO;
+import com.mihnea.restapi.dtos.UserActivityDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class AdminController {
 
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("reviews/delete")
     public ResponseEntity<String> deleteReview(Authentication authentication, @RequestBody Long reviewId) {
         adminService.deleteReview(authentication, reviewId);
         return ResponseEntity.ok("Review deleted successfully");
@@ -55,5 +56,19 @@ public class AdminController {
 
         List<ReviewDTO> reviews = adminService.getAllReviews(authentication, sortBy);
         return ResponseEntity.ok(reviews);
+    }
+    @GetMapping("/users")
+    public ResponseEntity<List<UserActivityDTO>> getAllUsersGeneralActivity(
+            @RequestParam(required = false, defaultValue = "") String query) {
+        List<UserActivityDTO> activity = adminService.searchUsers(query);
+        return ResponseEntity.ok(activity);
+    }
+
+    @DeleteMapping("/users/delete")
+    public ResponseEntity<String> deleteUser(Authentication authentication, @RequestBody Long userId) {
+        adminService.deleteUser(authentication, userId);
+        return ResponseEntity.ok("User deleted successfully");
+
+        //de adaugat email ca user a fost sters
     }
 }

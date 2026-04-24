@@ -1,7 +1,11 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Models.Role;
+import com.mihnea.restapi.Models.User;
+import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.Response.ChartDataResponse;
 import com.mihnea.restapi.dtos.ReviewDTO;
+import com.mihnea.restapi.dtos.UserActivityDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -13,7 +17,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminService {
     private final RestTemplate restTemplate;
-
+    private final UserRespository userRespository;
+    private final UserService userService;
     private final String pythonApiUrl = "http://localhost:8000";
     private  final ReviewService reviewService;
     public ChartDataResponse getLogTrends(int days) {
@@ -41,9 +46,20 @@ public class AdminService {
         reviewService.deleteReviewAdmin(authentication,reviewId);
     }
 
-
-
     public List<ReviewDTO> getAllReviews(Authentication authentication, String sortBy) {
         return reviewService.getAllReviews(authentication,sortBy);
+    }
+
+    public List<UserActivityDTO> searchUsers(String query) {
+        String searchTerm = (query == null) ? "" : query;
+        return userRespository.findUserActivity(Role.ROLE_USER, searchTerm);
+    }
+    public void deleteUser(Authentication authentication,Long id){
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getRole()!= Role.ROLE_ADMIN) {
+            throw new RuntimeException("Unauthorized");
+        }
+        userService.deleteUser(id);
     }
 }

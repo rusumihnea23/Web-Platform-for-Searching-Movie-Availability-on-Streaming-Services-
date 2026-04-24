@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { 
   ChartBarIcon, 
-  ChatBubbleLeftRightIcon 
-} from '@heroicons/react/24/outline'; // Using Heroicons 24 for nav
+  ChatBubbleLeftRightIcon,
+  UsersIcon // Added for user management
+} from '@heroicons/react/24/outline'; 
 import {
   getGeneralStats,
   getLogsChart,
@@ -11,9 +12,10 @@ import {
 } from '../../Actions/GeneralAdminDashboardActions'; 
 import GeneralComponent from "./GeneralComponent";
 import AdminReviewManagement from "./AdminReviewManagement";
+import AdminUserManagement from "./AdminUserManagement";
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' or 'reviews'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'reviews', or 'users'
   const [data, setData] = useState({
     stats: {},
     logs: { chartData: [], average: 0 },
@@ -26,7 +28,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchAllData = useCallback(async () => {
-    setLoading(true);
+    // We only want the loading spinner for the initial load or "overview" data
+    if (activeTab === 'overview') setLoading(true);
     try {
       const [stats, logs, reviewChart, movies] = await Promise.all([
         getGeneralStats(),
@@ -40,7 +43,7 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [days, limit]);
+  }, [days, limit, activeTab]);
 
   useEffect(() => {
     fetchAllData();
@@ -51,10 +54,10 @@ const AdminDashboard = () => {
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Admin Panel</h1>
-          <p className="text-gray-500">Manage your platform analytics and content.</p>
+          <p className="text-gray-500">Manage platform analytics, users, and content.</p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Navigation Tabs */}
         <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-200">
           <button
             onClick={() => setActiveTab('overview')}
@@ -67,6 +70,19 @@ const AdminDashboard = () => {
             <ChartBarIcon className="w-4 h-4" />
             Overview
           </button>
+          
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === 'users' 
+                ? "bg-purple-600 text-white shadow-md" 
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+          >
+            <UsersIcon className="w-4 h-4" />
+            Users
+          </button>
+
           <button
             onClick={() => setActiveTab('reviews')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${
@@ -88,9 +104,8 @@ const AdminDashboard = () => {
         </div>
       ) : (
         <div className="fade-in">
-          {activeTab === 'overview' ? (
+          {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* Period Selector (Only show on overview) */}
               <div className="flex justify-end">
                 <div className="flex items-center gap-3 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
                   <label className="text-sm font-semibold text-gray-600 px-2">Period:</label>
@@ -115,9 +130,11 @@ const AdminDashboard = () => {
                 setLimit={setLimit}
               />
             </div>
-          ) : (
-            <AdminReviewManagement />
           )}
+
+          {activeTab === 'users' && <AdminUserManagement />}
+          
+          {activeTab === 'reviews' && <AdminReviewManagement />}
         </div>
       )}
     </div>

@@ -8,7 +8,6 @@ const AdminReviewManagement = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [loading, setLoading] = useState(false);
 
-  // Define the specific options for Admin
   const adminSortOptions = [
     { value: "newest", label: "Newest First" },
     { value: "oldest", label: "Oldest First" },
@@ -35,7 +34,7 @@ const AdminReviewManagement = () => {
           sortBy={sortBy} 
           setSortBy={setSortBy} 
           options={adminSortOptions} 
-          // We DON'T pass setGrade here, so the grade filter will be hidden
+
         />
         {loading ? (
           <div className="flex justify-center items-center h-64">

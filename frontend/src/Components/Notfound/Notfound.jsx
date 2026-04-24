@@ -4,14 +4,6 @@ export default function Notfound() {
     const navigate=useNavigate();
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full">
-        <body class="h-full">
-        ```
-      */}
       <main className="grid min-h-full place-items-center bg-sky-900 px-6 py-24 sm:py-32 lg:px-8">
         <div className="text-center">
           <p className="text-base font-semibold text-sky-400">404</p>
@@ -28,7 +20,6 @@ export default function Notfound() {
             >
               Go back home
             </button>
-           
           </div>
         </div>
       </main>

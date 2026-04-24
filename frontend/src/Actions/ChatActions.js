@@ -18,6 +18,7 @@ const getChatHistory = async () => {
   try {
     const res = await api.get(`${mainpath}/history`, {
     });
+    console.log(res.data)
     return res.data;
   } catch (err) {
     console.error("Chat Error:", err);

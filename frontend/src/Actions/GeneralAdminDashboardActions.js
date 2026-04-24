@@ -54,7 +54,7 @@ const getTopMovies = async (limit = 5) => {
 const deleteReview = async (reviewId) => {
   try {
    
-    const res = await api.delete(`${mainpath}reviews/delete`, {
+    const res = await api.delete(`${mainpath}/reviews/delete`, {
       data: reviewId, 
       headers: {
         'Content-Type': 'application/json',

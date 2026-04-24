@@ -42,7 +42,7 @@ public class AdminController {
 
     }
 
-    @DeleteMapping("reviews/delete")
+    @DeleteMapping("/reviews/delete")
     public ResponseEntity<String> deleteReview(Authentication authentication, @RequestBody Long reviewId) {
         adminService.deleteReview(authentication, reviewId);
         return ResponseEntity.ok("Review deleted successfully");

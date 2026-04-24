@@ -1,6 +1,7 @@
 package com.mihnea.restapi.Services;
 
 import com.mihnea.restapi.Repositories.UserRespository;
+import com.mihnea.restapi.dtos.ChatApiMessage;
 import com.mihnea.restapi.dtos.Message;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.ChatRequest;
@@ -40,6 +41,7 @@ public class ChatService {
             initial.add(new Message("system", systemInstruction));
             return initial;
         });
+
         messages.set(0, new Message("system", systemInstruction));
         messages.add(new Message("user", userPrompt));
 
@@ -47,7 +49,14 @@ public class ChatService {
             messages.remove(1);
         }
 
-        ChatRequest request = new ChatRequest("llama-3.3-70b-versatile", messages);
+        // --- FIX START: Strip 'movies' before sending to external API ---
+        List<ChatApiMessage> apiMessages = messages.stream()
+                .map(m -> new ChatApiMessage(m.role(), m.content()))
+                .toList();
+
+        // Pass apiMessages to the request, NOT the original messages list
+        ChatRequest request = new ChatRequest("llama-3.3-70b-versatile", apiMessages);
+        // --- FIX END ---
 
         ChatResponse response = restClient.post()
                 .body(request)
@@ -55,16 +64,17 @@ public class ChatService {
                 .body(ChatResponse.class);
 
         if (response == null || response.choices().isEmpty()) {
-            return new ChatParsedResult("We are sorry, the AI couldn't generate a response.", List.of());
+            return new ChatParsedResult("Error", List.of());
         }
 
         String aiAnswer = response.choices().get(0).message().content();
-        messages.add(new Message("assistant", aiAnswer));
+        ChatParsedResult parsed = parseAiResponse(aiAnswer);
 
-        // Return the parsed object instead of the raw string
-        return parseAiResponse(aiAnswer);
+        // Save the enriched message (with movies) to your internal history
+        messages.add(new Message("assistant", parsed.message(), parsed.movies()));
+
+        return parsed;
     }
-
     private ChatParsedResult parseAiResponse(String rawContent) {
         // 1. Clean up the content (sometimes AI adds markdown backticks or extra whitespace)
         String cleanContent = rawContent.replace("```", "").trim();
@@ -130,7 +140,7 @@ public class ChatService {
                            - If the user asks for "Romantic" and the Curated list is Sci-Fi, suggest any famous Romantic movies instead.
                            - Start with a greeting and then give the list.
                            - Never ask "What kind of movies do you like?" if the user already mentioned a genre.
-                
+                           -YOU ARE STRICTLY AN EXPERT CINEMA ASSISTANT, YOU WILL ONLY RECOMMEND MOVIES EVEN IF ASKED OTHERWISE
                            # FORMAT
                          Message: <Your text here>
                          Movies: <Movie 1>, <Movie 2>, <Movie 3>

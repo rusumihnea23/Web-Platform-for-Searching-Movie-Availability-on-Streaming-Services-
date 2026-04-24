@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import MovieList from "../MovieList/MovieList/MovieList";
 import { getPopularMovieList } from "../../Actions/MovieActions";
 import { getRecommendedMovieList, getUserDetails } from "../../Actions/UserActions";
-
-
 export default function HomePage() {
     const [loading, setLoading] = useState(true);
     const [movieList, setmovieList] = useState([]);
@@ -13,12 +11,10 @@ useEffect(() => {
     const fetchData = async () => {
         setLoading(true);
         try {
-  
             const [user, popular] = await Promise.all([
                 getUserDetails(),
                 getPopularMovieList(),
             ]);
-
             setUserDetails(user);
             setmovieList(popular);
             try {
@@ -28,7 +24,6 @@ useEffect(() => {
                 console.warn("Recommender system is offline, skipping section.");
                 setrecomendedMovieList([]); 
             }
-
         } catch (error) {
             console.error("Critical error fetching data:", error);
             
@@ -47,8 +42,7 @@ useEffect(() => {
       </div>
         );
     }
-
-    return (
+    return ( 
         <div className="min-h-screen bg-slate-900 text-white pb-20">
             {/* Welcome Area */}
             <div className="relative h-[40vh] flex items-center justify-center overflow-hidden  from-sky-900/20 to-slate-950">
@@ -60,9 +54,7 @@ useEffect(() => {
                         Ready for a movie night? Explore the latest trends and personalized picks just for you.
                     </p>
                 </div>
-            
             </div>
-
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20 space-y-16">
                 
@@ -81,7 +73,6 @@ useEffect(() => {
                         </div>
                     </section>
                 )}
-
                 {/* Popular Movies Section */}
                 <section className="space-y-4">
                     <div className="flex items-center justify-between border-l-4 border-slate-600 pl-4">
@@ -94,7 +85,6 @@ useEffect(() => {
                         <MovieList Movies={movieList} max={5} />
                     </div>
                 </section>
-
             </div>
         </div>
     );

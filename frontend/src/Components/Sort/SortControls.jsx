@@ -27,7 +27,7 @@ export default function SortControls({ sortBy, setSortBy, grade, setGrade, optio
         </select>
       </div>
 
-      {/* Only show Grade Filter if setGrade is provided (prevents showing it in Admin) */}  
+    
       {setGrade && (
         <div className="flex flex-col gap-1.5">
           <label className="text-slate-500 text-[10px] uppercase font-bold tracking-wider ml-1">Filter by Grade</label>

@@ -46,7 +46,14 @@ public class MovieController {
     public Mono<MovieDetailDTO> getMovieDetails(@PathVariable Long id) {
         return TMDBService.getDetailedMovie(id);
 
+
 }
+    @GetMapping("/{id}/recommendations")
+    public List<MovieDTO> getRecommandedMovies(@PathVariable Long id) {
+        return TMDBService.getMovieRecommandations(id);
+
+
+    }
     @GetMapping("/movies")
     public ResponseEntity<List<GradedMovieDTO>> getMovies(
             @RequestParam(defaultValue = "newest") String sortBy) {

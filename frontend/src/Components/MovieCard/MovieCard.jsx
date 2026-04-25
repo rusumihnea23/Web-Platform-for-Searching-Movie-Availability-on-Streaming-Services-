@@ -12,7 +12,7 @@ import WatchlistButton from "./WatchlistButton";
 import ReviewForm from "../Reviews/ReviewForm";
 import ReviewList from "../Reviews/ReviewList";
 import SortControls from "../Sort/SortControls";
-
+import Recommendations from "./Recommendations"; // Import the new component
 export default function MovieCard() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
@@ -123,7 +123,7 @@ export default function MovieCard() {
             {movie.overview}
           </p>
           <CreditsSection cast={movie.cast} crew={movie.crew} />
-
+            <Recommendations movieId={id} />
           <section className="mt-20 pt-10 border-t border-slate-800">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <h2 className="text-3xl font-bold text-white">Reviews</h2>

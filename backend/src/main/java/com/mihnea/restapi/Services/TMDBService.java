@@ -59,7 +59,19 @@ public class TMDBService {
                 .toList();
 
     }
+    public List<MovieDTO>getMovieRecommandations(Long id) {
+        @Nullable Map response = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/movie/{id}/recommendations").build(id))
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+        List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
 
+        return results.stream()
+                .map(mapper::map)
+                .toList();
+
+    }
     public Mono<MovieDetailDTO> getDetailedMovie(Long id) {
         Mono<MovieDetailDTO> detailsMono = webClient.get()
                 .uri("/movie/{id}", id)

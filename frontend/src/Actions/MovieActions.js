@@ -61,11 +61,7 @@ const getAllMovies = async (sortBy, grade) => {
     
     // Check if the data is a string and parse it manually if necessary
     const parsedData = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
-    
-    // If the API nests the array inside an object (like { data: [...] }), 
-    // make sure you return the array part here: 
-    // return parsedData.data || parsedData;
-    
+  
     return parsedData;
   } catch (err) {
     console.error(err);
@@ -73,8 +69,17 @@ const getAllMovies = async (sortBy, grade) => {
   }
 };
 
-
+const getRecommandation=async(id)=>{
+try {
+    const res = await api.get(`${mainpath}/${id}/recommendations`,);
+    console.log(res)
+    return res;
+  } catch (err) {
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+};
 //de mutat astea cu watchlist in usermovieactions
 
 
-export {getPopularMovieList,getQueryMovieList,getMovieDetails,getAllMovies};
+export {getPopularMovieList,getQueryMovieList,getMovieDetails,getAllMovies,getRecommandation};

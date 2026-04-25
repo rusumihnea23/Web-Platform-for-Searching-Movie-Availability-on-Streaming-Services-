@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* 1. Import the Dosis font from Google */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&display=swap');
+
+@theme {
+  /* 2. Define the Dosis font in your theme */
+  --font-dosis: "Dosis", sans-serif;
+}
+
 body {
-    @apply font-mono;
+  /* 3. Apply the custom font */
+  @apply font-dosis;
+  background-color: theme('colors.slate.900'); /* Matches your MovieCard bg */
+}
+
+/* Optional: Keep font-mono for specific elements like code or ratings */
+.rating-number {
+  @apply font-mono;
 }

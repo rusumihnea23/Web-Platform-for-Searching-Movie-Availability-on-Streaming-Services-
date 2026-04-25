@@ -32,11 +32,8 @@ export default function BrowseMovies() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-white pb-20">
-      <header className="h-[30vh] flex flex-col items-center justify-center bg-linear-to-b ">
-        <h1 className="text-4xl font-bold">Browse <span className="text-pink-500">Movies</span></h1>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 -mt-10 relative">
+      <main className="max-w-7xl mx-auto px-4 pt-1 relative">
        
         
         <div className="border-l-4 border-pink-500 pl-4 my-6">

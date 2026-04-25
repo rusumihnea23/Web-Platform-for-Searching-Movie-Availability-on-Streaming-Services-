@@ -1,9 +1,11 @@
 package com.mihnea.restapi.Controllers;
 
 import com.mihnea.restapi.Models.Movie;
+import com.mihnea.restapi.Services.MovieService;
 import com.mihnea.restapi.Services.RecommendationService;
 import com.mihnea.restapi.Services.TMDBService;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
+import com.mihnea.restapi.dtos.GradedMovieDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/movies")
 public class MovieController {
     private final TMDBService TMDBService;
+    private final MovieService movieService;
 
     @GetMapping
     public ResponseEntity<String> sayHello(){
@@ -43,7 +46,13 @@ public class MovieController {
     public Mono<MovieDetailDTO> getMovieDetails(@PathVariable Long id) {
         return TMDBService.getDetailedMovie(id);
 
+}
+    @GetMapping("/movies")
+    public ResponseEntity<List<GradedMovieDTO>> getMovies(
+            @RequestParam(defaultValue = "newest") String sortBy) {
 
+        List<GradedMovieDTO> movies = movieService.getAllMovies(sortBy);
+        return ResponseEntity.ok(movies);
+    }
 
-
-}}
+}

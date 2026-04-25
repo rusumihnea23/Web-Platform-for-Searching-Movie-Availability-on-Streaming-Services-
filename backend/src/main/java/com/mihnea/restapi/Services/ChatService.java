@@ -128,7 +128,7 @@ public class ChatService {
         return """
                # ROLE
                            Expert Cinema Assistant.
-                
+
                            # KNOWLEDGE BASE
                            - User's Watched: %s
                            - Curated Suggestions: %s

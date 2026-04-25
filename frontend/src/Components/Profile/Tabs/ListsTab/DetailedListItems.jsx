@@ -109,7 +109,7 @@ export default function DetailedListItems({ list, onBack }) {
                 )}
             </div>
 
-       
+
             {/* Lista de filme*/}
             {currentMovies && currentMovies.length > 0 ? (
                 <MovieList

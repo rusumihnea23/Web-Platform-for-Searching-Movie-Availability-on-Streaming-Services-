@@ -57,11 +57,11 @@ export default function Navbar() {
                   {user?.profilePicturePath ? (
                     <img
                       src={user.profilePicturePath}
-                      className="size-8 rounded-full"
+                      className="size-8 rounded-full cursor-pointer"
                       alt="User"
                     />
                   ) : (
-                    <UserCircleIcon className="w-9 h-9 bg" />
+                    <UserCircleIcon className="w-9 h-9 bg cursor-pointer" />
                   )}
                 </MenuButton>
                 <MenuItems className="absolute right-0 mt-2 w-48 bg-white py-1 shadow-lg rounded-md ring-1 ring-black/5 z-50 focus:outline-none">

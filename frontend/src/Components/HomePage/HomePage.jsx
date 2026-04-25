@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import MovieList from "../MovieList/MovieList/MovieList";
+import { useNavigate } from "react-router-dom";
 import { getPopularMovieList } from "../../Actions/MovieActions";
 import { getRecommendedMovieList, getUserDetails } from "../../Actions/UserActions";
+import { SparklesIcon as Spark } from '@heroicons/react/24/solid';
 export default function HomePage() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [movieList, setmovieList] = useState([]);
     const [recomendedMovieList, setrecomendedMovieList] = useState([]);
@@ -53,26 +56,41 @@ useEffect(() => {
                     <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
                         Ready for a movie night? Explore the latest trends and personalized picks just for you.
                     </p>
+                   
                 </div>
             </div>
+            
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20 space-y-16">
                 
                 {/* Recommended Section  */}
-                {recomendedMovieList.length > 0 && (
-                    <section className="space-y-4">
-                        <div className="flex items-center justify-between border-l-4 border-sky-500 pl-4">
-                            <div>
-                                <h2 className="text-2xl font-bold">Recommended for You</h2>
-                                <p className="text-gray-400 text-sm">Based on your taste and activity</p>
-                            </div>
-                        </div>
-                        <div className="bg-slate-900/50 p-6 rounded-2xl backdrop-blur-sm border border-white/5">
-                            <MovieList Movies={recomendedMovieList} max={5} />
+               <section className="space-y-4">
+                    <div className="flex items-end justify-between border-l-4 border-sky-500 pl-4">
+                        <div>
+                            <div className="flex space-x-1"><h2 className="text-2xl font-bold italic tracking-tight">Recommended for You </h2>
+                            <Spark className="w-5 h-5"></Spark></div>
                             
+                            <p className="text-gray-500 text-sm">Based on your activity</p>
                         </div>
-                    </section>
-                )}
+
+                        {/* Minimal Browse Trigger */}
+                        <div 
+                            onClick={() => navigate("/browse")}
+                            className="group flex items-center gap-2 cursor-pointer pb-1"
+                        >
+                            <span className="text-xs font-bold tracking-widest text-slate-500 group-hover:text-sky-400 transition-colors">
+                                BROWSE ALL
+                            </span>
+                            <svg className="w-4 h-4 text-slate-600 group-hover:text-sky-400 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-slate-900/50 p-6 rounded-2xl border border-white/5">
+                        <MovieList Movies={recomendedMovieList.length > 0 ? recomendedMovieList : movieList} max={5} />
+                    </div>
+                </section>
                 {/* Popular Movies Section */}
                 <section className="space-y-4">
                     <div className="flex items-center justify-between border-l-4 border-slate-600 pl-4">

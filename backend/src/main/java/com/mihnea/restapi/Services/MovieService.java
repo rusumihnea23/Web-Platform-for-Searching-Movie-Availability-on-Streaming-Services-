@@ -5,8 +5,11 @@ import com.mihnea.restapi.Models.Movie;
 import com.mihnea.restapi.Repositories.GenreRepository;
 import com.mihnea.restapi.Repositories.MovieRepository;
 import com.mihnea.restapi.dtos.GenreDTO;
+import com.mihnea.restapi.dtos.GradedMovieDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort; // ---> ADD THIS IMPORT <---
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -18,6 +21,7 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final TMDBService TMDBService;
     private final GenreRepository genreRepository;
+
     public Movie getOrCreateMovie(Long tmdbId) {
         return movieRepository.findByApiId(tmdbId)
                 .orElseGet(() -> {
@@ -49,4 +53,32 @@ public class MovieService {
                 });
     }
 
+    public List<GradedMovieDTO> getAllMovies(String sortBy) {
+        if (sortBy == null || sortBy.trim().isEmpty()) {
+            sortBy = "newest";
+        }
+
+        Sort sortOrder = getSortOrder(sortBy);
+        return movieRepository.findAllWithGrades(sortOrder);
+    }
+
+    private Sort getSortOrder(String sortBy) {
+        switch (sortBy.toLowerCase()) {
+            case "popular":
+                // Use JpaSort.unsafe for query aliases that don't exist in the entity
+                return JpaSort.unsafe(Sort.Direction.DESC, "popularity");
+            case "least-liked":
+                return JpaSort.unsafe(Sort.Direction.ASC, "popularity");
+            case "highest-grade":
+                return JpaSort.unsafe(Sort.Direction.DESC, "averageGrade");
+            case "lowest-grade":
+                return JpaSort.unsafe(Sort.Direction.ASC, "averageGrade");
+            case "oldest":
+                // Standard Sort.by works fine here because releaseDate IS in the Movie entity
+                return Sort.by(Sort.Direction.ASC, "releaseDate");
+            case "newest":
+            default:
+                return Sort.by(Sort.Direction.DESC, "releaseDate");
+        }
+    }
 }

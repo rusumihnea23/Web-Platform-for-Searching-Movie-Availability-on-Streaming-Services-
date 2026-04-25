@@ -49,6 +49,7 @@ public class ReviewService {
 
         return reviewRepository.findUserReviewsWithGrades(user.getId(), filterGrade, sort);
     }
+
     public List<ReviewDTO> getAllReviews(Authentication authentication, String sortBy) {
         User currentUser = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -11,6 +11,7 @@ import SearchResult from './Components/Search/SearchResults/SearchResults'
 import MovieCard from './Components/MovieCard/MovieCard'
 import Profile from './Components/Profile/Profile'
 import AdminDashboard from './Components/AdminDashboard/AdminDashboard'
+import BrowseMovies from './Components/BrowseMovies/BrowseMovies'
 function App() {
  
 
@@ -33,6 +34,7 @@ function App() {
       <Route path="/search" element={<SearchResult />} />
       <Route path="/about" element={<div  className='h-screen'><h1>About Us</h1></div>} />
       <Route path="*" element={<Notfound/>}/>
+      <Route path="/browse" element={<BrowseMovies/>}/>
     </Route>
 
     {/* Pagini publice fara navbar */}

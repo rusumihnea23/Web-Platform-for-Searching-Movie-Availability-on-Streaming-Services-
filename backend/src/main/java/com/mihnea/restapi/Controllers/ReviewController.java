@@ -52,4 +52,15 @@ public class ReviewController {
         reviewService.toggleLike(authentication, reviewId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/user/{userId}/reviews")
+    public List<ReviewDTO> getPublicReviews(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "newest") String sortBy,
+            @RequestParam(required = false) Integer grade) {
+
+        return reviewService.getReviewsByUserId(userId, sortBy, grade);
+    }
+
+
 }

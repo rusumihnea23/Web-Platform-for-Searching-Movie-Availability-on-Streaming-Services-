@@ -32,4 +32,6 @@ public interface UserRespository extends JpaRepository<User,Long> {
             @Param("role") Role role,
             @Param("searchTerm") String searchTerm
     );
+
+    Optional<User> findByUsername(String username);
 }

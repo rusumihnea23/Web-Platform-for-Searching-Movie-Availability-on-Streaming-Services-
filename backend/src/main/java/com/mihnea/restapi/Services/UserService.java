@@ -23,12 +23,12 @@ public class UserService implements IUserService{
     public void updateUser(Long id, User user) {
     User userToUpdate=userRespository.findById(id).orElseThrow(
             ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
-    validateEmail(user.getEmail());
+    validateEmail(user.getEmail(),userToUpdate.getId());
     userToUpdate.setFirstName(user.getFirstName());
     userToUpdate.setLastName(user.getLastName());
     userToUpdate.setEmail(user.getEmail());
     userToUpdate.setPassword(user.getPassword());
-
+    userToUpdate.setUsername(user.getActualUsername());
     userRespository.save(userToUpdate);
     }
 
@@ -48,6 +48,7 @@ public class UserService implements IUserService{
         dtoToReturn.setEmail(userToReturn.getEmail());
         dtoToReturn.setFirstName(userToReturn.getFirstName());
         dtoToReturn.setLastName(userToReturn.getLastName());
+        dtoToReturn.setUsername(userToReturn.getActualUsername());
         return dtoToReturn;
     }
 
@@ -61,14 +62,16 @@ public class UserService implements IUserService{
         dtoToReturn.setLastName(userToReturn.getLastName());
         dtoToReturn.setProfilePicturePath(userToReturn.getProfilePicturePath());
         dtoToReturn.setRole(userToReturn.getRole());
+        dtoToReturn.setUsername(userToReturn.getActualUsername());
         return dtoToReturn;
     }
 
-    private void validateEmail(String email){
-        Optional<User> userOptional = userRespository.getUserByEmail(email);
-        if(userOptional.isPresent()){
-            throw new IllegalStateException(String.format("Email address %s already exists", email));
-        }
+    private void validateEmail(String email, Long currentUserId) {
+        userRespository.getUserByEmail(email).ifPresent(user -> {
+            if (user.getId()!=(currentUserId)) {
+                throw new IllegalStateException(String.format("Email address %s already taken", email));
+            }
+        });
     }
 
     public void updateUserProfilePicture(Authentication authentication,String profilePicturePath) {
@@ -99,5 +102,19 @@ public class UserService implements IUserService{
         userToUpdate.setLastName(lastName);
         userRespository.save(userToUpdate);
     }
+    public UserDTO getPublicProfileByUsername(String username) {
+        User userToReturn = userRespository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("User with username @%s doesn't exist", username)
+                ));
+        UserDTO dtoToReturn=new UserDTO();
+        dtoToReturn.setId(userToReturn.getId());
+        dtoToReturn.setEmail(userToReturn.getEmail());
+        dtoToReturn.setFirstName(userToReturn.getFirstName());
+        dtoToReturn.setLastName(userToReturn.getLastName());
+        dtoToReturn.setUsername(userToReturn.getActualUsername());
+        return dtoToReturn;
+    }
+
 
 }

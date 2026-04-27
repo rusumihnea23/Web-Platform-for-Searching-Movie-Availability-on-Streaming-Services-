@@ -46,11 +46,14 @@ public class DataInitializer implements CommandLineRunner {
         if(userRespository.getUserByEmail("admin2").isPresent())
             System.out.println("admin already exist");
         else {
-            var admin=User.builder().
-                    email("admin2").
-                    password(passwordEncoder.
-                            encode("123"))
-                    .role(Role.ROLE_ADMIN).build();
+            var admin = User.builder()
+                    .firstName("Admin")
+                    .lastName("User")
+                    .email("admin@test.com")
+                    .password(passwordEncoder.encode("password"))
+                    .role(Role.ROLE_ADMIN)
+                    .username("admin")
+                    .build();
 
             userRespository.save(admin);
             System.out.println("admin created");

@@ -50,5 +50,10 @@ public class WatchListController {
     public Boolean isMovieInUserWatchList(Authentication authentication,@PathVariable Long id){
         return movieWatchListService.isMovieInWatchlist(authentication,id);
     }
+    @GetMapping("/user/{userId}/watchlist")
+    public List<MovieDTO> getPublicWatchlist(@PathVariable Long userId) {
+        return movieWatchListService.getWatchlistById(userId);
+    }
+
 
 }

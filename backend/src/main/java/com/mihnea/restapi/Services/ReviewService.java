@@ -27,7 +27,11 @@ public class ReviewService {
         return userRespository.getUserByEmail(authentication.getName())
                 .map(User::getId).orElse(-1L);
     }
-
+    public List<ReviewDTO> getReviewsByUserId(Long userId, String sortBy, Integer grade) {
+        Sort sort = getSortOrder(sortBy);
+        Integer filterGrade = (grade != null && grade > 0) ? grade : null;
+        return reviewRepository.findUserReviewsWithGrades(userId, grade, sort);
+    }
     public List<ReviewDTO> getReviewsByMovie(Authentication auth, Long movieId, String sortBy, Integer grade) {
         Sort sort = getSortOrder(sortBy);
         Long currentUserId = getCurrentUserId(auth);

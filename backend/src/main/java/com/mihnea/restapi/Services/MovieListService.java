@@ -21,69 +21,17 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MovieListService {
-private  final UserRespository userRespository;
-private final MovieListRepository listRepository;
-private final MovieService movieService;
-    public void createList(Authentication authentication, MovieListRequest request){
-        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
-        Movie m = null;
+    private final UserRespository userRespository;
+    private final MovieListRepository listRepository;
+    private final MovieService movieService;
 
-        MovieList movieList= (MovieList.builder()
-                        .name(request.getName())
-                        .description(request.getDescription())
-                        .owner(user)
-                .movies(new ArrayList<>())
-                        .build());
-        if(request.getMovieId()!=null) {
-            m = movieService.getOrCreateMovie(request.getMovieId());
-            movieList.getMovies().add(m);
-        }
-        listRepository.save(movieList);
-}
-        public List<LightListMovieDTO> getAllLightList(Authentication authentication){
-            User user = userRespository.getUserByEmail(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            List<MovieList> userLists = listRepository.findByOwnerId(user.getId());
-            return userLists.stream()
-                    .map(list -> LightListMovieDTO.builder()
-                            .id(list.getId())
-                            .name(list.getName())
-                            .build())
-                    .toList();
-        }
-    public List<ListMovieDTO> getAllListsFull(Authentication authentication) {
-        User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        List<MovieList> userLists = listRepository.findByOwnerId(user.getId());
-
-        return userLists.stream()
-                .map(list -> ListMovieDTO.builder()
-                        .id(list.getId())
-                        .name(list.getName())
-                        .description(list.getDescription())
-                        .movies(list.getMovies().stream()
-                                .map(movie -> new MovieDTO(
-                                        movie.getApiId(),
-                                        movie.getTitle(),
-                                        movie.getOverview(),
-                                        movie.getReleaseDate(),
-                                        movie.getPosterPath()
-                                ))
-                                .toList())
-                        .build())
-                .toList();
-    }
-
-    public List<ListMovieDTO> getList(Authentication authentication,Long id) {
-        User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), id)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
-        return Collections.singletonList(ListMovieDTO.builder()
-                .id(movieList.getId())
-                .name(movieList.getName())
-                .description(movieList.getDescription())
-                .movies(movieList.getMovies().stream()
+    // --- NEW HELPER METHOD (The "Constant" Logic) ---
+    private ListMovieDTO mapToListDTO(MovieList list) {
+        return ListMovieDTO.builder()
+                .id(list.getId())
+                .name(list.getName())
+                .description(list.getDescription())
+                .movies(list.getMovies().stream()
                         .map(movie -> new MovieDTO(
                                 movie.getApiId(),
                                 movie.getTitle(),
@@ -92,53 +40,120 @@ private final MovieService movieService;
                                 movie.getPosterPath()
                         ))
                         .toList())
-                .build());
+                .build();
+    }
 
-}
+    public List<ListMovieDTO> getListsByUserId(Long userId) {
+        List<MovieList> userLists = listRepository.findByOwnerId(userId);
+        return userLists.stream()
+                .map(this::mapToListDTO)
+                .toList();
+    }
+    public List<LightListMovieDTO> getAllLightList(Authentication authentication){
+
+        User user = userRespository.getUserByEmail(authentication.getName())
+
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<MovieList> userLists = listRepository.findByOwnerId(user.getId());
+
+        return userLists.stream()
+
+                .map(list -> LightListMovieDTO.builder()
+
+                        .id(list.getId())
+
+                        .name(list.getName())
+
+                        .build())
+
+                .toList();
+
+    }
+    public ListMovieDTO getListById(Long listId) {
+        MovieList list = listRepository.findById(listId)
+                .orElseThrow(() -> new RuntimeException("List not found"));
+        return mapToListDTO(list);
+    }
 
 
+    public List<ListMovieDTO> getAllListsFull(Authentication authentication) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return getListsByUserId(user.getId());
+    }
+
+    public List<ListMovieDTO> getList(Authentication authentication, Long id) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Use findByOwnerIdAndId to ensure only the owner can access this via the "Me" route
+        MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), id)
+                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+
+        return Collections.singletonList(mapToListDTO(movieList));
+    }
+
+    // --- MODIFICATION LOGIC (Keep Authentication for Security) ---
+
+    public void createList(Authentication authentication, MovieListRequest request){
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        MovieList movieList = MovieList.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .owner(user)
+                .movies(new ArrayList<>())
+                .build();
+
+        if(request.getMovieId() != null) {
+            Movie m = movieService.getOrCreateMovie(request.getMovieId());
+            movieList.getMovies().add(m);
+        }
+        listRepository.save(movieList);
+    }
+    public void updateListDetails(Authentication authentication, Long listId, MovieListRequest request) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
+
+                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+        if (request.getName() != null) {
+            movieList.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+
+            movieList.setDescription(request.getDescription());
+        }
+        listRepository.save(movieList);
+
+    }
     public void addMovieToList(Authentication authentication, Long listId, Long movieId) {
         User user = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
                 .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+
         Movie movie = movieService.getOrCreateMovie(movieId);
         if (!movieList.getMovies().contains(movie)) {
             movieList.getMovies().add(movie);
             listRepository.save(movieList);
-        }else throw new RuntimeException("List already contains movie");
-
+        } else throw new RuntimeException("List already contains movie");
     }
-
 
     public void removeMovieFromList(Authentication authentication, Long listId, Long movieId) {
         User user = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
                 .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+
         Movie movie = movieService.getOrCreateMovie(movieId);
         if (movieList.getMovies().contains(movie)) {
             movieList.getMovies().remove(movie);
             listRepository.save(movieList);
-        }else throw new RuntimeException("List dosent contain movie");
-
+        } else throw new RuntimeException("List doesn't contain movie");
     }
-
-
-    public void updateListDetails(Authentication authentication, Long listId, MovieListRequest request) {
-        User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
-        if (request.getName() != null) {
-            movieList.setName(request.getName());
-        }
-        if (request.getDescription() != null) {
-            movieList.setDescription(request.getDescription());
-        }
-        listRepository.save(movieList);
-    }
-
 
     public void deleteList(Authentication authentication, Long listId) {
         User user = userRespository.getUserByEmail(authentication.getName())

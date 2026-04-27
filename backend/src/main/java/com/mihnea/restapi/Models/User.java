@@ -38,13 +38,16 @@ public class User implements UserDetails {
     private String profilePicturePath;
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    @Column(unique = true, nullable = false)
+    private String username;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<UserMovieLog> userMovieLog;
-
+    public String getActualUsername() {
+        return username;
+    }
     @ManyToMany
     @JoinTable(
             name = "user_watchlist",

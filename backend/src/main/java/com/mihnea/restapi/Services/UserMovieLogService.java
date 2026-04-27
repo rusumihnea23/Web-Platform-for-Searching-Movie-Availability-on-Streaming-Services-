@@ -36,7 +36,14 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
             log.getUserWatchDates().add(request.getWatchDate());
             logRepository.save(log);
 }
-
+    public List<MovieDTO> getLogsById(Long userId) {
+        List<UserMovieLog> logs = logRepository.findByUserId(userId);
+        return logs.stream()
+                .map(log -> {
+                    Movie m = log.getMovie();
+                    return new MovieDTO(m.getApiId(), m.getTitle(), m.getOverview(), m.getReleaseDate(), m.getPosterPath());
+                }).toList();
+    }
     public List<MovieDTO> getUserLoggedMovies(Long userId){
         List<UserMovieLog> logs = logRepository.findByUserId(userId);
         return  logs.stream()

@@ -45,4 +45,8 @@ public class UserMovieLogController {
     public ResponseEntity<List<UserLogDTO>> getDetailedLogs(Authentication authentication) {
         return ResponseEntity.ok(userMovieLogService.getUserLogsWithGrades(authentication));
     }
+    @GetMapping("/user/{userId}")
+    public List<MovieDTO> getPublicLogs(@PathVariable Long userId) {
+        return userMovieLogService.getLogsById(userId);
+    }
 }

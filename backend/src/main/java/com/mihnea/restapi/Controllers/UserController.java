@@ -8,6 +8,7 @@ import com.mihnea.restapi.dtos.Requests.UpdateNameRequest;
 import com.mihnea.restapi.dtos.Requests.UpdateProfilePictureRequest;
 import com.mihnea.restapi.dtos.UserDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,10 @@ public class UserController {
     @GetMapping(value = "/details")
     public UserDTO getUserDetails(Authentication authentication) {
         return userService.getLoggedUserDetails(authentication);
+    }
+    @GetMapping("/public/{username}")
+    public ResponseEntity<UserDTO> getProfile(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getPublicProfileByUsername(username));
     }
     @PatchMapping(path="/profile/picture")
     public void updateUserPicture(Authentication authentication,@RequestBody UpdateProfilePictureRequest request){

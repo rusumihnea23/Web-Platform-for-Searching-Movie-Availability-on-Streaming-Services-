@@ -26,14 +26,18 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Email already in use");
         }
         var user= User.builder().firstName(request.getFirstName()).
-                lastName(request.getLastName()).
+                lastName(request.getLastName())
+                .username(request.getUsername()).
                 email(request.getEmail()).
                 password(passwordEncoder.
                         encode(request.getPassword()))
                 .role(Role.ROLE_USER).build();
         repository.save(user);
         var jwtToken=jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().token(jwtToken).id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
     }
 
     public @Nullable AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -41,6 +45,11 @@ public class AuthenticationService {
         var user= repository.getUserByEmail(request.getEmail()).orElseThrow(); //todo try and catch the exception
         repository.save(user);
         var jwtToken=jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
     }
 }

@@ -60,6 +60,15 @@ public class MovieListController {
         movieListService.removeMovieFromList(authentication, listId, movieId);
         return ResponseEntity.ok("Movie removed from list successfully");
     }
+    @GetMapping("/user/{userId}")
+    public List<ListMovieDTO> getPublicLists(@PathVariable Long userId) {
+        return movieListService.getListsByUserId(userId);
+    }
 
+    // This one stays the same for everyone (viewing a single list by ID)
+    @GetMapping("lists/{listId}")
+    public ListMovieDTO getSingleList(@PathVariable Long listId) {
+        return movieListService.getListById(listId);
+    }
 
 }

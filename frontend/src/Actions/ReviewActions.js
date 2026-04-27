@@ -84,7 +84,16 @@ const toggleReviewLike = async (reviewId) => {
     return false;
   }
 };
-
+const getPublicUserReviews = async (userId, sortBy = "newest", grade = null) => {
+  try {
+    const query = buildQuery(sortBy, grade);
+    const res = await api.get(`${mainpath}/user/${userId}/reviews${query}`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
 export {
   addReview,
   getReviewsByMovie,
@@ -93,4 +102,5 @@ export {
   deleteReview,
   editReview,
   toggleReviewLike,
+  getPublicUserReviews
 };

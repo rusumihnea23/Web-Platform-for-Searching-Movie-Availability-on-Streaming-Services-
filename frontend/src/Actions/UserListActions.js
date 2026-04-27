@@ -90,6 +90,28 @@ const removeMovieFromList = async (listId, movieId) => {
   }
 };
 
+
+const getPublicUserLists = async (userId) => {
+  try {
+    const res = await api.get(`${mainpath}/user/${userId}`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
+
+const getPublicSingleList = async (listId) => {
+  try {
+    // Note: your controller uses "/lists/{listId}" for the public route
+    const res = await api.get(`${mainpath}/lists/${listId}`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
 export {
   createMovieList,
   getUserListsSparse,
@@ -98,5 +120,7 @@ export {
   updateListDetails,
   deleteList,
   addMovieToList,
-  removeMovieFromList
+  removeMovieFromList,
+  getPublicUserLists,
+  getPublicSingleList
 };

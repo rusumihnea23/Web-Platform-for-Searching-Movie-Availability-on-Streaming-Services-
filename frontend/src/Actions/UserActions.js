@@ -11,7 +11,19 @@ const getUserDetails= async()=>{
      alert(err.response?.data?.message || err.message);
 }
 
+
 }
+
+const getPublicProfile = async (username) => {
+  try {
+    const res = await api.get(`${mainpath}/public/${username}`);
+    console.log(res.data);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    alert(err.response?.data?.message || err.message);
+  }
+};
 const updateFirstName= async(Name)=>{
   try{
     const res = await api.patch(`${mainpath}/profile/firstName`,{Name});
@@ -20,7 +32,7 @@ const updateFirstName= async(Name)=>{
     console.error(err);
      alert(err.response?.data?.message || err.message);
   }
-}
+} 
 const updateLastName= async(Name)=>{
   try{
     const res = await api.patch(`${mainpath}/profile/lastName`,{Name});
@@ -39,4 +51,4 @@ const getRecommendedMovieList =async () => {
      alert(err.response?.data?.message || err.message);
   }
 };
-export  {getUserDetails,updateFirstName,updateLastName,getRecommendedMovieList}
+export  {getUserDetails,updateFirstName,updateLastName,getRecommendedMovieList,getPublicProfile}

@@ -1,55 +1,58 @@
 import { useEffect, useState } from "react";
-import { getUserReviews } from "../../../Actions/ReviewActions";
+import { getUserReviews,getPublicUserReviews } from "../../../Actions/ReviewActions";
+
 import ReviewList from "../../Reviews/ReviewList";
 import SortControls from "../../Sort/SortControls";
 
-export default function ReviewsTab() {
+// userId present → public read-only view (sort/filter work, no delete).
+// userId absent  → own profile with delete callback.
+export default function ReviewsTab({ userId }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // 1. Add states for sorting and filtering
   const [sortBy, setSortBy] = useState("newest");
   const [grade, setGrade] = useState(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      // 2. Pass the parameters to your action
-      const data = await getUserReviews(sortBy, grade); 
+      const data = userId
+        ? await getPublicUserReviews(userId, sortBy, grade)
+        : await getUserReviews(sortBy, grade);
       setReviews(data || []);
     } catch (err) {
-      console.error("Error fetching user reviews:", err);
+      console.error("Error fetching reviews:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 3. Trigger fetch whenever sortBy or grade changes
-  useEffect(() => { 
-    fetchData(); 
-  }, [sortBy, grade]); 
+  useEffect(() => {
+    fetchData();
+  }, [userId, sortBy, grade]);
 
   return (
     <div className="space-y-2">
-      <h2 className="text-xl font-bold text-white mb-4">My Movie Reviews</h2>
-      
-      {/* 4. Add the controls at the top */}
-      <SortControls 
-        sortBy={sortBy} 
-        setSortBy={setSortBy} 
-        grade={grade} 
-        setGrade={setGrade} 
+      <h2 className="text-xl font-bold text-white mb-4">
+        {userId ? "Movie Reviews" : "My Movie Reviews"}
+      </h2>
+
+      <SortControls
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        grade={grade}
+        setGrade={setGrade}
       />
 
       {loading ? (
         <div className="flex justify-center p-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-pink-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-pink-500" />
         </div>
       ) : (
-        <ReviewList 
-          reviews={reviews} 
-          showMovieTitle={true} 
-          onReviewDeleted={fetchData} 
+        <ReviewList
+          reviews={reviews}
+          showMovieTitle={true}
+          // Only pass delete callback on own profile
+          onReviewDeleted={!userId ? fetchData : undefined}
         />
       )}
     </div>

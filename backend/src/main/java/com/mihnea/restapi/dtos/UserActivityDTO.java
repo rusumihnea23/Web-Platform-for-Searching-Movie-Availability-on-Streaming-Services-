@@ -11,6 +11,7 @@ public class UserActivityDTO {
     private String profile_picture_path;
     private String firstName;
     private String lastName;
+    private String username;
     private Long totalLogs;
     private Long totalReviews;
 }

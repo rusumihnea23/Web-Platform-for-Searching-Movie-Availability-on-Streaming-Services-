@@ -16,12 +16,11 @@ import Profile from './Components/Profile/Profile'
 import AdminDashboard from './Components/AdminDashboard/AdminDashboard'
 import BrowseMovies from './Components/BrowseMovies/BrowseMovies'
 import PublicProfile from './Components/Profile/PublicProfile'
-
+import PublicUserDirectory from './Components/UserDirectory/PublicUserDirectory'
 function App() {
   return (
     <div className='font-semibold bg-sky-900 min-h-screen'>
-      {/* 2. Wrap everything inside AuthProvider */}
-    
+  
         <HashRouter>
           <Routes>
             <Route element={<NavbarLayout />}> 
@@ -31,6 +30,7 @@ function App() {
                 <Route path="/profile" element={<Profile/>}/>
                <Route path="/profile" element={<Profile />} />
 <Route path="/profile/:username" element={<PublicProfile />} />
+<Route path="/users" element={<PublicUserDirectory />} />
               </Route>
 
               <Route path="/movies/:id/details" element={<MovieCard />} />

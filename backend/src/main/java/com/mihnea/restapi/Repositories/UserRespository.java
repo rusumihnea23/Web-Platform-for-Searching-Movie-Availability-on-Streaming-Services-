@@ -17,7 +17,7 @@ public interface UserRespository extends JpaRepository<User,Long> {
 
 
     @Query("SELECT new com.mihnea.restapi.dtos.UserActivityDTO(" +
-            "u.id, u.email, u.profilePicturePath, u.firstName, u.lastName, " +
+            "u.id, u.email, u.profilePicturePath, u.firstName, u.lastName,u.username, " +
             "COUNT(DISTINCT m.id), " +
             "COUNT(DISTINCT r.id)) " +
             "FROM User u " +
@@ -26,7 +26,8 @@ public interface UserRespository extends JpaRepository<User,Long> {
             "WHERE u.role = :role " +
             "AND (lower(u.firstName) LIKE lower(concat('%', :searchTerm, '%')) " +
             "OR lower(u.lastName) LIKE lower(concat('%', :searchTerm, '%')) " +
-            "OR lower(u.email) LIKE lower(concat('%', :searchTerm, '%'))) " + // Added email here
+            "OR lower(u.email) LIKE lower(concat('%', :searchTerm, '%'))" +
+            "OR lower(u.username) LIKE lower(concat('%', :searchTerm, '%'))) " + // Added email here
             "GROUP BY u.id, u.email, u.profilePicturePath, u.firstName, u.lastName")
     List<UserActivityDTO> findUserActivity(
             @Param("role") Role role,

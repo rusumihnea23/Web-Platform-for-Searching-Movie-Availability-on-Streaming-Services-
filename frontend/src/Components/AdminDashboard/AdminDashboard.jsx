@@ -3,7 +3,7 @@ import { ChartBarIcon, ChatBubbleLeftRightIcon, UsersIcon } from '@heroicons/rea
 import { getGeneralStats, getLogsChart, getReviewsChart, getTopMovies } from '../../Actions/GeneralAdminDashboardActions'; 
 import GeneralComponent from "./GeneralComponent";
 import AdminReviewManagement from "./AdminReviewManagement";
-import AdminUserManagement from "./AdminUserManagement";
+import AdminUserManagement from "../UserDirectory/AdminUserManagement";
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: ChartBarIcon, color: 'bg-blue-600' },

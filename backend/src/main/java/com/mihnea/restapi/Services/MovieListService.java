@@ -70,9 +70,12 @@ public class MovieListService {
 
     // --- Existing methods unchanged ---
 
-    public List<ListMovieDTO> getListsByUserId(Long userId) {
-        List<MovieList> userLists = listRepository.findByOwnerId(userId);
-        return userLists.stream().map(this::mapToListDTO).toList();
+    public List<PublicListDTO> getPublicUserLists(Authentication authentication, Long userId) {
+        Long currentUserId = getCurrentUserId(authentication);
+        List<MovieList> lists = listRepository.findByOwnerId(userId);
+        return lists.stream()
+                .map(list -> mapToPublicDTO(list, currentUserId))
+                .toList();
     }
 
     public List<LightListMovieDTO> getAllLightList(Authentication authentication) {
@@ -93,10 +96,10 @@ public class MovieListService {
         return mapToListDTO(list);
     }
 
-    public List<ListMovieDTO> getAllListsFull(Authentication authentication) {
+    public List<PublicListDTO> getAllListsFull(Authentication authentication) {
         User user = userRespository.getUserByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return getListsByUserId(user.getId());
+        return getPublicUserLists(authentication,user.getId());
     }
 
     public List<ListMovieDTO> getList(Authentication authentication, Long id) {
@@ -136,7 +139,8 @@ public class MovieListService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         MovieList movieList = listRepository.findById(listId)
                 .orElseThrow(() -> new RuntimeException("List not found"));
-
+        if (movieList.getOwner().getId() == user.getId())
+            throw new RuntimeException("Cannot like your own list");
         Optional<MovieListLike> existingLike = movieListLikeRepository.findByUserAndMovieList(user, movieList);
         if (existingLike.isPresent()) {
             movieListLikeRepository.delete(existingLike.get());

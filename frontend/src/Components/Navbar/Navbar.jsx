@@ -7,7 +7,8 @@ import { logout } from "../../Actions/AuthActions"
 import { LogModal } from '../LogModal/LogModal';
 import SearchBar from '../Search/SearchBar/SearchBar';
 
-const navigation = [{ name: 'Home', href: '/' }, { name: 'Top-Users', href: '/users' },];
+
+const navigation = [{ name: 'Home', href: '/' }, { name: 'Top-Users', href: '/users' },{ name: 'Lists', href: '/lists' },];
 
 export default function Navbar() {
   const [user, setUser] = useState(null);

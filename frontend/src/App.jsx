@@ -17,6 +17,7 @@ import AdminDashboard from './Components/AdminDashboard/AdminDashboard'
 import BrowseMovies from './Components/BrowseMovies/BrowseMovies'
 import PublicProfile from './Components/Profile/PublicProfile'
 import PublicUserDirectory from './Components/UserDirectory/PublicUserDirectory'
+import BrowseLists from './Components/BrowseLists/BrowseLists'
 function App() {
   return (
     <div className='font-semibold bg-sky-900 min-h-screen'>
@@ -31,6 +32,7 @@ function App() {
                <Route path="/profile" element={<Profile />} />
 <Route path="/profile/:username" element={<PublicProfile />} />
 <Route path="/users" element={<PublicUserDirectory />} />
+<Route path="/lists" element={<BrowseLists />} />
               </Route>
 
               <Route path="/movies/:id/details" element={<MovieCard />} />

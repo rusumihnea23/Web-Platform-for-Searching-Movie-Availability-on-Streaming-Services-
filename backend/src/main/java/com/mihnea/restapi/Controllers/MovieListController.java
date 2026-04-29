@@ -29,7 +29,7 @@ public class MovieListController {
 
     }
     @GetMapping("/detailed")
-    public List<ListMovieDTO> getUserLists(Authentication authentication){
+    public List<PublicListDTO> getUserLists(Authentication authentication){
         return movieListService.getAllListsFull(authentication);
 
     }
@@ -62,8 +62,8 @@ public class MovieListController {
         return ResponseEntity.ok("Movie removed from list successfully");
     }
     @GetMapping("/user/{userId}")
-    public List<ListMovieDTO> getPublicLists(@PathVariable Long userId) {
-        return movieListService.getListsByUserId(userId);
+    public List<PublicListDTO> getPublicLists(Authentication authentication,@PathVariable Long userId) {
+        return movieListService.getPublicUserLists(authentication,userId);
     }
 
     @GetMapping("lists/{listId}")

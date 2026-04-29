@@ -112,6 +112,40 @@ const getPublicSingleList = async (listId) => {
   }
 };
 
+
+const getAllLists = async () => {
+  try {
+    // Note: your controller uses "/lists/{listId}" for the public route
+    const res = await api.get(`${mainpath}/public`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
+
+const likeList = async (listId) => {
+  try {
+    // Note: your controller uses "/lists/{listId}" for the public route
+    const res = await api.post(`${mainpath}/${listId}/like`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+const getLikedLists = async () => {
+  try {
+    // Note: your controller uses "/lists/{listId}" for the public route
+    const res = await api.get(`${mainpath}/me/liked`);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
+
 export {
   createMovieList,
   getUserListsSparse,
@@ -122,5 +156,8 @@ export {
   addMovieToList,
   removeMovieFromList,
   getPublicUserLists,
-  getPublicSingleList
+  getPublicSingleList,
+  getAllLists,
+  likeList,
+  getLikedLists
 };

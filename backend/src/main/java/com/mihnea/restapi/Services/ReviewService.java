@@ -35,8 +35,6 @@ public class ReviewService {
     public List<ReviewDTO> getReviewsByMovie(Authentication auth, Long movieId, String sortBy, Integer grade) {
         Sort sort = getSortOrder(sortBy);
         Long currentUserId = getCurrentUserId(auth);
-
-        // If grade is 0 or null, pass null to the repository to trigger the "IS NULL" check
         Integer filterGrade = (grade != null && grade > 0) ? grade : null;
 
         return reviewRepository.findReviewsWithGrades(movieId, currentUserId, filterGrade, sort);
@@ -69,7 +67,6 @@ public class ReviewService {
             case "least-liked":
                 return Sort.by(Sort.Direction.ASC, "likeCount");
             case "highest-grade":
-                // Target the alias defined in the @Query
                 return Sort.by(Sort.Direction.DESC, "gradeAlias");
             case "lowest-grade":
                 return Sort.by(Sort.Direction.ASC, "gradeAlias");

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 @Entity
 @Data
@@ -40,4 +41,6 @@ public class MovieList {
     )
     private List<Movie> movies;
 
+    @OneToMany(mappedBy = "movieList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MovieListLike> likes = new ArrayList<>();
 }

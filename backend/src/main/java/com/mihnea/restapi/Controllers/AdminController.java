@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 @RestController
-@RequestMapping("/api/admin/dashboard")
-@PreAuthorize("hasRole('ADMIN')") // Your standard Spring Security
+@RequestMapping("/api/admin/dashboard")// Your standard Spring Security
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
@@ -41,7 +40,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getTopMovies(limit));
 
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/reviews/delete")
     public ResponseEntity<String> deleteReview(Authentication authentication, @RequestBody Long reviewId) {
         adminService.deleteReview(authentication, reviewId);
@@ -63,7 +62,7 @@ public class AdminController {
         List<UserActivityDTO> activity = adminService.searchUsers(query);
         return ResponseEntity.ok(activity);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/delete")
     public ResponseEntity<String> deleteUser(Authentication authentication, @RequestBody Long userId) {
         adminService.deleteUser(authentication, userId);

@@ -4,6 +4,7 @@ package com.mihnea.restapi.Controllers;
 import com.mihnea.restapi.Services.MovieListService;
 import com.mihnea.restapi.dtos.LightListMovieDTO;
 import com.mihnea.restapi.dtos.ListMovieDTO;
+import com.mihnea.restapi.dtos.PublicListDTO;
 import com.mihnea.restapi.dtos.Requests.MovieListRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -65,10 +66,26 @@ public class MovieListController {
         return movieListService.getListsByUserId(userId);
     }
 
-    // This one stays the same for everyone (viewing a single list by ID)
     @GetMapping("lists/{listId}")
     public ListMovieDTO getSingleList(@PathVariable Long listId) {
         return movieListService.getListById(listId);
     }
+    @GetMapping("/public")
+    public ResponseEntity<List<PublicListDTO>> getPlatformLists(
+            Authentication authentication,
+            @RequestParam(defaultValue = "popular") String sortBy,
+            @RequestParam(required = false) String name) {
+        return ResponseEntity.ok(movieListService.getAllPlatformLists(authentication, sortBy, name));
+    }
 
+    @PostMapping("/{listId}/like")
+    public ResponseEntity<Void> toggleLike(Authentication authentication, @PathVariable Long listId) {
+        movieListService.toggleListLike(authentication, listId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me/liked")
+    public ResponseEntity<List<PublicListDTO>> getLikedLists(Authentication authentication) {
+        return ResponseEntity.ok(movieListService.getLikedLists(authentication));
+    }
 }

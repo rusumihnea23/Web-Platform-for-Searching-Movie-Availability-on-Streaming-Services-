@@ -1,5 +1,6 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Models.Role;
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Repositories.UserRespository;
@@ -56,7 +57,7 @@ public class AdminService {
     }
     public void deleteUser(Authentication authentication,Long id){
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (user.getRole()!= Role.ROLE_ADMIN) {
             throw new RuntimeException("Unauthorized");
         }

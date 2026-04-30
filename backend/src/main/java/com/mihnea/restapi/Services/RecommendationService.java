@@ -1,5 +1,6 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Repositories.MovieRepository;
 import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.utils.Mapper;
@@ -26,7 +27,7 @@ public class RecommendationService {
 
     public List<MovieDTO> getRecommendations(Authentication authentication) {
 
-        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new ResourceNotFoundException("User not found"));
 
         Long userId=user.getId();
         String url = "http://localhost:8000/recommend/" + userId;

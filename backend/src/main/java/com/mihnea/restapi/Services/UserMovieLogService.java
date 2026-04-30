@@ -1,5 +1,6 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Models.Movie;
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Models.UserMovieLog;
@@ -54,7 +55,7 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                 .collect(Collectors.toList());
     }
     public List<MovieDTO> getUserLoggedMovies(Authentication authentication){
-        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new ResourceNotFoundException("User not found"));
         List<UserMovieLog> logs = logRepository.findByUserId(user.getId());
         return  logs.stream()
                 .map(log -> {
@@ -64,7 +65,7 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                 .collect(Collectors.toList());
     }
     public Boolean isMovieInLogs(Authentication authentication,Long id){
-        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new ResourceNotFoundException("User not found"));
         Movie movie=movieService.getOrCreateMovie(id);
 
 
@@ -73,7 +74,7 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
 
     public List<UserLogDTO> getUserLogsWithGrades(Authentication authentication) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         List<UserMovieLog> logs = logRepository.findByUserId(user.getId());
         return logs.stream()
                 .map(log -> {

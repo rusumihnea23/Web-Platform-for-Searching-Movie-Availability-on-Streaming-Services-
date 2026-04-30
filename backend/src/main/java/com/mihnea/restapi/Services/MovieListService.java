@@ -1,5 +1,7 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.BadRequestException;
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Models.*;
 import com.mihnea.restapi.Repositories.MovieListLikeRepository;
 import com.mihnea.restapi.Repositories.MovieListRepository;
@@ -80,7 +82,7 @@ public class MovieListService {
 
     public List<LightListMovieDTO> getAllLightList(Authentication authentication) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         List<MovieList> userLists = listRepository.findByOwnerId(user.getId());
         return userLists.stream()
                 .map(list -> LightListMovieDTO.builder()
@@ -92,21 +94,21 @@ public class MovieListService {
 
     public ListMovieDTO getListById(Long listId) {
         MovieList list = listRepository.findById(listId)
-                .orElseThrow(() -> new RuntimeException("List not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
         return mapToListDTO(list);
     }
 
     public List<PublicListDTO> getAllListsFull(Authentication authentication) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return getPublicUserLists(authentication,user.getId());
     }
 
     public List<ListMovieDTO> getList(Authentication authentication, Long id) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), id)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
         return Collections.singletonList(mapToListDTO(movieList));
     }
 
@@ -136,11 +138,11 @@ public class MovieListService {
 
     public void toggleListLike(Authentication authentication, Long listId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findById(listId)
-                .orElseThrow(() -> new RuntimeException("List not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found"));
         if (movieList.getOwner().getId() == user.getId())
-            throw new RuntimeException("Cannot like your own list");
+            throw new BadRequestException("Cannot like your own list");
         Optional<MovieListLike> existingLike = movieListLikeRepository.findByUserAndMovieList(user, movieList);
         if (existingLike.isPresent()) {
             movieListLikeRepository.delete(existingLike.get());
@@ -153,7 +155,7 @@ public class MovieListService {
 
     public List<PublicListDTO> getLikedLists(Authentication authentication) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return movieListLikeRepository.findAll().stream()
                 .filter(like -> like.getUser().getId() == user.getId())
@@ -175,7 +177,7 @@ public class MovieListService {
 
     public void createList(Authentication authentication, MovieListRequest request) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = MovieList.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -191,9 +193,9 @@ public class MovieListService {
 
     public void updateListDetails(Authentication authentication, Long listId, MovieListRequest request) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
         if (request.getName() != null) movieList.setName(request.getName());
         if (request.getDescription() != null) movieList.setDescription(request.getDescription());
         listRepository.save(movieList);
@@ -201,33 +203,33 @@ public class MovieListService {
 
     public void addMovieToList(Authentication authentication, Long listId, Long movieId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
         Movie movie = movieService.getOrCreateMovie(movieId);
         if (!movieList.getMovies().contains(movie)) {
             movieList.getMovies().add(movie);
             listRepository.save(movieList);
-        } else throw new RuntimeException("List already contains movie");
+        } else throw new BadRequestException("List already contains movie");
     }
 
     public void removeMovieFromList(Authentication authentication, Long listId, Long movieId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
         Movie movie = movieService.getOrCreateMovie(movieId);
         if (movieList.getMovies().contains(movie)) {
             movieList.getMovies().remove(movie);
             listRepository.save(movieList);
-        } else throw new RuntimeException("List doesn't contain movie");
+        } else throw new BadRequestException("List doesn't contain movie");
     }
 
     public void deleteList(Authentication authentication, Long listId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
-                .orElseThrow(() -> new RuntimeException("List not found or access denied"));
+                .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
         listRepository.delete(movieList);
     }
 }

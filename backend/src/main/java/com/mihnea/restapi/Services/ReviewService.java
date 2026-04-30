@@ -1,5 +1,7 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.BadRequestException;
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Models.*;
 import com.mihnea.restapi.Repositories.ReviewLikeRepository;
 import com.mihnea.restapi.Repositories.ReviewRepository;
@@ -42,7 +44,7 @@ public class ReviewService {
 
     public List<ReviewDTO> getAllUserReviews(Authentication authentication, String sortBy, Integer grade) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Sort sort = getSortOrder(sortBy);
 
@@ -54,7 +56,7 @@ public class ReviewService {
 
     public List<ReviewDTO> getAllReviews(Authentication authentication, String sortBy) {
         User currentUser = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Sort sort = getSortOrder(sortBy);
 
        return reviewRepository.findAllReviewsForAdmin( sort);
@@ -80,7 +82,7 @@ public class ReviewService {
 
     public void addReview(Authentication authentication, ReviewRequest request) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Movie movie = movieService.getOrCreateMovie(request.getMovieId());
 
         Review review = Review.builder()
@@ -93,43 +95,43 @@ public class ReviewService {
 
     public void deleteReview(Authentication authentication, Long reviewId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
         if (review.getUser().getId()!=(user.getId())) {
-            throw new RuntimeException("Unauthorized");
+            throw new BadRequestException("Unauthorized");
         }
         reviewRepository.delete(review);
     }
     public void deleteReviewAdmin(Authentication authentication, Long reviewId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
         if (user.getRole()!= Role.ROLE_ADMIN) {
-            throw new RuntimeException("Unauthorized");
+            throw new BadRequestException("Unauthorized");
         }
         reviewRepository.delete(review);
     }
     public void editReview(Authentication authentication, Long reviewId,ReviewRequest request) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
         review.setContent(request.getContent());
         if (review.getUser().getId()!=(user.getId())) {
-            throw new RuntimeException("Unauthorized");
+            throw new BadRequestException("Unauthorized");
         }
         reviewRepository.save(review);
     }
     public void toggleLike(Authentication authentication, Long reviewId) {
         User user = userRespository.getUserByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Review not found"));
 
 
         Optional<ReviewLike> existingLike = reviewLikeRepository.findByUserAndReview(user, review);

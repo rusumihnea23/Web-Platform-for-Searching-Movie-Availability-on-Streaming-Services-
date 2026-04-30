@@ -1,5 +1,8 @@
 package com.mihnea.restapi.Services;
 
+import com.mihnea.restapi.Exceptions.BadRequestException;
+import com.mihnea.restapi.Exceptions.ResourceAlreadyExistsException;
+import com.mihnea.restapi.Exceptions.ResourceNotFoundException;
 import com.mihnea.restapi.Models.User;
 import com.mihnea.restapi.Repositories.UserRespository;
 import com.mihnea.restapi.dtos.UserDTO;
@@ -22,7 +25,7 @@ public class UserService implements IUserService{
     @Override
     public void updateUser(Long id, User user) {
     User userToUpdate=userRespository.findById(id).orElseThrow(
-            ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
+            ()->new ResourceNotFoundException(String.format("User with id %s dosen't exist",id)));
     validateEmail(user.getEmail(),userToUpdate.getId());
     userToUpdate.setFirstName(user.getFirstName());
     userToUpdate.setLastName(user.getLastName());
@@ -35,14 +38,14 @@ public class UserService implements IUserService{
     @Override
     public void deleteUser(Long id) {
         User userToDelete=userRespository.findById(id).orElseThrow(
-                ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
+                ()->new ResourceNotFoundException(String.format("User with id %s dosen't exist",id)));
         userRespository.delete(userToDelete);
 
     }
 
     public UserDTO getUserDetails(Long id){
         User userToReturn=userRespository.findById(id).orElseThrow(
-                ()->new IllegalStateException(String.format("User with id %s dosen't exist",id)));
+                ()->new ResourceNotFoundException(String.format("User with id %s dosen't exist",id)));
         UserDTO dtoToReturn=new UserDTO();
         dtoToReturn.setId(userToReturn.getId());
         dtoToReturn.setEmail(userToReturn.getEmail());
@@ -54,7 +57,7 @@ public class UserService implements IUserService{
 
     public UserDTO getLoggedUserDetails(Authentication authentication){
         User userToReturn=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
         UserDTO dtoToReturn=new UserDTO();
         dtoToReturn.setId(userToReturn.getId());
         dtoToReturn.setEmail(userToReturn.getEmail());
@@ -69,21 +72,21 @@ public class UserService implements IUserService{
     private void validateEmail(String email, Long currentUserId) {
         userRespository.getUserByEmail(email).ifPresent(user -> {
             if (user.getId()!=(currentUserId)) {
-                throw new IllegalStateException(String.format("Email address %s already taken", email));
+                throw new ResourceAlreadyExistsException(String.format("Email address %s already taken", email));
             }
         });
     }
 
     public void updateUserProfilePicture(Authentication authentication,String profilePicturePath) {
         User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
        userToUpdate.setProfilePicturePath(profilePicturePath);
         userRespository.save(userToUpdate);
     }
 
     public String getUserProfilePicture(Authentication authentication){
         User userToReturn=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
 
         return userToReturn.getProfilePicturePath();
     }
@@ -91,28 +94,37 @@ public class UserService implements IUserService{
 
 
     public void updateUserFirstName(Authentication authentication,String firstName) {
+        if (firstName.length() < 3) {
+            throw new BadRequestException("Username must be at least 3 characters long");
+        }
         User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
         userToUpdate.setFirstName(firstName);
         userRespository.save(userToUpdate);
     }
     public void updateUserLasttName(Authentication authentication,String lastName) {
+        if (lastName.length() < 3) {
+            throw new BadRequestException("Username must be at least 3 characters long");
+        }
         User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
         userToUpdate.setLastName(lastName);
         userRespository.save(userToUpdate);
     }
     public void updateUserUsername(Authentication authentication,String username) {
+        if (username.length() < 3) {
+            throw new BadRequestException("Username must be at least 3 characters long");
+        }
         User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
-                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+                ()->new ResourceNotFoundException(String.format("User with name %s dosen't exist",authentication.getName())));
         if(userRespository.findByUsername(username).isPresent())
-            throw new IllegalStateException(String.format("Username Not %s available",username));
+            throw new ResourceAlreadyExistsException(String.format("Username Not %s available",username));
         userToUpdate.setUsername(username);
         userRespository.save(userToUpdate);
     }
     public UserDTO getPublicProfileByUsername(String username) {
         User userToReturn = userRespository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("User with username @%s doesn't exist", username)
                 ));
         UserDTO dtoToReturn=new UserDTO();

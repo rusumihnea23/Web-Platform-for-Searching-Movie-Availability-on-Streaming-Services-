@@ -16,11 +16,13 @@ import BrowseMovies from './Components/BrowseMovies/BrowseMovies'
 import PublicProfile from './Components/Profile/PublicProfile'
 import PublicUserDirectory from './Components/UserDirectory/PublicUserDirectory'
 import BrowseLists from './Components/BrowseLists/BrowseLists'
+import ScrollToTop from './Routes/ScrollToTop'
 function App() {
   return (
     <div className='font-semibold bg-sky-900 min-h-screen'>
 
       <HashRouter>
+        <ScrollToTop/>
         <Routes>
           <Route element={<NavbarLayout />}>
             <Route element={<PrivateRoutes />}>

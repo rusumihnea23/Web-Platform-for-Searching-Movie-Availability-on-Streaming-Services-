@@ -112,18 +112,18 @@ const getPublicSingleList = async (listId) => {
   }
 };
 
-
-const getAllLists = async () => {
+const getAllLists = async (name = "", sortBy = "popular") => {
   try {
-    // Note: your controller uses "/lists/{listId}" for the public route
-    const res = await api.get(`${mainpath}/public`);
+    // We use axios (api) params to construct: /api/list/public?name=...&sortBy=...
+    const res = await api.get(`${mainpath}/public`, {
+      params: { name, sortBy }
+    });
     return res.data;
   } catch (err) {
     console.error(err);
-    return null;
+    return [];
   }
 };
-
 
 const likeList = async (listId) => {
   try {

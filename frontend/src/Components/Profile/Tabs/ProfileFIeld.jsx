@@ -25,7 +25,7 @@ export default function ProfileField({
           className={`  w-full px-4 bg py-2 rounded-lg border transition-all outline-none 
             ${readOnly 
               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed" 
-              : " text-slate-900bg-white border-gray-300 focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+              : " bg-slate-900 border-gray-300 focus:ring-2 focus:ring-slate-800 focus:border-transparent"
             }`}
         />
         

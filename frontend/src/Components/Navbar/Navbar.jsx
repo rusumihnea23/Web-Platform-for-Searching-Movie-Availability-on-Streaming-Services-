@@ -8,7 +8,7 @@ import { LogModal } from '../LogModal/LogModal';
 import SearchBar from '../Search/SearchBar';
 
 
-const navigation = [{ name: 'Home', href: '/' }, { name: 'Top-Users', href: '/users' },{ name: 'Lists', href: '/lists' },];
+const navigation = [{ name: 'Home', href: '/' }, { name: 'Top-Users', href: '/users' },{ name: 'Lists', href: '/lists' },{ name: 'Movies', href: '/browse' }];
 
 export default function Navbar() {
   const [user, setUser] = useState(null);

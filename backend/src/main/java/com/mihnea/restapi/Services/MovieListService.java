@@ -196,6 +196,8 @@ public class MovieListService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         MovieList movieList = listRepository.findByOwnerIdAndId(user.getId(), listId)
                 .orElseThrow(() -> new ResourceNotFoundException("List not found or access denied"));
+        if(movieList.getOwner().getId()!=user.getId())
+            throw new BadRequestException("Not Allowed to change other users lists");
         if (request.getName() != null) movieList.setName(request.getName());
         if (request.getDescription() != null) movieList.setDescription(request.getDescription());
         listRepository.save(movieList);

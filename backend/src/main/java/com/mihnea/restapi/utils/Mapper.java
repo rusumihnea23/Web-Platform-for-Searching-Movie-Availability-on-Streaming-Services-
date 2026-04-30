@@ -1,10 +1,11 @@
-package com.mihnea.restapi.dtos;
+package com.mihnea.restapi.utils;
 
 import com.mihnea.restapi.Models.Movie;
-import com.mihnea.restapi.Models.Review;
 import com.mihnea.restapi.dtos.DetailedMovieDto.CreditsDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.MovieDetailDTO;
 import com.mihnea.restapi.dtos.DetailedMovieDto.ProviderDao.WatchProviderDTO;
+import com.mihnea.restapi.dtos.GenreDTO;
+import com.mihnea.restapi.dtos.MovieDTO;
 
 import java.util.List;
 import java.util.Map;

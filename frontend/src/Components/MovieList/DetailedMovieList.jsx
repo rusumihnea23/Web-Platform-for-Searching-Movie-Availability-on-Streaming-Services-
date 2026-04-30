@@ -1,4 +1,4 @@
-import Movie from "../Movie/Movie"
+import Movie from "./Movie"
 import { useNavigate } from "react-router-dom"
 
 export default function DetailedMovieList({ Movies, max }) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; // Removed useEffect since it's unused
-import { register } from "../../../Actions/AuthActions";
+import { register } from "../../Actions/AuthActions";
 import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {

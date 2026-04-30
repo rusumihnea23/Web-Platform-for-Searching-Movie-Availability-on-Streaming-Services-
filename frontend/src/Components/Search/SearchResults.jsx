@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { getQueryMovieList } from "../../../Actions/MovieActions";
+import { getQueryMovieList } from "../../Actions/MovieActions";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import DetailedMovieList from "../../MovieList/DetailedMovieList/DetailedMovieList";
+import DetailedMovieList from "../MovieList/DetailedMovieList";
 
 export default function SearchResult() {
     const [movieList, setmovieList] = useState([]);

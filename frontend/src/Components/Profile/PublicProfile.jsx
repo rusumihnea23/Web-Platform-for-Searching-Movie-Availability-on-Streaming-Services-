@@ -6,7 +6,7 @@ import { UserCircleIcon } from "@heroicons/react/24/outline";
 // Reuse the exact same tab components — just pass userId to flip them to public mode
 import LoggedMoviesTab from "./Tabs/LoggedMoviesTab";
 import WatchlistTab from "./Tabs/WatchlistTab";
-import ListsTab from "./Tabs/ListsTab/ListsTab";
+import ListsTab from "./Tabs/ListsTab";
 import ReviewsTab from "./Tabs/ReviewsTab";
 
 export default function PublicProfile() {

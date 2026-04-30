@@ -39,13 +39,13 @@ export default function Footer() {
                                 className="w-32 h-32" 
                                 src="equilateral.png"
                                 alt="triangle with equal sides"
-                                srcset={tmdb}
+                                srcSet={tmdb}
                             />
                             <img
                                 className="w-32 h-32" 
                                 src="equilateral.png"
                                 alt="triangle with equal sides"
-                                srcset={JustWatch}
+                                srcSet={JustWatch}
                             />
                         </div>
 

@@ -1,6 +1,6 @@
 import React from "react";
-import {useUsers} from "./useUsers";  
-import UserListBase from "./UserListBase";     
+import {useUsers} from "../../Hooks/useUsers";  
+import UserList from "./UserList";     
 
 
 const PublicUserDirectory = () => {
@@ -8,7 +8,7 @@ const PublicUserDirectory = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <UserListBase 
+      <UserList 
         userState={userState} 
         title="Our Communiy's Top Users" 
       />

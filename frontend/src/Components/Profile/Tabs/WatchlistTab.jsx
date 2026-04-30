@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserWatchlist, unWatchlistMovie ,getPublicUserWatchlist} from "../../../Actions/UserMovieActions";
 
-import MovieList from "../../MovieList/MovieList/MovieList";
+import MovieList from "../../MovieList/MovieList";
 
 // userId present → public read-only (no remove button).
 // userId absent  → own profile with full remove functionality.

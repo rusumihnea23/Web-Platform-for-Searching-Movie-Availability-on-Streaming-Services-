@@ -5,7 +5,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom"
 import { getUserDetails } from "../../Actions/UserActions";
 import { logout } from "../../Actions/AuthActions"
 import { LogModal } from '../LogModal/LogModal';
-import SearchBar from '../Search/SearchBar/SearchBar';
+import SearchBar from '../Search/SearchBar';
 
 
 const navigation = [{ name: 'Home', href: '/' }, { name: 'Top-Users', href: '/users' },{ name: 'Lists', href: '/lists' },];

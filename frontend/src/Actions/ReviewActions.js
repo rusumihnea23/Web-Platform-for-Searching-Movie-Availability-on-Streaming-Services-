@@ -14,7 +14,7 @@ const buildQuery = (sortBy, grade) => {
 const addReview = async (reviewData) => {
   try {
     const res = await api.post(`${mainpath}/add`, reviewData);
-    alert("Review added successfully!");
+    
     return res.data;
   } catch (err) {
     console.error(err);

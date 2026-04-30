@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import MovieList from "../MovieList/MovieList/MovieList";
+import MovieList from "../MovieList/MovieList";
 import SortControls from "../Sort/SortControls";
-import Pagination from "../Reviews/Pagination";
+import Pagination from "../Sort/Pagination";
 import { getAllMovies } from "../../Actions/MovieActions";
 
 export default function BrowseMovies() {

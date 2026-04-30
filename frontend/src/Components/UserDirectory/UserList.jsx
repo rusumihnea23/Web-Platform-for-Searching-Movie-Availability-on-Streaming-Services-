@@ -1,6 +1,6 @@
 import React from "react";
 import { MagnifyingGlassIcon, UserIcon, ChartBarIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
-import Pagination from "../Reviews/Pagination";
+import Pagination from "../Sort/Pagination";
 import { useNavigate } from "react-router-dom";
 
 const UserListBase = ({ userState, title = "Users", renderActions, isAdmin = false }) => {

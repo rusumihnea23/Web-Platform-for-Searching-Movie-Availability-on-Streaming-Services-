@@ -11,7 +11,7 @@ export default function ProfileField({
   return (
     <div className="flex flex-col gap-1 w-full max-w-md">
       
-      <label className="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1 ">
         {label}
       </label>
       
@@ -22,10 +22,10 @@ export default function ProfileField({
           value={value || ""}
           onChange={onChange}
           readOnly={readOnly}
-          className={`w-full px-4 py-2 rounded-lg border transition-all outline-none
+          className={`  w-full px-4 bg py-2 rounded-lg border transition-all outline-none 
             ${readOnly 
               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed" 
-              : "bg-white border-gray-300 focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+              : " text-slate-900 bg-white border-gray-300 focus:ring-2 focus:ring-slate-800 focus:border-transparent"
             }`}
         />
         

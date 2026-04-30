@@ -1,8 +1,8 @@
 import React from "react";
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { deleteUser } from "../../Actions/GeneralAdminDashboardActions";
-import { useUsers } from "./useUsers";
-import UserListBase from "./UserListBase";
+import { useUsers } from "../../Hooks/useUsers";
+import UserList from "./UserList";
 
 const AdminUserManagement = () => {
   const userState = useUsers();
@@ -19,7 +19,7 @@ const AdminUserManagement = () => {
   };
 
   return (
-    <UserListBase 
+    <UserList 
       userState={userState}
       title="Admin Management"
       isAdmin={true}

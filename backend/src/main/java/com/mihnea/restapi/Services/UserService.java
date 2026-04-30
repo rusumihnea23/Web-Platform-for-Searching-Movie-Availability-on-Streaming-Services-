@@ -102,6 +102,14 @@ public class UserService implements IUserService{
         userToUpdate.setLastName(lastName);
         userRespository.save(userToUpdate);
     }
+    public void updateUserUsername(Authentication authentication,String username) {
+        User userToUpdate=userRespository.getUserByEmail(authentication.getName()).orElseThrow(
+                ()->new IllegalStateException(String.format("User with name %s dosen't exist",authentication.getName())));
+        if(userRespository.findByUsername(username).isPresent())
+            throw new IllegalStateException(String.format("Username Not %s available",username));
+        userToUpdate.setUsername(username);
+        userRespository.save(userToUpdate);
+    }
     public UserDTO getPublicProfileByUsername(String username) {
         User userToReturn = userRespository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException(

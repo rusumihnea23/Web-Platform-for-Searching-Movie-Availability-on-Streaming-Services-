@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { getAllUsers } from "../../Actions/GeneralAdminDashboardActions";
+import { getAllUsers } from "../Actions/GeneralAdminDashboardActions";
 
 export const useUsers = (mode = "standard") => {
   const [users, setUsers] = useState([]);

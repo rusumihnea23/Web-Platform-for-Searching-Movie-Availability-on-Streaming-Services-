@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { getAllLists } from "../../Actions/UserListActions";
 import { getUserDetails } from "../../Actions/UserActions";
-import { useListLike } from "../Profile/Tabs/ListsTab/useListLike";
-import ListGrid from "../Profile/Tabs/ListsTab/ListGrid";
+import { useListLike } from "../../Hooks/useListLike";
+import ListGrid from "../Lists/ListGrid";
 
 export default function BrowseLists() {
   const [lists, setLists] = useState([]);
@@ -28,7 +28,7 @@ export default function BrowseLists() {
     </div>
   );
 
-  // Filter out own lists from showing the like button — pass a custom onLike that checks ownership
+ 
   const handleLike = (e, list) => {
     if (currentUser?.username === list.ownerUsername) return;
     handleToggleLike(e, list);
@@ -47,7 +47,7 @@ export default function BrowseLists() {
             search={search} setSearch={setSearch}
             currentPage={currentPage} setCurrentPage={(p) => { setCurrentPage(p); window.scrollTo(0, 0); }}
             itemsPerPage={12}
-            onSelect={() => {}} // no drill-in on browse page, adjust if needed
+            onSelect={() => {}} 
             onLike={handleLike} togglingLike={togglingLike}
             showLike={true}
             emptyMessage="No lists found."

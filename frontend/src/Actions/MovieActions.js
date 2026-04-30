@@ -28,7 +28,7 @@ const getPopularMovieList =async () => {
       const res = await api.get(`${mainpath}/search`,{params:{
         query:String(query)
       }});
-      console.log(res.data)
+     
       return res.data;
     } catch (err) {
       console.error(err);
@@ -46,7 +46,7 @@ try {
       watchlisted: res2.data,
       logged: res3.data 
     };
-    console.log(combinedMovieData)
+    
 
     return combinedMovieData;
   } catch (err) {
@@ -72,7 +72,7 @@ const getAllMovies = async (sortBy, grade) => {
 const getRecommandation=async(id)=>{
 try {
     const res = await api.get(`${mainpath}/${id}/recommendations`,);
-    console.log(res)
+   
     return res;
   } catch (err) {
     console.error(err);

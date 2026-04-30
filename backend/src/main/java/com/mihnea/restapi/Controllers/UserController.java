@@ -65,6 +65,10 @@ public class UserController {
     public void updateUserFirstName(Authentication authentication,@RequestBody UpdateNameRequest request){
         userService.updateUserFirstName(authentication,request.getName());
     }
+    @PatchMapping("/profile/username")
+    public void updateUserUsername(Authentication authentication,@RequestBody UpdateNameRequest request){
+        userService.updateUserUsername(authentication,request.getName());
+    }
 
   }
 

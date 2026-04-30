@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getQueryMovieList } from '../../Actions/MovieActions';
-import Movie from '../MovieList/Movie/Movie';
+import Movie from '../MovieList/Movie';
 
 const MovieChatBubble = ({ titles }) => {
   const [resolvedMovies, setResolvedMovies] = useState([]);

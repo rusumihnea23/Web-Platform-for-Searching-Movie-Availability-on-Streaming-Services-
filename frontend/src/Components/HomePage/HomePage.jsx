@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import MovieList from "../MovieList/MovieList/MovieList";
+import MovieList from "../MovieList/MovieList";
 import { useNavigate } from "react-router-dom";
 import { getPopularMovieList } from "../../Actions/MovieActions";
 import { getRecommendedMovieList, getUserDetails } from "../../Actions/UserActions";

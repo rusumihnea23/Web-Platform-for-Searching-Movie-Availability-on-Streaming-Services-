@@ -1,7 +1,7 @@
 package com.mihnea.restapi.config;
 
 import com.mihnea.restapi.Repositories.UserRespository;
-import com.mihnea.restapi.dtos.Mapper;
+import com.mihnea.restapi.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

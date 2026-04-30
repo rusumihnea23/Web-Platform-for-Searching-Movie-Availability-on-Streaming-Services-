@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import Pagination from "../../../Reviews/Pagination"; 
+import Pagination from "../Sort/Pagination"; 
 import ListCard from "./ListCard";
 
 export default function ListGrid({ lists, currentPage, setCurrentPage, search, setSearch, itemsPerPage = 6, onSelect, onLike, onUnlike, onDelete, togglingLike, showLike = false, showUnlike = false, showDelete = false, emptyMessage = "No lists found." }) {

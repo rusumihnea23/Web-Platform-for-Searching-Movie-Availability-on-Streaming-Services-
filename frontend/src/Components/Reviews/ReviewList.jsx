@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReviewItem from "./ReviewItem";
-import Pagination from "./Pagination";
+import Pagination from "../Sort/Pagination";
 
 export default function ReviewList({ reviews, onReviewDeleted, showMovieTitle = false, isAdmin = false }) {
   const [currentPage, setCurrentPage] = useState(1);

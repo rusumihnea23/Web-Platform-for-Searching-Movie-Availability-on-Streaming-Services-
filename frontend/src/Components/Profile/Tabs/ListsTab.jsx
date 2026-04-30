@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { getUserListsDetailed, createMovieList, deleteList, getPublicUserLists, getPublicSingleList } from "../../../../Actions/UserListActions";
-import { useListLike } from "./useListLike";
-import DetailedListItems from "./DetailedListItems";
-import ListGrid from "./ListGrid"; // adjust path
+import { getUserListsDetailed, createMovieList, deleteList, getPublicUserLists, getPublicSingleList } from "../../../Actions/UserListActions";
+import { useListLike } from "../../../Hooks/useListLike";
+import DetailedListItems from "../../Lists/DetailedListItems";
+import ListGrid from "../../Lists/ListGrid"; // adjust path
 
 export default function ListsTab({ userId }) {
   const isPublic = Boolean(userId);

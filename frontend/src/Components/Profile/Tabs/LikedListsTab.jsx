@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { getLikedLists, getPublicSingleList } from "../../../../Actions/UserListActions";
+import { getLikedLists, getPublicSingleList } from "../../../Actions/UserListActions";
 import { HeartIcon } from "@heroicons/react/24/solid";
-import { useListLike } from "./useListLike";
-import DetailedListItems from "./DetailedListItems";
-import ListGrid from "./ListGrid";
+import { useListLike } from "../../../Hooks/useListLike";
+import DetailedListItems from "../../Lists/DetailedListItems";
+import ListGrid from "../../Lists/ListGrid";
 
 export default function LikedListsTab() {
   const [lists, setLists] = useState([]);

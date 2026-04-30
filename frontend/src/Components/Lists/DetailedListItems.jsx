@@ -1,12 +1,12 @@
 import { useState } from "react";
-import MovieList from "../../../MovieList/MovieList/MovieList";
-import MovieIdSelector from "../../../LogModal/MovieIdSelector.jsx";
+import MovieList from "../MovieList/MovieList.jsx";
+import MovieIdSelector from "../LogModal/MovieIdSelector.jsx";
 import {
   removeMovieFromList,
   addMovieToList,
   updateListDetails,
   getSingleList,
-} from "../../../../Actions/UserListActions.js";
+} from "../../Actions/UserListActions.js";
 
 // isPublic=true  → read-only: no edit/add/remove controls.
 // isPublic=false → full owner controls (original behaviour).

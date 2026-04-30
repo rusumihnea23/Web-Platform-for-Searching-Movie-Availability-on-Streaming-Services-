@@ -1,8 +1,7 @@
 package com.mihnea.restapi.Services;
 
-import com.mihnea.restapi.Repositories.UserRespository;
-import com.mihnea.restapi.dtos.ChatApiMessage;
-import com.mihnea.restapi.dtos.Message;
+import com.mihnea.restapi.dtos.ChatApiMessageDTO;
+import com.mihnea.restapi.dtos.MessageDTO;
 import com.mihnea.restapi.dtos.MovieDTO;
 import com.mihnea.restapi.dtos.Requests.ChatRequest;
 import com.mihnea.restapi.dtos.Response.ChatParsedResult;
@@ -30,28 +29,28 @@ public class ChatService {
     private final UserMovieLogService userMovieLogService;
 
 
-    private final Map<String, List<Message>> chatHistory = new ConcurrentHashMap<>();
+    private final Map<String, List<MessageDTO>> chatHistory = new ConcurrentHashMap<>();
 
     public ChatParsedResult getAiResponse(String userPrompt, Authentication authentication) {
         String username = authentication.getName();
         String systemInstruction = buildSystemInstruction(authentication);
 
-        List<Message> messages = chatHistory.computeIfAbsent(username, k -> {
-            List<Message> initial = new ArrayList<>();
-            initial.add(new Message("system", systemInstruction));
+        List<MessageDTO> messageDTOS = chatHistory.computeIfAbsent(username, k -> {
+            List<MessageDTO> initial = new ArrayList<>();
+            initial.add(new MessageDTO("system", systemInstruction));
             return initial;
         });
 
-        messages.set(0, new Message("system", systemInstruction));
-        messages.add(new Message("user", userPrompt));
+        messageDTOS.set(0, new MessageDTO("system", systemInstruction));
+        messageDTOS.add(new MessageDTO("user", userPrompt));
 
-        if (messages.size() > 11) {
-            messages.remove(1);
+        if (messageDTOS.size() > 11) {
+            messageDTOS.remove(1);
         }
 
         // --- FIX START: Strip 'movies' before sending to external API ---
-        List<ChatApiMessage> apiMessages = messages.stream()
-                .map(m -> new ChatApiMessage(m.role(), m.content()))
+        List<ChatApiMessageDTO> apiMessages = messageDTOS.stream()
+                .map(m -> new ChatApiMessageDTO(m.role(), m.content()))
                 .toList();
 
         // Pass apiMessages to the request, NOT the original messages list
@@ -67,11 +66,11 @@ public class ChatService {
             return new ChatParsedResult("Error", List.of());
         }
 
-        String aiAnswer = response.choices().get(0).message().content();
+        String aiAnswer = response.choices().get(0).messageDTO().content();
         ChatParsedResult parsed = parseAiResponse(aiAnswer);
 
         // Save the enriched message (with movies) to your internal history
-        messages.add(new Message("assistant", parsed.message(), parsed.movies()));
+        messageDTOS.add(new MessageDTO("assistant", parsed.message(), parsed.movies()));
 
         return parsed;
     }
@@ -112,7 +111,7 @@ public class ChatService {
     public void clearHistory(Authentication authentication) {
         chatHistory.remove(authentication.getName());
     }
-    public List<Message> getHistory(Authentication authentication) {
+    public List<MessageDTO> getHistory(Authentication authentication) {
         return chatHistory.get(authentication.getName());
     }
 

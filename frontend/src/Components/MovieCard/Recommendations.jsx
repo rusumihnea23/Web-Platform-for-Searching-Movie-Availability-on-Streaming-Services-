@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getRecommandation } from "../../Actions/MovieActions";
-import MovieList from "../MovieList/MovieList/MovieList";
+import MovieList from "../MovieList/MovieList";
 
 export default function Recommendations({ movieId }) {
   const [recommendations, setRecommendations] = useState([]);

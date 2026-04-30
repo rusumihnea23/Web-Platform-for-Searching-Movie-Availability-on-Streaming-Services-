@@ -1,3 +1,3 @@
 package com.mihnea.restapi.dtos;
 
-public record ChatApiMessage(String role, String content) {}
+public record ChatApiMessageDTO(String role, String content) {}

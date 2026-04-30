@@ -1,9 +1,8 @@
 package com.mihnea.restapi.Services;
 
-import com.mihnea.restapi.Repositories.MovieListRepository;
 import com.mihnea.restapi.Repositories.MovieRepository;
 import com.mihnea.restapi.Repositories.UserRespository;
-import com.mihnea.restapi.dtos.Mapper;
+import com.mihnea.restapi.utils.Mapper;
 import com.mihnea.restapi.dtos.MovieDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

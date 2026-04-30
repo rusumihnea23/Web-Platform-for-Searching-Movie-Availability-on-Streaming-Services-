@@ -15,7 +15,7 @@ const getUserLogsMovieList =async () => {
 const userLogMovie= async({movieId,personalGrade,watchDate})=>{
  try {
     const res = await api.post(`${mainpath}/add`, { movieId,personalGrade,watchDate});
-    alert("movie logged succesfully");
+    
   
   } catch (err) {
     console.error(err);
@@ -40,7 +40,7 @@ const watchlistMovie=async(id)=>{
     
 const res = await api.patch(`${watchlistpath}/add/${id}`);
     
-    alert("Watchlist successful!");
+  
   } catch (err) {
     console.error(err);
      alert(err.response?.data?.message || err.message);

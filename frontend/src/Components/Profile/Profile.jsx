@@ -2,9 +2,9 @@ import { useState } from "react";
 import SettingsTab from "./Tabs/SettingsTab";
 import LoggedMoviesTab from "./Tabs/LoggedMoviesTab";
 import WatchlistTab from "./Tabs/WatchlistTab";
-import ListsTab from "./Tabs/ListsTab/ListsTab"; 
+import ListsTab from "./Tabs/ListsTab"; 
 import ReviewsTab from "./Tabs/ReviewsTab";
-import LikedListsTab from "./Tabs/ListsTab/LikedListsTab"; // same folder as ListsTab
+import LikedListsTab from "./Tabs/LikedListsTab"; // same folder as ListsTab
 
 const tabs = [
   { id: "logged",      label: "Logged Movies", component: <LoggedMoviesTab /> },

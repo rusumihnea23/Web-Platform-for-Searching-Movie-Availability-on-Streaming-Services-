@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { likeList } from "../../../../Actions/UserListActions";
+import { likeList } from "../Actions/UserListActions";
 
 export function useListLike(setLists) {
   const [togglingLike, setTogglingLike] = useState(null);

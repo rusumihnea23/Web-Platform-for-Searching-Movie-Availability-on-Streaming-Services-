@@ -4,7 +4,7 @@ const mainpath = "/api/list";
 const createMovieList = async (movieListData) => {
   try {
     const res = await api.post(`${mainpath}`, movieListData);
-    alert("List created successfully!");
+    
     return res.data;
   } catch (err) {
     console.error(err);
@@ -48,7 +48,7 @@ const getSingleList = async (id) => {
 const updateListDetails = async (id, updateData) => {
   try {
     const res = await api.put(`${mainpath}/${id}`, updateData);
-    alert("List updated successfully");
+    
     return res.data;
   } catch (err) {
     console.error(err);
@@ -59,7 +59,7 @@ const updateListDetails = async (id, updateData) => {
 const deleteList = async (id) => {
   try {
     await api.delete(`${mainpath}/${id}`);
-    alert("List deleted successfully");
+   
   } catch (err) {
     console.error(err);
     alert(err.response?.data?.message || err.message);
@@ -70,7 +70,7 @@ const deleteList = async (id) => {
 const addMovieToList = async (listId, movieId) => {
   try {
     const res = await api.post(`${mainpath}/${listId}/movies/${movieId}`);
-    alert("Movie added to list successfully");
+    
     return res.data;
   } catch (err) {
     console.error(err);
@@ -82,7 +82,7 @@ const addMovieToList = async (listId, movieId) => {
 const removeMovieFromList = async (listId, movieId) => {
   try {
     const res = await api.delete(`${mainpath}/${listId}/movies/${movieId}`);
-    alert("Movie removed from list successfully");
+   
     return res.data;
   } catch (err) {
     console.error(err);

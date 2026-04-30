@@ -4,7 +4,7 @@ const mainpath="/api/users"
 const getUserDetails= async()=>{
     try {
     const res = await api.get(`${mainpath}/details`,);
-    console.log(res.data)
+    
     return res.data;
   } catch (err) {
     console.error(err);
@@ -17,7 +17,7 @@ const getUserDetails= async()=>{
 const getPublicProfile = async (username) => {
   try {
     const res = await api.get(`${mainpath}/public/${username}`);
-    console.log(res.data);
+    
     return res.data;
   } catch (err) {
     console.error(err);
@@ -27,7 +27,16 @@ const getPublicProfile = async (username) => {
 const updateFirstName= async(Name)=>{
   try{
     const res = await api.patch(`${mainpath}/profile/firstName`,{Name});
-    console.log(res.data)
+      alert("Succesfuly updated first name")
+  }catch(err){
+    console.error(err);
+     alert(err.response?.data?.message || err.message);
+  }
+} 
+const updateUsername= async(Name)=>{
+  try{
+    const res = await api.patch(`${mainpath}/profile/username`,{Name});
+    alert("Succesfuly updated username")
   }catch(err){
     console.error(err);
      alert(err.response?.data?.message || err.message);
@@ -36,7 +45,7 @@ const updateFirstName= async(Name)=>{
 const updateLastName= async(Name)=>{
   try{
     const res = await api.patch(`${mainpath}/profile/lastName`,{Name});
-    console.log(res.data)
+      alert("Succesfuly updated last name")
   }catch(err){
     console.error(err);
      alert(err.response?.data?.message || err.message);
@@ -51,4 +60,4 @@ const getRecommendedMovieList =async () => {
      alert(err.response?.data?.message || err.message);
   }
 };
-export  {getUserDetails,updateFirstName,updateLastName,getRecommendedMovieList,getPublicProfile}
+export  {getUserDetails,updateFirstName,updateLastName,getRecommendedMovieList,getPublicProfile,updateUsername}

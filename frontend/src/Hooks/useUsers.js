@@ -21,7 +21,7 @@ export const useUsers = (mode = "standard") => {
             const scoreB = (b.totalLogs || 0) + ((b.totalReviews || 0) / 2);
             return scoreB - scoreA; 
           })
-          .slice(0, 3); // Take top 10
+          .slice(0, 10); // Take top 10
       }
 
       setUsers(data);

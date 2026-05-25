@@ -78,7 +78,7 @@ useEffect(() => {
                             className="group flex items-center gap-2 cursor-pointer pb-1"
                         >
                             <span className="text-xs font-bold tracking-widest text-slate-500 group-hover:text-sky-400 transition-colors">
-                                BROWSE ALL
+                                BROWSE CATALOGUE
                             </span>
                             <svg className="w-4 h-4 text-slate-600 group-hover:text-sky-400 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />

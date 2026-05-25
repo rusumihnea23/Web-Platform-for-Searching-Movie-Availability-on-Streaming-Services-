@@ -4,10 +4,11 @@ import {
   getPublicUserLists,
   getPublicSingleList,
   getAllLists,
+  getLikedLists, // 1. ADD THIS IMPORT HERE
 } from "../Actions/UserListActions";
 
 /**
- * @param {"owner" | "public" | "browse"} mode
+ * @param {"owner" | "public" | "browse" | "liked"} mode // 2. ADD "liked" TO JSDOC
  * @param {string|null} userId required when mode === "public"
  */
 export function useListView(mode, userId = null) {
@@ -15,7 +16,7 @@ export function useListView(mode, userId = null) {
   const [selectedList, setSelectedList] = useState(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("popular"); // Added state for backend sorting
+  const [sortBy, setSortBy] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchLists = async () => {
@@ -24,11 +25,12 @@ export function useListView(mode, userId = null) {
       let data;
       if (mode === "owner") {
         data = await getUserListsDetailed();
+      } else if (mode === "liked") {
+        // 3. ADD THIS CONDITION TO FETCH LIKED LISTS
+        data = await getLikedLists(); 
       } else if (mode === "public") {
         data = await getPublicUserLists(userId);
       } else {
-        // For 'browse' mode, we pass search and sortBy to the API action
-        // which sends them as query parameters to your Spring Boot backend
         data = await getAllLists(search, sortBy);
       }
       setLists(data || []);
@@ -40,15 +42,12 @@ export function useListView(mode, userId = null) {
     }
   };
 
-  // Trigger fetch whenever mode, userId, search, or sortBy changes
   useEffect(() => {
     fetchLists();
-    // Reset to page 1 when search or sort changes to avoid empty pages
     setCurrentPage(1); 
   }, [mode, userId, search, sortBy]);
 
   const handleSelectList = async (list) => {
-    // Public / browse views need the full list fetched; owner already has it.
     if (mode !== "owner") {
       const full = await getPublicSingleList(list.id);
       setSelectedList(full || list);
@@ -59,7 +58,7 @@ export function useListView(mode, userId = null) {
 
   const handleBack = () => {
     setSelectedList(null);
-    if (mode === "owner") fetchLists(); // re-sync after edits
+    if (mode === "owner") fetchLists();
   };
 
   const handlePageChange = (page, scrollToTop = false) => {
@@ -69,13 +68,13 @@ export function useListView(mode, userId = null) {
 
   return {
     lists,
-    setLists,        // exposed so useListLike can update it
+    setLists,
     selectedList,
     loading,
     search,
-    setSearch,       // used by Search Bar
-    sortBy,          // used by SortControls
-    setSortBy,       // used by SortControls (prevents the 'not a function' error)
+    setSearch,
+    sortBy,
+    setSortBy,
     currentPage,
     setCurrentPage: handlePageChange,
     handleSelectList,

@@ -18,7 +18,7 @@ export default function LikedListsTab() {
     currentPage, setCurrentPage,
     handleSelectList,
     handleBack,
-  } = useListView("browse"); // Or a custom mode if implemented
+  } = useListView("liked"); // Or a custom mode if implemented
 
   const { togglingLike, handleToggleLike } = useListLike(setLists);
 

@@ -50,7 +50,7 @@ export default function Navbar() {
           {isLoggedIn ? (
             <div className="flex items-center gap-1 sm:gap-3">
               <div className="hidden sm:flex items-center gap-3">
-                <BellIcon className="size-6 text-sky-100 cursor-pointer hover:text-white transition-colors" />
+                
                 <LogModal /> 
               </div>
               <Menu as="div" className="relative ml-1">

@@ -1,17 +1,15 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Pagination from "../Sort/Pagination";
 import ListCard from "./ListCard";
 import SortControls from "../Sort/SortControls";
 
 const LIST_SORT_OPTIONS = [
-  { value: "popular",      label: "Most popular" },
-  { value: "least-liked",  label: "Least liked" },
-  { value: "name",         label: "Name (A–Z)" },
+  { value: "popular",     label: "Most popular" },
+  { value: "least-liked", label: "Least liked" },
+  { value: "name",        label: "Name (A–Z)" },
 ];
 
 export default function ListGrid({
   lists,
-  search, setSearch,
   sortBy, setSortBy,
   currentPage, setCurrentPage,
   itemsPerPage = 6,
@@ -23,24 +21,20 @@ export default function ListGrid({
 }) {
   const totalPages = Math.ceil(lists.length / itemsPerPage);
   const paginated = lists.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
 
-  const handleSort = (val) => { setSortBy(val); setCurrentPage(1); };
-  const handleSearch = (e) => { setSearch(e.target.value); setCurrentPage(1); };
+  );
 
   return (
     <>
-    
-      <div className="flex items-center ">
+      <div className="flex items-center">
         <SortControls
           sortBy={sortBy}
-          setSortBy={handleSort}
+          setSortBy={(val) => { setSortBy(val); setCurrentPage(1); }}
           options={LIST_SORT_OPTIONS}
           className="h-8.5 w-44 shrink-0"
         />
-        
       </div>
 
       {lists.length === 0 ? (

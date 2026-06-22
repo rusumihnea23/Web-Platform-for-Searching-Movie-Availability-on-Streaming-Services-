@@ -5,14 +5,17 @@ import WatchlistTab from "./Tabs/WatchlistTab";
 import ListsTab from "./Tabs/ListsTab"; 
 import ReviewsTab from "./Tabs/ReviewsTab";
 import LikedListsTab from "./Tabs/LikedListsTab"; // same folder as ListsTab
+import DiaryTab from "./Tabs/DiaryTab";
 
 const tabs = [
   { id: "logged",      label: "Logged Movies", component: <LoggedMoviesTab /> },
   { id: "watchlist",   label: "Watchlist",      component: <WatchlistTab /> },
   { id: "lists",       label: "Lists",          component: <ListsTab /> },
-  { id: "liked-lists", label: "Liked Lists",    component: <LikedListsTab /> }, // 👈
+   { id: "diary",      label: "Diary", component: <DiaryTab /> },
+  { id: "liked-lists", label: "Liked Lists",    component: <LikedListsTab /> }, 
   { id: "reviews",     label: "Reviews",        component: <ReviewsTab /> },
   { id: "settings",    label: "Settings",       component: <SettingsTab /> },
+ 
 ];
 
 export default function Profile() {

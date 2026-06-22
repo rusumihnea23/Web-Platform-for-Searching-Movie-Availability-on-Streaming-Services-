@@ -88,6 +88,7 @@ public class MovieListService {
                 .map(list -> LightListMovieDTO.builder()
                         .id(list.getId())
                         .name(list.getName())
+                        .createdAt(list.getCreatedAt())
                         .build())
                 .toList();
     }

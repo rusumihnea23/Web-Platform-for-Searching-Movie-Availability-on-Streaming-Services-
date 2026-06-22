@@ -1,26 +1,22 @@
+import { useNavigate } from "react-router-dom";
 import { useListLike } from "../../Hooks/useListLike";
 import { useListView } from "../../Hooks/useListView";
 import ListGrid from "../Lists/ListGrid";
-import DetailedListItems from "../Lists/DetailedListItems";
-import Loading from "../loading/Loading"
+import Loading from "../loading/Loading";
 
 export default function BrowseLists() {
+  const navigate = useNavigate();
   const {
     lists, setLists,
-    selectedList,
     loading,
     search, setSearch,
-    sortBy, setSortBy, // From updated useListView
+    sortBy, setSortBy,
     currentPage, setCurrentPage,
-    handleSelectList,
-    handleBack,
   } = useListView("browse");
 
   const { togglingLike, handleToggleLike } = useListLike(setLists);
 
-  if (loading) return <Loading />; // Your loading logic
-
-  if (selectedList) return <DetailedListItems list={selectedList} isPublic onBack={handleBack} />;
+  if (loading) return <Loading />;
 
   return (
     <div className="min-h-screen bg-slate-900 text-white pb-20">
@@ -35,12 +31,12 @@ export default function BrowseLists() {
             lists={lists}
             search={search}
             setSearch={setSearch}
-            sortBy={sortBy}      
-            setSortBy={setSortBy}  
+            sortBy={sortBy}
+            setSortBy={setSortBy}
             currentPage={currentPage}
             setCurrentPage={(p) => setCurrentPage(p, true)}
             itemsPerPage={6}
-            onSelect={handleSelectList}
+            onSelect={(list) => navigate(`/lists/${list.id}`)}
             onToggleLike={handleToggleLike}
             togglingLike={togglingLike}
             showLike

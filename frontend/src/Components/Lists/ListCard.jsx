@@ -1,30 +1,18 @@
 import { HeartIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartOutline, TrashIcon } from "@heroicons/react/24/outline";
-export default function ListCard({
-  list,
-  onClick,
-  onToggleLike,
-  onDelete,
-  togglingLike,
-  showLike = false,
-  showDelete = false,
-}) {
+
+export default function ListCard({ list, onClick, onToggleLike, onDelete, togglingLike, showLike = false, showDelete = false }) {
   const isToggling = togglingLike === list.id;
 
   return (
-    <div
-      className="group bg-slate-800/50 hover:bg-slate-800 border border-slate-700 p-5 rounded-xl transition-all flex justify-between items-start"
-      onClick={onClick}
-    >
-      {/* Main content */}
-      <div className="flex-1 min-w-0 cursor-pointer">
+    <div className="group bg-slate-800/50 hover:bg-slate-800 border border-slate-700 p-5 rounded-xl transition-all flex justify-between items-start">
+      <div className="flex-1 min-w-0 cursor-pointer" onClick={onClick}>
         <h3 className="text-lg font-bold text-sky-400 group-hover:text-pink-500 transition-colors uppercase tracking-tight truncate">
           {list.name}
         </h3>
         <p className="text-sm text-gray-400 line-clamp-2 mt-1 mb-3">
           {list.description || "No description provided."}
         </p>
-
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-xs bg-slate-900 px-2 py-1 rounded text-gray-500">
             {list.movies?.length ?? 0} Movies
@@ -43,7 +31,6 @@ export default function ListCard({
         </div>
       </div>
 
-      {/* Like button */}
       {showLike && (
         <button
           onClick={(e) => { e.stopPropagation(); onToggleLike(e, list); }}
@@ -65,10 +52,9 @@ export default function ListCard({
         </button>
       )}
 
-      {/* Delete button */}
       {showDelete && (
         <button
-          onClick={(e) => { e.stopPropagation(); onDelete(list.id); }}
+          onClick={() => onDelete(list.id)}
           title="Delete List"
           className="ml-4 text-gray-600 hover:text-red-500 p-2 transition-colors shrink-0"
         >

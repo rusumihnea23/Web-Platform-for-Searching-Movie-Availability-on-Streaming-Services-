@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,22 +22,22 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserMovieLogService {
-private final UserMovieLogRepository logRepository;
-private final MovieService movieService;
-private final UserRespository userRespository;
+    private final UserMovieLogRepository logRepository;
+    private final MovieService movieService;
+    private final UserRespository userRespository;
 
-public void logMovie(Authentication authentication,MovieLogRequest request){
-    User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
-    Movie movie=movieService.getOrCreateMovie(request.getMovieId());
-    UserMovieLog log=logRepository.findByUserIdAndMovieId(user.getId(), movie.getId()).orElse(UserMovieLog.builder().
-            movie(movie).
-            user(user).
-            userWatchDates(new ArrayList<>())
-            .build());
-            log.setPersonalGrade(request.getPersonalGrade());
-            log.getUserWatchDates().add(request.getWatchDate());
-            logRepository.save(log);
-}
+    public void logMovie(Authentication authentication,MovieLogRequest request){
+        User user=userRespository.getUserByEmail(authentication.getName()).orElseThrow(()->new RuntimeException("User not found"));
+        Movie movie=movieService.getOrCreateMovie(request.getMovieId());
+        UserMovieLog log=logRepository.findByUserIdAndMovieId(user.getId(), movie.getId()).orElse(UserMovieLog.builder().
+                movie(movie).
+                user(user).
+                userWatchDates(new ArrayList<>())
+                .build());
+        log.setPersonalGrade(request.getPersonalGrade());
+        log.getUserWatchDates().add(request.getWatchDate());
+        logRepository.save(log);
+    }
     public List<MovieDTO> getLogsById(Long userId) {
         List<UserMovieLog> logs = logRepository.findByUserId(userId);
         return logs.stream()
@@ -83,8 +84,35 @@ public void logMovie(Authentication authentication,MovieLogRequest request){
                     dto.setTitle(log.getMovie().getTitle());
                     dto.setPersonalGrade(log.getPersonalGrade());
                     dto.setWatchDates(log.getUserWatchDates());
+                    dto.setPosterPath(log.getMovie().getPosterPath());
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void deleteWatchDate(Authentication authentication, Long movieId, LocalDate date) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Movie movie = movieService.getOrCreateMovie(movieId);
+        UserMovieLog log = logRepository.findByUserIdAndMovieId(user.getId(), movie.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Log not found"));
+
+        log.getUserWatchDates().remove(date);
+
+        if (log.getUserWatchDates().isEmpty()) {
+            logRepository.delete(log);
+        } else {
+            logRepository.save(log);
+        }
+    }
+
+    public void deleteAllLogsForMovie(Authentication authentication, Long movieId) {
+        User user = userRespository.getUserByEmail(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Movie movie = movieService.getOrCreateMovie(movieId);
+        UserMovieLog log = logRepository.findByUserIdAndMovieId(user.getId(), movie.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Log not found"));
+
+        logRepository.delete(log);
     }
 }

@@ -11,4 +11,5 @@ public class UserLogDTO {
    private  String title;
     private Float personalGrade;
     private List<LocalDate> watchDates;
+    private String posterPath;
 }

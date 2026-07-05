@@ -86,5 +86,19 @@ const getPublicUserWatchlist = async (userId) => {
     return [];
   }
 };
+ const getUserLogsWithGrades = async () => {
+  const res = await api.get("/api/log/details");
+  return res.data;
+};
 
-export {getUserLogsMovieList,userLogMovie,getUserWatchlist,watchlistMovie,unWatchlistMovie,getUserLogsDetailed,getPublicUserLogs,getPublicUserWatchlist};
+ const deleteWatchDate = async (movieId, date) => {
+  const res = await api.delete(`/api/log/${movieId}/date`, { params: { date } });
+  return res.data;
+};
+
+ const deleteAllLogsForMovie = async (movieId) => {
+  const res = await api.delete(`/api/log/${movieId}`);
+  return res.data;
+};
+
+export {getUserLogsMovieList,userLogMovie,getUserWatchlist,watchlistMovie,unWatchlistMovie,getUserLogsDetailed,getPublicUserLogs,getPublicUserWatchlist,getUserLogsWithGrades,deleteWatchDate,deleteAllLogsForMovie};

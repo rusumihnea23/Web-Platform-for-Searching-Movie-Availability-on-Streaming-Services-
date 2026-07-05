@@ -2,10 +2,8 @@ package com.mihnea.restapi.config;
 
 import com.mihnea.restapi.Models.*;
 import com.mihnea.restapi.Repositories.*;
-import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import jakarta.transaction.Transactional;
 
@@ -14,21 +12,20 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@RequiredArgsConstructor
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DatabaseSeeder implements CommandLineRunner {
 
-    public final GenreRepository genreRepository;
-    public final UserRespository userRespository; // Kept your exact repository spelling
+    private final GenreRepository genreRepository;
     private final MovieRepository movieRepository;
+    private final UserRespository userRepository; // Kept your exact repository spelling
     private final ReviewRepository reviewRepository;
     private final MovieListRepository movieListRepository;
     private final UserMovieLogRepository userMovieLogRepository;
-    private final PasswordEncoder passwordEncoder;
 
     private final Faker faker = new Faker();
     private final Random random = new Random();
 
+    // A list of realistic review templates to produce high-quality human critiques
     private final List<String> reviewTemplates = List.of(
             "An absolute masterpiece! The direction and cinematography were flawless.",
             "Honestly, it started strong but the second half felt dragged out and predictable.",
@@ -42,70 +39,56 @@ public class DataInitializer implements CommandLineRunner {
             "The visuals were stunning, but it lacked the emotional depth of the original story."
     );
 
+    public DatabaseSeeder(GenreRepository genreRepository, MovieRepository movieRepository,
+                          UserRespository userRepository, ReviewRepository reviewRepository,
+                          MovieListRepository movieListRepository, UserMovieLogRepository userMovieLogRepository) {
+        this.genreRepository = genreRepository;
+        this.movieRepository = movieRepository;
+        this.userRepository = userRepository;
+        this.reviewRepository = reviewRepository;
+        this.movieListRepository = movieListRepository;
+        this.userMovieLogRepository = userMovieLogRepository;
+    }
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+        // 1. Seed Official TMDB Genres if they don't exist yet
+        if (genreRepository.count() == 0) {
+            System.out.println("🎬 Seeding official TMDB genres...");
+            Map<Long, String> tmdbGenres = Map.ofEntries(
+                    Map.entry(28L, "Action"), Map.entry(12L, "Adventure"), Map.entry(16L, "Animation"),
+                    Map.entry(35L, "Comedy"), Map.entry(80L, "Crime"), Map.entry(99L, "Documentary"),
+                    Map.entry(18L, "Drama"), Map.entry(10751L, "Family"), Map.entry(14L, "Fantasy"),
+                    Map.entry(36L, "History"), Map.entry(27L, "Horror"), Map.entry(10402L, "Music"),
+                    Map.entry(9648L, "Mystery"), Map.entry(10749L, "Romance"), Map.entry(878L, "Sci-Fi"),
+                    Map.entry(10770L, "TV Movie"), Map.entry(53L, "Thriller"), Map.entry(10752L, "War"),
+                    Map.entry(37L, "Western")
+            );
 
-        // 1. Core TMDB Genre Initialization
-        List<Genre> tmdbGenres = List.of(
-                new Genre(28L, "Action", null),
-                new Genre(12L, "Adventure", null),
-                new Genre(16L, "Animation", null),
-                new Genre(35L, "Comedy", null),
-                new Genre(80L, "Crime", null),
-                new Genre(99L, "Documentary", null),
-                new Genre(18L, "Drama", null),
-                new Genre(10751L, "Family", null),
-                new Genre(14L, "Fantasy", null),
-                new Genre(36L, "History", null),
-                new Genre(27L, "Horror", null),
-                new Genre(10402L, "Music", null),
-                new Genre(9648L, "Mystery", null),
-                new Genre(10749L, "Romance", null),
-                new Genre(878L, "Science Fiction", null),
-                new Genre(10770L, "TV Movie", null),
-                new Genre(53L, "Thriller", null),
-                new Genre(10752L, "War", null),
-                new Genre(37L, "Western", null)
-        );
-
-        genreRepository.saveAll(tmdbGenres);
-        System.out.println("TMDB baseline genres verified/saved.");
-
-        // 2. Core Admin Account Initialization
-        if (userRespository.getUserByEmail("admin@test.com").isPresent()) {
-            System.out.println("System admin already exists.");
-        } else {
-            var admin = User.builder()
-                    .firstName("Admin")
-                    .lastName("User")
-                    .email("admin@test.com")
-                    .password(passwordEncoder.encode("password"))
-                    .role(Role.ROLE_ADMIN)
-                    .username("admin")
-                    .build();
-
-            userRespository.save(admin);
-            System.out.println("👑 Primary system admin created successfully.");
+            tmdbGenres.forEach((id, name) -> {
+                Genre genre = Genre.builder().id(id).name(name).build();
+                genreRepository.save(genre);
+            });
         }
 
-        // 3. Artificial Data Check: Exit early if the Python script hasn't brought in movies yet
+        // Prevent seeding artificial users/reviews if users already exist
+        if (userRepository.count() > 0) {
+            System.out.println("Database already contains user data. Skipping artificial seeding.");
+            return;
+        }
+
+        // Fetch the real movies imported by the Python script
         List<Movie> realMovies = movieRepository.findAll();
         if (realMovies.isEmpty()) {
-            System.out.println("⏳ Application initialized successfully. Standing by for TMDB Python movie import script...");
+            System.out.println("No movies found in the database. Run Python TMDB script first!");
             return;
         }
 
-        // 4. FIXED SAFETY CHECK: Check reviews instead of users so the admin account won't block seeding
-        if (reviewRepository.count() > 0) {
-            System.out.println("Database already populated with community activity data. Skipping generation.");
-            return;
-        }
+        System.out.println(" Initializing artificial user data generation around " + realMovies.size() + " real TMDB movies...");
 
-        System.out.println("🚀 Real movies detected! Generating community platform engagement activity...");
-
-        // 5. Seed Fake Community Users
-        List<User> communityUsers = new ArrayList<>();
+        // 2. Seed Users
+        List<User> users = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             String firstName = faker.name().firstName();
             String lastName = faker.name().lastName();
@@ -116,36 +99,36 @@ public class DataInitializer implements CommandLineRunner {
                     .lastName(lastName)
                     .email(email)
                     .username(faker.credentials().username())
-                    .password(passwordEncoder.encode("password123"))
-                    .role(Role.ROLE_USER)
+                    .password("{noop}password123")
+                    .role(i == 0 ? Role.ROLE_ADMIN : Role.ROLE_USER)
                     .profilePicturePath("https://api.dicebear.com/7.x/avataaars/svg?seed=" + firstName)
                     .build();
-            communityUsers.add(user);
+            users.add(user);
         }
-        communityUsers = userRespository.saveAll(communityUsers);
+        users = userRepository.saveAll(users);
 
-        // 6. Update Users with Random Watchlists
-        for (User user : communityUsers) {
+        // 4. Update Users with Random Watchlists
+        for (User user : users) {
             List<Movie> watchlist = new ArrayList<>();
             int watchlistSize = random.nextInt(5);
             for (int i = 0; i < watchlistSize; i++) {
                 watchlist.add(realMovies.get(random.nextInt(realMovies.size())));
             }
             user.setWatchlist(watchlist);
-            userRespository.save(user);
+            userRepository.save(user);
         }
 
-        // 7. FIXED: Seed Reviews & Review Likes with distinct historical dates
-        System.out.println("✍️ Writing authentic-looking audience reviews with randomized timestamps...");
+        // 5. Seed Reviews & Review Likes (With historical timestamp injection for beautiful charts)
+        System.out.println(" Writing audience reviews with historical trend data...");
         for (int i = 0; i < Math.min(realMovies.size(), 120); i++) {
             Movie movie = realMovies.get(random.nextInt(realMovies.size()));
             int reviewCount = random.nextInt(3) + 1;
 
             for (int j = 0; j < reviewCount; j++) {
-                User randomUser = communityUsers.get(random.nextInt(communityUsers.size()));
+                User randomUser = users.get(random.nextInt(users.size()));
                 String realisticReviewText = reviewTemplates.get(random.nextInt(reviewTemplates.size()));
 
-                // 📅 Generates a unique timestamp spread over the past 30 days
+                // 📅 DISTRIBUTE REVIEWS RADIALLY OVER THE PAST 30 DAYS
                 java.time.LocalDateTime randomHistoricalDate = faker.timeAndDate()
                         .past(30, TimeUnit.DAYS)
                         .atZone(ZoneId.systemDefault())
@@ -155,22 +138,22 @@ public class DataInitializer implements CommandLineRunner {
                         .content(realisticReviewText)
                         .user(randomUser)
                         .movie(movie)
-                        .createdAt(randomHistoricalDate) // Overrides standard @PrePersist configuration
+                        .createdAt(randomHistoricalDate) // Overrides default timestamp
                         .build();
 
                 List<ReviewLike> reviewLikes = new ArrayList<>();
                 int likeCount = random.nextInt(6);
                 for (int k = 0; k < likeCount; k++) {
-                    reviewLikes.add(new ReviewLike(communityUsers.get(random.nextInt(communityUsers.size())), review));
+                    reviewLikes.add(new ReviewLike(users.get(random.nextInt(users.size())), review));
                 }
                 review.setLikes(reviewLikes);
                 reviewRepository.save(review);
             }
         }
 
-        // 8. Seed Custom Movie Lists
+        // 6. Seed Custom Movie Lists & List Likes
         for (int i = 0; i < 15; i++) {
-            User owner = communityUsers.get(random.nextInt(communityUsers.size()));
+            User owner = users.get(random.nextInt(users.size()));
             List<Movie> listMovies = new ArrayList<>();
             for (int j = 0; j < random.nextInt(6) + 2; j++) {
                 listMovies.add(realMovies.get(random.nextInt(realMovies.size())));
@@ -185,14 +168,14 @@ public class DataInitializer implements CommandLineRunner {
 
             List<MovieListLike> listLikes = new ArrayList<>();
             for (int k = 0; k < random.nextInt(8); k++) {
-                listLikes.add(new MovieListLike(communityUsers.get(random.nextInt(communityUsers.size())), movieList));
+                listLikes.add(new MovieListLike(users.get(random.nextInt(users.size())), movieList));
             }
             movieList.setLikes(listLikes);
             movieListRepository.save(movieList);
         }
 
-        // 9. Seed User Movie Logs / History
-        for (User user : communityUsers) {
+        // 7. Seed User Movie Logs / History
+        for (User user : users) {
             int loggedMoviesCount = random.nextInt(5);
             for (int i = 0; i < loggedMoviesCount; i++) {
                 Movie randomMovie = realMovies.get(random.nextInt(realMovies.size()));
@@ -212,6 +195,6 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
 
-        System.out.println("✅ Complete platform environment seeded safely with zero conflicts!");
+        System.out.println("✅ Database populated with fake activity around real TMDB movies successfully!");
     }
 }

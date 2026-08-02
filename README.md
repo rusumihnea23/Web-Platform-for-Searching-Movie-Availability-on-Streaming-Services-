@@ -1,6 +1,5 @@
 <div align="center">
 
-# 🎬 StreamFinder
 
 ### AI-Powered Movie & TV Streaming Discovery Platform
 
@@ -24,7 +23,7 @@
 
 This is the ultimate dilemma of the modern streaming era. With digital content scattered across dozens of fragmented platforms, users spend more time scrolling through subscription apps than actually watching movies.
 
-**StreamFinder** is a centralized, AI-driven discovery hub built to solve that exact pain point. By combining rich entertainment metadata from **The Movie Database (TMDB)** with real-time streaming availability data from the **JustWatch API**, the platform lets users search for any movie or TV show and instantly find out where it's available to **stream, rent, or buy** — in their specific geographic region. On top of that, it's a full social layer: personalized recommendations, watchlists, custom lists, reviews, and user profiles.
+The solution is a centralized, AI-driven discovery hub built to solve that exact pain point. By combining rich entertainment metadata from **The Movie Database (TMDB)** with real-time streaming availability data from the **JustWatch API**, the platform lets users search for any movie or TV show and instantly find out where it's available to **stream, rent, or buy** — in their specific geographic region. On top of that, it's a full social layer: personalized recommendations, watchlists, custom lists, reviews, and user profiles.
 
 <p align="center">
   <img src="assets/homepage.png" alt="StreamFinder homepage with personalized recommendations and trending titles" width="850">
